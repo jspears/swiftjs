@@ -1,6 +1,5 @@
-import { Viewable } from "./View";
+import { Content, Viewable } from "./View";
 import { swifty } from "./utilit";
-
 
 class NavigationViewClass extends Viewable {
 

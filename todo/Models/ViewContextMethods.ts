@@ -9,7 +9,12 @@ import { ViewContext } from 'swiftjs/CoreData';
 import {Item,ItemType,} from './Categories';
 
 
-
+type AddItem = {
+     context: ViewContext<ItemType>,
+        dueDate: Date,
+        toDoText: string,
+        category: string
+}
 export class ViewContextMethods {
 
     static addItem(
@@ -20,10 +25,9 @@ export class ViewContextMethods {
     ) {
         withAnimation( ()=> {
             const newItem = Item(context)
-            newItem.timestamp = Date()
+            newItem.timestamp = new Date()
             newItem.dueDate = dueDate
             newItem.toDoText = toDoText
-            newItem.isDone = false
             newItem.category = category
             
             try {
@@ -39,7 +43,7 @@ export class ViewContextMethods {
     
     static isDone(item: ItemType, context: ViewContext<ItemType>) {
         withAnimation(()=>{
-            item.isDone.toggle()
+            item.isDone(!item.isDone())
         try {
              context.save()
         } catch(error) {

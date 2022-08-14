@@ -13,12 +13,12 @@ export class ContentView extends Viewable<ContentOpts> {
     @State
     name?:string;
 
-    body = View(
+    body = ()=>
         HStack({},
                Text('SwiftUI').font(Font.largeTitle),
                Text('Is Cool')
         )
-     )
+    
     
 
 }

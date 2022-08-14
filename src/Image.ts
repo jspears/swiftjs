@@ -7,7 +7,9 @@ export interface ImageConfig {
 }
 class ImageClass extends Viewable<ImageConfig> {
 
-
+    resizable(){
+        return this;
+    }
 }
 export const Image = swifty(ImageClass);    
     

@@ -7,7 +7,7 @@
 
 //import 'SwiftUI';
 //import CoreData
-import {Capsule, Color, Environment, FetchRequest,IndexSet, Viewable, View, NavigationView, ForEach, List,InsetGroupedListStyle, HStack,VStack,Image, Section, Spacer, Toggle, Text, State, withAnimation} from 'swiftjs';
+import {Capsule, Color, Environment, FetchRequest,IndexSet, Viewable, View, NavigationView, ForEach, List,InsetGroupedListStyle, HStack,VStack,Image, Section, Spacer, Toggle, Text, State, withAnimation, Bound, Int} from 'swiftjs';
 import {FetchedResults, NSSortDescriptor, ViewContext} from 'swiftjs/CoreData'
 import {Item, ViewContextMethods, categories, ItemType} from './Models';
 
@@ -16,25 +16,24 @@ import {Item, ViewContextMethods, categories, ItemType} from './Models';
 
 export class ToDoList extends Viewable {
      @Environment('.managedObjectContext') 
-     private viewContext:ViewContext<ItemType> = new ViewContext();
+     viewContext:ViewContext<ItemType> = new ViewContext();
     
      @FetchRequest({
          sortDescriptors: [NSSortDescriptor({keyPath: '.dueDate', ascending: false})],
          animation: '.default'})
-
-    private items: FetchedResults<ItemType> = [];
+    items: FetchedResults<ItemType> = [];
     
-    @State private searchQuery = "";
-    @State private notDoneOnly = false;
+    @State searchQuery = "";
+    @State notDoneOnly = false;
 
    
-    body = ()=>View(
+    body = ({$notDoneOnly}:Bound<this>, self = this)=>
         NavigationView (
-            List (
+            List<ItemType> (
                 Section (
                     HStack (
-                        Toggle({isOn: this.$`notDoneOnly`},
-                            Text(this.notDoneOnly ? "Show all items" : "Show not done only")
+                        Toggle({$isOn: $notDoneOnly},
+                            Text(self.notDoneOnly ? "Show all items" : "Show not done only")
                                 .frame({maxWidth: '.infinity'})
                         )
                         .toggleStyle('.button')
@@ -46,7 +45,7 @@ export class ToDoList extends Viewable {
                 Section (
                     ForEach(this.searchResults, (item)=>
                         HStack (
-                            Image({systemName: item.isDone ? "circle.fill" : "circle"})
+                            Image({systemName: item.isDone?.() ? "circle.fill" : "circle"})
                                 .resizable()
                                 .foregroundColor(this.getCategoryColor(item))
                                 .frame({width: 30, height: 30})
@@ -90,7 +89,7 @@ export class ToDoList extends Viewable {
             .searchable("Search in history", this.searchQuery, '.automatic')
             .navigationTitle("All todo items")
             
-    ));
+    );
     
     
     get searchResults(): ItemType[] {
@@ -131,7 +130,7 @@ export class ToDoList extends Viewable {
     }
     
     
-    private deleteItems(offsets: IndexSet) {
+    private deleteItems=(offsets: Set<Int>):void => {
         withAnimation(()=> {
             //offsets.map { items[$0] }.forEach(viewContext.delete)
             offsets.forEach($0=>this.viewContext.delete(this.items[$0]));

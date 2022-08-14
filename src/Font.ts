@@ -47,16 +47,16 @@ export class Font {
         return this;
     }
 
-    weight(weight:Weight | Dot<keyof typeof Weight>):this {
+    weight(weight:WeightKey):this {
         return this;
     }
-    leading(leading:Leading | Dot<keyof typeof Leading>):this {
+    leading(leading:LeadingKey):this {
         return this;
     }
 }
 
-type F = typeof Font['prototype']
-
+export type LeadingKey = Leading| Dot<keyof typeof Leading>;
+export type WeightKey = Weight | Dot<keyof typeof Weight>;
 const largeTitle = new Font();
 const title = new Font()
 const title2 =new Font() 
@@ -68,3 +68,5 @@ const callout = new Font()
 const caption = new Font()
 const caption2 = new Font()
 const footnote = new Font()
+
+export type FontKey = Font | Dot<keyof typeof Font>;

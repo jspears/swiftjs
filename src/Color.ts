@@ -1,3 +1,4 @@
+import { Dot, Num } from "./types";
 import { swifty } from "./utilit";
 
 type RGB = {red:number, blue:number, green:number, opacity?:number}
@@ -35,6 +36,9 @@ export class Color {
     opacity(opacity: number):this {
         return this;
     }
+    shadow(def:{color:ColorKey, radius: Num, x: Num, y: Num}){
+        return this;
+    }
 }
 
 const black = new Color('black')
@@ -53,3 +57,5 @@ const red = new Color('red')
 const teal = new Color('teal')
 const white = new Color('white')
 const yellow = new Color('yellow')
+
+export type ColorKey = Color | Dot<keyof typeof Color>;

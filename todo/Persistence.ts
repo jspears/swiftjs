@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 21.06.21.
 //
 import { Item, ItemType } from "./Models";
-import {ViewContext, HasId} from 'swiftjs/Coredata';
+import {ViewContext, HasId} from 'swiftjs/CoreData';
 
 
 export class PersistenceController {
@@ -20,8 +20,8 @@ export class PersistenceController {
         const viewContext = _preview.container.viewContext
         for (let i=0; i<10; i++) {
             const newItem = Item(viewContext)
-            newItem.timestamp = Date()
-            newItem.dueDate = Date()
+            newItem.timestamp = new Date()
+            newItem.dueDate = new Date()
             newItem.category = "Business"
             newItem.toDoText = "You need to do this task in order to proceed with the next one"
         }
