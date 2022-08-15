@@ -27,18 +27,18 @@ class StackClass<T extends {alignment?:unknown}> extends Viewable<StackOptions &
 class VStackClass extends StackClass<{ alignment?: KeyOfTypeWithType<VerticalAlignment>; }> {
 
 }
+export const VStack = swifty(VStackClass);
+export const LazyVStack = VStack;
 
 class HStackClass extends StackClass<{ alignment?: KeyOfTypeWithType<HorizontalAlignment>; }> {
 
 }
+export const HStack = swifty(HStackClass);
+export const LazyHStack = HStack;
 
 class ZStackClass extends StackClass<{ alignment?: AlignmentKey; }> {
 
 }
 
-export const HStack = swifty(HStackClass);
-export const VStack = swifty(VStackClass);
 export const ZStack = swifty(ZStackClass);
-export const LazyHStack = HStack;
-export const LazyVStack = ZStack;
 export const LazyZStack = ZStack;

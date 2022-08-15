@@ -5,7 +5,7 @@ export class NavigationMixin {
     sheet(opts: {
         isPresented: Bindable<boolean>,
         onDismiss(): void,
-        content: Content
+        content: Content | View
     }) {
         return this;
     }

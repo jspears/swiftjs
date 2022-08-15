@@ -11,6 +11,7 @@ import { EventsMixin } from "./EventsMixin";
 import { ShapeMixin } from './ShapeMixin';
 import { AnimationMixin } from './AnimationMixin';
 import { ControlMixin } from './ControlMixin';
+import { NavigationMixin } from "./NavigationMixin";
 
 export class ViewableClass<T = any> extends View {
     private watch = new Map<string, Bindable<any>>;
@@ -48,7 +49,7 @@ export class ViewableClass<T = any> extends View {
     frame(conf: Partial<Bounds & { alignment: AlignmentKey }>) {
         return this;
     }
-   
+
     toolbar(id: string, content?: Content): this
     toolbar(content?: Content): this
     toolbar(id?: string | Content, content?: Content) {
@@ -66,7 +67,7 @@ export class ViewableClass<T = any> extends View {
 }
 
 
-export interface ViewableClass extends Apperance, AnimationMixin, EventsMixin, FontMixin, PaddingMixin, PickerMixin,ControlMixin, Searchable, ShapeMixin {
+export interface ViewableClass extends Apperance, AnimationMixin, ControlMixin, EventsMixin, FontMixin, NavigationMixin, PaddingMixin, PickerMixin, Searchable, ShapeMixin {
 
 }
-export const Viewable = applyMixins(ViewableClass, Apperance,AnimationMixin,  EventsMixin, FontMixin, PaddingMixin, PickerMixin, ControlMixin, Searchable, ShapeMixin)
+export const Viewable = applyMixins(ViewableClass, Apperance, AnimationMixin, ControlMixin, EventsMixin, FontMixin, NavigationMixin, PaddingMixin, PickerMixin, Searchable, ShapeMixin)

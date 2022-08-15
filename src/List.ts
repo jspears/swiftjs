@@ -1,4 +1,4 @@
-import { Content, Viewable } from "./View";
+import { Content, View, Viewable } from "./View";
 import { swifty } from "./utilit";
 import { Bindable, Int } from "./types";
 import { On } from "./View/EventsMixin";
@@ -27,8 +27,8 @@ class RowContent {
 
 }
 class ListClass<T> extends Viewable<ListConfig<T>> {
-    constructor(config:ListConfig<T>){
-        super();
+    constructor(config:ListConfig<T>| View, ...view:View[]){
+        super(...(config instanceof View ? [config, ...view] : view));
     }
     listStyle(style:ListStyle){
         return this;

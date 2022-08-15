@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 22.06.21.
 //
 
-import { Color, Viewable, Environment, FetchRequest, PlainButtonStyle, Namespace, State, Binding, AppStorage, Image, Text, ZStack, HStack, ScrollView, Spacer, VStack, ForEach, withAnimation, Font, NavigationView, LazyHStack, Button, LazyVStack, Bound, Calendar } from "swiftjs"
+import { Color, Viewable, Environment, FetchRequest, PlainButtonStyle, Namespace, State, Binding, AppStorage, Image, Text, ZStack, HStack, ScrollView, Spacer, VStack, ForEach, withAnimation, Font, NavigationView, LazyHStack, Button, LazyVStack, Bound, Calendar, RoundedRectangle, Toggle, toggle } from "swiftjs"
 import { FetchedResults, NSSortDescriptor, ViewContext } from "swiftjs/CoreData"
 import { Haptics } from "./Haptics";
 import { categories, Item, ItemCategory, ItemCategoryType, ItemType, ViewContextMethods } from "./Models";
@@ -37,7 +37,7 @@ export class MainScreen extends Viewable {
 
     @AppStorage("userName") userName = ""
 
-    body = ({ $newItemOpen, newItemOpen, $menuOpen, $settingsOpen }: Bound<this>, self = this) =>
+    body = ({ $newItemOpen, newItemOpen, $menuOpen, $settingsOpen }: Bound<this>, { userName, ...self } = this) =>
         ZStack(
             !newItemOpen ?
                 NavigationView(
@@ -86,13 +86,13 @@ export class MainScreen extends Viewable {
 
                             this.todaysItems.length ?
                                 LazyVStack({ spacing: 10 },
-                                    ForEach(this.todaysItems, toDoItem => (
+                                    ForEach(this.todaysItems, toDoItem => 
 
                                         // MARK: Today's tasks list view
                                         VStack(
                                             { alignment: '.leading' },
                                             HStack(
-                                                Image({ systemName: toDoItem.isDone ? "circle.fill" : "circle" })
+                                                Image({ systemName: toDoItem.isDone() ? "circle.fill" : "circle" })
                                                     .resizable()
                                                     .foregroundColor(this.getCategoryColor(toDoItem))
                                                     .frame({ width: 30, height: 30 })
@@ -118,7 +118,7 @@ export class MainScreen extends Viewable {
                                                 VStack(
                                                     // empty VStack for the blur
                                                 ).frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
-                                                 .background('.thinMaterial', { in: RoundedRectangle({ cornerRadius: 20 }) })
+                                                    .background('.thinMaterial', { in: RoundedRectangle({ cornerRadius: 20 }) })
                                             ),
                                        
                                     )
@@ -128,7 +128,7 @@ export class MainScreen extends Viewable {
                                         .padding('.horizontal')
 
                                     )
-                                ).padding('.bottom', 60)
+                                .padding('.bottom', 60)
                                 :
                                 VStack(
                                     Text("No tasks for today")
@@ -145,8 +145,8 @@ export class MainScreen extends Viewable {
                             Spacer(),
                             Button({
                                 action() {
-                                    withAnimation(() =>
-                                        self.newItemOpen?.toggle()
+                                    withAnimation(
+                                        toggle($newItemOpen)
                                     )
                                 }
                             },
@@ -161,7 +161,7 @@ export class MainScreen extends Viewable {
                             .matchedGeometryEffect({ id: "button", in: this.namespace })
                     )
                 )
-                    .navigationTitle(!self.userName ? "Hi there!" : "What's up, \(userName)!")
+                    .navigationTitle(!userName ? "Hi there!" : `What's up, ${userName}!`)
 
                     // MARK: Navigation bar buttons to open different menus
                     .navigationBarItems({
@@ -191,7 +191,7 @@ export class MainScreen extends Viewable {
 
                         )
                             .buttonStyle(PlainButtonStyle())
-                            .sheet({ isPresented: $settingsOpen, onDismiss() { self.settingsOpen = false } }, Settings())
+                            .sheet({ isPresented: $settingsOpen, onDismiss() { self.settingsOpen = false } , content:Settings()}),
                     })
 
 

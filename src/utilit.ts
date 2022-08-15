@@ -1,4 +1,4 @@
-import { Bindable, Dot, KeyOfTypeWithType, Listen } from "./types";
+import { Bindable, Bool, Dot, KeyOfTypeWithType, Listen } from "./types";
 
 
 export function swifty<T, A extends any[] = []>(clazz: { new (...args:A): T }) {
@@ -72,3 +72,5 @@ export function applyMixins<T extends Constructor>(derivedCtor:T, ...constructor
     });
     return derivedCtor;
   }
+
+  export const toggle = (v:Bindable<Bool>)=>()=>v(!v())

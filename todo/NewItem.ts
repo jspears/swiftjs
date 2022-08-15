@@ -60,7 +60,7 @@ class NewItemClass extends Viewable<NewItemConfig> {
                             VStack(
                                 // empty VStack for the blur
                             )
-                                .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
+                            .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
                                 .background('.thinMaterial', RoundedRectangle({ cornerRadius: 5 }))
                         )), '.leading')
                 .shadow({ color: black.opacity(0.1), radius: 20, x: 5, y: 10 })
@@ -120,8 +120,8 @@ class NewItemClass extends Viewable<NewItemConfig> {
                 role: '.none',
                 action() {
                     ViewContextMethods.addItem(self.viewContext, self.dueDate, self.toDoText, self.category)
-                    withAnimation(() => 
-                        self.newItemOpen?.( false)
+                    withAnimation(() =>
+                        self.newItemOpen?.(false)
                     );
                 },
                 label: HStack(
@@ -159,7 +159,7 @@ class NewItemClass extends Viewable<NewItemConfig> {
                             .padding()
                     )
                 )
-                    ({ id: "button", in: this.namespace }),
+                    .matchedGeometryEffect({ id: "button", in: this.namespace }),
 
                 Spacer()
             ))

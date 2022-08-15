@@ -14,7 +14,7 @@ export interface ButtonConfig {
     
 }
 export class ButtonStyleConfiguration {
-    constructor(arg:ButtonConfig){
+    constructor(arg?:ButtonConfig){
 
     }
 }

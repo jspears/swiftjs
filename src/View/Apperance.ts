@@ -83,10 +83,8 @@ export class Apperance<S extends Style = Style> {
         return this;
     }
     
-    background(color:ColorKey):this;
-
-    background(alignment: AlignmentKey | ColorKey, content?: Content | View):this {
-        return this;
+    background(alignment: AlignmentKey | ColorKey | string | View, content?: Content | View):this {
+        return this; 
     }
 
     hidden() {
