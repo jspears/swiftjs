@@ -5,13 +5,13 @@
 //  Created by Roman Luzgin on 28.06.21.
 //
 
-import { ViewContext } from "swiftjs/CoreData"
+import { ViewContext } from "@jswift/CoreData"
 import {
     Button, Viewable, State, Color, Image, Namespace, Binding, Environment, Font,
     ForEach, ScrollView, RoundedRectangle, Picker, Text, DatePicker, Spacer, Bound,
     Bindable, swifty, VStack, HStack, ZStack, BorderedButtonStyle, withAnimation,
     UIApplication, TextEditor, MenuPickerStyle
-} from "swiftjs"
+} from "@jswift/ui"
 import { categories, ItemType, ViewContextMethods } from "./Models";
 
 const { white, black } = Color;

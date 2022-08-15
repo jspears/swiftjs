@@ -71,19 +71,20 @@ export class ViewableClass<T = any> extends View {
 
     render(){
         if (this.body){
-            const resp = this.body(new Proxy<Bound<this>>(this as Bound<this>, {
-                get(target, key){
-                    if (isString(key) && key.startsWith('$')){
-                        return target.$(key as any);
-                    }
-                }
-            }), this);
+            const resp = this.body(bound(this), this);
             return toNode(...(Array.isArray(resp) ? resp : [resp]));
         }
         return super.render?.();
     }
 }
 
+const bound = <T>(v:T)=>new Proxy<Bound<T>>(v as Bound<T>, {
+    get(target, key){
+        if (isString(key) && key['0']=== '$'){
+            return target.$(key.slice(1) as any);
+        }
+    }
+}
 
 export interface ViewableClass extends Apperance, AnimationMixin, ControlMixin, EventsMixin, FontMixin, NavigationMixin, PaddingMixin, PickerMixin, Searchable, ShapeMixin {
 

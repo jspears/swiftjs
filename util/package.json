@@ -1,8 +1,8 @@
 {
-  "name": "@jswift/project",
+  "name": "@jswift/util",
   "version": "1.0.0",
-  "private":true,
   "description": "Just playing around with TS syntax to make something swift like.",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,16 +16,10 @@
     "url": "https://github.com/jspears/swiftjs/issues"
   },
   "homepage": "https://github.com/jspears/swiftjs#readme",
-  "dependencies": {
+  "devDependencies": {
     "typescript": "^4.7.4"
-  },
-  "workspaces": {
-    "packages": [
-      "CoreData",
-      "ui",
-      "util",
-      "todo",
-      "demo"
-    ]
   }
+  ,"dependencies": {
+    "preact": "^10.10.2"
+    }
 }

@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 21.06.21.
 //
 
-import { Viewable, Color, VStack, Text, Font, LinearGradient, ZStack, RoundedRectangle, swifty, View, Bound } from 'swiftjs';
+import { Viewable, Color, VStack, Text, Font, LinearGradient, ZStack, RoundedRectangle, swifty, View, Bound } from '@jswift/ui';
 interface CategoryCardsConfig {
     category:string,
     color:Color,

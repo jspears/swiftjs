@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 12.07.21.
 //
 
-import { AppStorage, Button, Bound, Color, Environment, Form, FocusState, NavigationView, TextField, Viewable, swifty } from "swiftjs"
+import { AppStorage, Button, Bound, Color, Environment, Form, FocusState, NavigationView, TextField, Viewable, swifty } from "@jswift/ui"
 
 export class SettingsClass extends Viewable {
 

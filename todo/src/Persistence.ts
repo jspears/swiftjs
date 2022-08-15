@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 21.06.21.
 //
 import { Item, ItemType } from "./Models";
-import {ViewContext, HasId} from 'swiftjs/CoreData';
+import {ViewContext, HasId} from '@jswift/CoreData';
 
 
 export class PersistenceController {

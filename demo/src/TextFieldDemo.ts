@@ -1,7 +1,7 @@
 // import {MainScreen} from './MainScreen';
 
 // console.log('hello', MainScreen);
-import { Viewable, Text, Bool, TextField, State, FocusState, Bound } from 'swiftjs';
+import { Viewable, Text, Bool, TextField, State, FocusState, Bound } from '@jswift/ui';
 
 function validate(t: unknown) {
     return ()=> console.log('figure this out', t);

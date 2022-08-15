@@ -16,8 +16,9 @@
     "noImplicitReturns": true,
     "skipLibCheck": true,
     "paths": {
-      "swiftjs":["../src"],
-      "swiftjs/CoreData":["../src/CoreData"]
+      "@jswift/ui":["../ui/src"],
+      "@jswift/util":["../util/src"],
+      "@jswift/CoreData":["../CoreData/src"]
     }
   }
 }

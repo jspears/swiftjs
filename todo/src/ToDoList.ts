@@ -7,8 +7,8 @@
 
 //import 'SwiftUI';
 //import CoreData
-import { Capsule, Color, Environment, FetchRequest, IndexSet, Viewable, View, NavigationView, ForEach, List, InsetGroupedListStyle, HStack, VStack, Image, Section, Spacer, Toggle, Text, State, withAnimation, Bound, Int, isEmpty } from 'swiftjs';
-import { FetchedResults, NSSortDescriptor, ViewContext } from 'swiftjs/CoreData'
+import { Capsule, Color, Environment, FetchRequest, IndexSet, Viewable, View, NavigationView, ForEach, List, InsetGroupedListStyle, HStack, VStack, Image, Section, Spacer, Toggle, Text, State, withAnimation, Bound, Int, isEmpty } from '@jswift/ui';
+import { FetchedResults, NSSortDescriptor, ViewContext } from '@jswift/CoreData'
 import { Item, ViewContextMethods, categories, ItemType } from './Models';
 
 //https://raw.githubusercontent.com/roman-luzgin/TodoAppSwiftUI3/main/TodoAppSwiftUI3/ToDoList.swift
