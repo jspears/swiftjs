@@ -1,15 +1,16 @@
 import { Content, View, Viewable } from "./View";
 import { swifty } from "./utilit";
+import { Dot } from "./types";
 export enum ButtonRole {
     cancel,
     destructive,
-
+    none,
 }
 export interface ButtonConfig {
-    role?:ButtonRole;
+    role?:ButtonRole | Dot<keyof typeof ButtonRole>;
     action?():void;
     label?:Content | string | View;
-    shape:'.roundedRectangle';
+    shape?:'.roundedRectangle';
 
     
 }

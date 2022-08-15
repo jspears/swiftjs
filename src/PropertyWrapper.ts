@@ -1,5 +1,5 @@
-import { UseAnimation } from "./Animation";
-import { View } from "./View/index";
+import { AnimationKey } from "./Animation";
+import { View, ViewableClass } from "./View/index";
 
 
 export const Namespace = Object.assign((target: Object, propertyKey: string) => {
@@ -9,8 +9,18 @@ export const Namespace = Object.assign((target: Object, propertyKey: string) => 
 export function FocusState(target: Object, propertyKey: PropertyKey) {
 
 }
-export function State(target: Object, propertyKey: PropertyKey) {
-     console.log("first(): called");
+export function State(target: InstanceType<typeof ViewableClass>, propertyKey: PropertyKey) {
+     const desc = Reflect.getOwnPropertyDescriptor(target, propertyKey);
+     Reflect.defineProperty(target, propertyKey, {
+          get(){
+               console.log('got state', propertyKey);
+               return this.$(propertyKey)()
+          },
+          set(v){
+               console.log('set state', propertyKey, v);
+               this.$(propertyKey)(v);
+          }
+     })
 }
 
 export function Environment(property: string) {
@@ -28,7 +38,7 @@ interface Sort {
      ascending?: boolean;
 }
 
-export function FetchRequest(req: { sortDescriptors: Sort[], animation?: UseAnimation }) {
+export function FetchRequest(req: { sortDescriptors: Sort[], animation?: AnimationKey }) {
      return function (target: Object, propertyKey: PropertyKey) {
           console.log("Environment(): called");
      }

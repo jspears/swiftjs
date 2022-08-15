@@ -1,8 +1,8 @@
-import { View, Viewable } from './View';
+import { Viewable } from './View';
 import { Text } from './Text';
 import { Font } from './Font';
 import { HStack } from './Stack';
-import {State} from './PropertyWrapper'
+import { State } from './PropertyWrapper'
 
 export interface ContentOpts {
 
@@ -17,8 +17,6 @@ export class ContentView extends Viewable<ContentOpts> {
         HStack({},
                Text('SwiftUI').font(Font.largeTitle),
                Text('Is Cool')
-        )
-    
-    
+        )  
 
 }

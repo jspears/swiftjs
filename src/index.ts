@@ -34,3 +34,5 @@ export * from './Toggle';
 export * from './types';
 export * from './UIApplication';
 export * from './utilit';
+export * from './dom';
+export * from './render';

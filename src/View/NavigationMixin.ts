@@ -1,5 +1,5 @@
 import { Bindable } from "../types";
-import { Content, View } from "./types";
+import { Content, View } from "./View";
 
 export class NavigationMixin {
     sheet(opts: {

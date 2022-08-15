@@ -1,2 +1,3 @@
 export * from './Viewable';
-export * from './types';
+export * from './View';
+export {MenuPickerStyle} from './PickerMixin';

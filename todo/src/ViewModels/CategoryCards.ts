@@ -12,10 +12,9 @@ interface CategoryCardsConfig {
     numberOfTasks:number,
     tasksDone:number
 }
- class CategoryCardsClass extends Viewable<CategoryCardsConfig> implements CategoryCardsConfig {
+ class CategoryCardsClass extends Viewable<CategoryCardsConfig> implements Omit<CategoryCardsConfig, 'color'> {
 
     category:string;
-    color:Color;
     numberOfTasks:number;
     tasksDone:number;
     maxProgress = 180.0
@@ -23,7 +22,7 @@ interface CategoryCardsConfig {
     constructor(config:CategoryCardsConfig, ...views:View[]){
         super(...views);
         this.category = config.category;
-        this.color = config.color;
+        this.color(config.color);
         this.numberOfTasks = config.numberOfTasks || 0;
         this.tasksDone = config.tasksDone || 0;
     }
@@ -52,7 +51,7 @@ interface CategoryCardsConfig {
             RoundedRectangle({ cornerRadius: 20, style: '.continuous' })
                 .frame({ maxWidth: self.maxProgress })
                 .frame({ width: self.numberOfTasks > 0 ? self.progress : 0, height: 5 })
-                .foregroundColor(self.color?.opacity(0.9))
+                .foregroundColor(self.config?.color?.opacity(0.9))
         )
 
 
@@ -62,9 +61,9 @@ interface CategoryCardsConfig {
         .frame({ width: 200, height: 120, alignment: '.leading' })
         .background(
             ZStack(
-
+                { alignment: '.leading' },
                 LinearGradient({
-                    colors: [this.color?.opacity(0.95), this.color?.opacity(0.3)],
+                    colors: [self.config?.color?.opacity(0.95), self.config?.color?.opacity(0.3)],
                     startPoint: '.topLeading', endPoint: '.bottomTrailing'
                 })
 
@@ -77,7 +76,7 @@ interface CategoryCardsConfig {
                     .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
                     .background('.thinMaterial')
             ),
-            { alignment: '.leading' }
+           
         )
         .clipShape(RoundedRectangle({ cornerRadius: 20, style: '.continuous' }))
         .shadow({ color: Color.black.opacity(0.1), radius: 20, x: 5, y: 10 })

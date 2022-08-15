@@ -1,42 +1,25 @@
 import {swifty} from './utilit';
-import {Dot, KeyOfTypeWithType} from './types';
+import {Dot, KeyOf, KeyOfTypeWithType} from './types';
 
 class AnimationClass {
-    static get default(){
-        return _default;
-    }
-    static get easeInOut(){
-        return easeInOut;
-    }
-    static get easeIn(){
-        return easeIn;
-    }
-    static get easeOut(){
-        return easeOut;
-    }
-    static get linear(){
-        return linear;
-    }
+    static default = new AnimationClass;
+    static easeInOut = new AnimationClass;
+    static easeIn = new AnimationClass;
+    static easeOut = new AnimationClass;
+    static linear = new AnimationClass;
 }
 export const Animation = swifty(AnimationClass);
 
-const _default = Animation();
-const easeInOut = Animation();
-const linear = Animation();
-const easeIn = Animation();
-const easeOut = Animation();
-
 export type AnimationType = typeof AnimationClass;
 
-export type AnimationKey = AnimationType | Dot<Exclude<keyof AnimationType, 'prototype'>>;
+export type AnimationKey = KeyOf<typeof AnimationClass>
 
 type Callback = ()=>void;
 
 
-export type UseAnimation = KeyOfTypeWithType<typeof AnimationClass, AnimationClass>
 
 export function withAnimation(result:Callback):void;
-export function withAnimation(animation:UseAnimation | Callback, result?:Callback):void {
+export function withAnimation(animation:AnimationKey | Callback, result?:Callback):void {
     if (!isAnimation(animation)){
         result = animation;
     }

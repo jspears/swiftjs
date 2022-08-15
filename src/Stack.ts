@@ -1,42 +1,44 @@
 import { Content, View, Viewable } from "./View";
 import { swifty } from "./utilit";
-import { VerticalAlignment, HorizontalAlignment, AlignmentKey } from "./Edge";
-import { KeyOfTypeWithType, Num } from './types';
+import { AlignmentKey, VerticalAlignmentKey, HorizontalAlignmentKey } from "./Edge";
+import { Num } from './types';
 import { ColorKey } from "./Color";
 
-interface StackOptions {
-    spacing?: number;
+interface StackOptions<T> {
+    alignment?: T;
+    spacing?: Num;
     content?: Content;
-    color?:ColorKey;
+    color?: ColorKey;
 }
 
-class StackClass<T extends {alignment?:unknown}> extends Viewable<StackOptions & T> {
-    
-    conf:Partial<T>;
-    
-    constructor(opts?:(T | View), ...views:View[]){
-        super(...(opts instanceof Viewable ? [opts, ...views] : views));
-        this.conf = opts instanceof Viewable ? {} : opts || {};
-    }
-
-    frame(conf: Partial<{ maxWidth:Num, maxHeight:Num, height: Num, width: Num, alignment:T['alignment'] }>) {
+class StackClass<T> extends Viewable<StackOptions<T>>{
+    frame(conf: Partial<{ maxWidth: Num, maxHeight: Num, height: Num, width: Num, alignment: T }>) {
         return this;
     }
-    
+    render(): HTMLElement | DocumentFragment | Text | undefined {
+        const descend = super.render();
+        if (descend != null) {
+            const div = document.createElement('div');
+            div.appendChild(descend);
+            return div;
+        }
+        return;
+    }
 }
-class VStackClass extends StackClass<{ alignment?: KeyOfTypeWithType<VerticalAlignment>; }> {
+
+class VStackClass extends StackClass<VerticalAlignmentKey> {
 
 }
 export const VStack = swifty(VStackClass);
 export const LazyVStack = VStack;
 
-class HStackClass extends StackClass<{ alignment?: KeyOfTypeWithType<HorizontalAlignment>; }> {
+class HStackClass extends StackClass<HorizontalAlignmentKey> {
 
 }
 export const HStack = swifty(HStackClass);
 export const LazyHStack = HStack;
 
-class ZStackClass extends StackClass<{ alignment?: AlignmentKey; }> {
+class ZStackClass extends StackClass<AlignmentKey> {
 
 }
 

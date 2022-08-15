@@ -1,8 +1,6 @@
-type FilterConditionally<Source, Condition> = Pick<Source, {[K in keyof Source]: Source[K] extends Condition ? K : never}[keyof Source]>;
 
 export type Dot<T> = T extends string ? `.${T}` : never;
 //This is to support `.property` notation from swift.   
-export type KeyOfTypeWithType<F,T = F> = T | Dot<Exclude<keyof FilterConditionally<F, T>, 'prototype'>>;
 
 
 export type EnumOrString<T> = T | Dot<keyof T>;
@@ -14,9 +12,7 @@ export type Bindable<T> = ((t?:T)=>T) & {
 }
 export type Num = number | '.infinity';
 
-export type Size = {width:Num, height:Num};
-
-export type KeyOf<T> = Dot<Exclude<keyof T, 'prototype'>>;
+export interface Size  {width:Num, height:Num};
 
 
 // Tuplify code from:
@@ -51,9 +47,18 @@ export type Bound<T> = T & {
 export type Int = number;
 
 export interface Bounds {
-  height:Num;
-  width:Num;
-  maxWidth:Num;
-  maxHeight:Num;
+  height: Num;
+  width: Num;
+  maxWidth: Num;
+  maxHeight: Num;
 }
+
 export type Bool = boolean;
+
+type Never<T> = { [K in keyof T as T[K] extends never ? never : K extends 'prototype' ? never : K]: T[K] }
+
+export type Constructor = new (...args:any) => any;
+
+export type KeyOfTypeWithType<T extends Constructor,V extends Constructor = T> = KeyOf<T,V>;
+
+export type KeyOf<T extends Constructor, V extends Constructor = T> = Dot<keyof (Never<{ [K in keyof T]: T[K] extends InstanceType<V> ? T[K] : never}>)> | InstanceType<V>;

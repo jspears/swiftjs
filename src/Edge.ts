@@ -1,44 +1,27 @@
-import { Dot } from "./types";
+import { Dot, KeyOf, KeyOfTypeWithType } from "./types";
 import { applyMixins } from "./utilit";
 
 
 
 export class VerticalAlignment {
-    static get top(){
-        return top 
-     }
-     static get bottom(){
-        return bottom;
-     }
-     static get firstTextBaseline(){
-        return firstTextBaseline;
-     }
-     static get lastTextBaseline(){
-        return lastTextBaseline;
-     }
+   static top = new VerticalAlignment();
+   static bottom = new VerticalAlignment();
+   static firstTextBaseline = new VerticalAlignment()
+   static lastTextBaseline = new VerticalAlignment()
+   
 }
+export type VerticalAlignmentKey = KeyOf<typeof VerticalAlignment>;
 
-const top = new VerticalAlignment();
-const bottom = new VerticalAlignment();
-const firstTextBaseline = new VerticalAlignment()
-const lastTextBaseline = new VerticalAlignment()
 
 export class HorizontalAlignment {
-    static get leading(){
-        return leading
-     }
-     static get center(){
-        return center;
-     }
-     static get trailing(){
-        return trailing;
-     }
+   static leading = new HorizontalAlignment()
+   static center = new HorizontalAlignment();
+   static trailing = new HorizontalAlignment();
  
 }
+export type HorizontalAlignmentKey = KeyOf<typeof HorizontalAlignment>;
 
-const leading = new HorizontalAlignment()
-const center = new HorizontalAlignment();
-const trailing = new HorizontalAlignment();
+
 
 export interface Alignment extends HorizontalAlignment, VerticalAlignment {
 
@@ -46,8 +29,7 @@ export interface Alignment extends HorizontalAlignment, VerticalAlignment {
 
 export const Alignment = applyMixins(class Alignment {}, HorizontalAlignment, VerticalAlignment);
 
-export type AlignmentKey = Alignment | Dot<Exclude<keyof typeof VerticalAlignment | keyof typeof HorizontalAlignment, 'prototype'>>;
-
+export type AlignmentKey = HorizontalAlignmentKey | VerticalAlignmentKey;
 
 export enum Edge {
       top,

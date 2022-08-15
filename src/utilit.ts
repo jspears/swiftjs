@@ -1,4 +1,4 @@
-import { Bindable, Bool, Dot, KeyOfTypeWithType, Listen } from "./types";
+import { Bindable, Bool, Dot, KeyOf, KeyOfTypeWithType, Listen } from "./types";
 
 
 export function swifty<T, A extends any[] = []>(clazz: { new (...args:A): T }) {
@@ -41,11 +41,18 @@ export function toEnum<T>(enm:T, property:T | Dot<keyof T> | keyof T):T{
     }
     return property as T;
 }
+export function isString(v:unknown): v is string {
+    return typeof v === 'string';
+}
 
-export function toValue<T>(clazz:T, property?:KeyOfTypeWithType<T, T>){
-    const fn = function(prop:KeyOfTypeWithType<T, T>){
-        if (typeof prop === 'string' ){
-            return clazz[prop.slice(1) as (keyof T)];
+export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(clazz:T):(property:K)=>K extends `.${infer R extends keyof T & string}` ? T[R]: K extends T ? K : never;
+
+//export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(clazz:T, property:K)=>K extends `.${infer R extends keyof T & string}` ? K extends T ? K : never;
+
+export function toValue<T extends Constructor>(clazz:T , property?:KeyOf<T>){
+    const fn = function(prop:KeyOf<T>){
+        if (isString(prop) ){
+            return clazz[prop.slice(1) as keyof T];
         }
         return prop;
     }

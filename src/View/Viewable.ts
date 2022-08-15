@@ -1,25 +1,29 @@
 import { AlignmentKey } from "../Edge";
 import { Bindable, Bound, Bounds } from "../types";
-import { applyMixins, has, swifty, watchable } from "../utilit"
+import { applyMixins, has, isString, swifty, watchable } from "../utilit"
 import { Apperance } from "./Apperance";
 import { PaddingMixin } from "./PaddingMixin";
 import { PickerMixin } from "./PickerMixin";
 import { Searchable } from './Searchable';
 import { FontMixin } from "./FontMixin";
-import { Content, View } from "./types";
+import { Content, View } from "./View";
 import { EventsMixin } from "./EventsMixin";
 import { ShapeMixin } from './ShapeMixin';
 import { AnimationMixin } from './AnimationMixin';
 import { ControlMixin } from './ControlMixin';
 import { NavigationMixin } from "./NavigationMixin";
+import { toNode } from "../dom";
 
 export class ViewableClass<T = any> extends View {
     private watch = new Map<string, Bindable<any>>;
     protected config: Partial<T>;
     protected dirty = watchable<boolean>(true);
-    constructor(config?: T | View, ...views: View[]) {
+    private attrs = new Map<string,string | number>();
+
+    constructor(config?: T | View, ...children: View[]) {
         super()
         this.config = config instanceof View ? {} : config || {};
+        this.children = config instanceof View ? [config, ...children] : children;
     }
     protected $ = <V extends typeof this = typeof this,
         K extends keyof V & string = keyof V & string,
@@ -63,7 +67,21 @@ export class ViewableClass<T = any> extends View {
         return this;
     }
 
-    body?(bound: Bound<this>, self: this): View
+    body?(bound: Bound<this>, self: this): View | (View| undefined)[] | undefined; 
+
+    render(){
+        if (this.body){
+            const resp = this.body(new Proxy<Bound<this>>(this as Bound<this>, {
+                get(target, key){
+                    if (isString(key) && key.startsWith('$')){
+                        return target.$(key as any);
+                    }
+                }
+            }), this);
+            return toNode(...(Array.isArray(resp) ? resp : [resp]));
+        }
+        return super.render?.();
+    }
 }
 
 

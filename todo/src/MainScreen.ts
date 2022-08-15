@@ -5,10 +5,9 @@
 //  Created by Roman Luzgin on 22.06.21.
 //
 
-import { Color, Viewable, Environment, FetchRequest, PlainButtonStyle, Namespace, State, Binding, AppStorage, Image, Text, ZStack, HStack, ScrollView, Spacer, VStack, ForEach, withAnimation, Font, NavigationView, LazyHStack, Button, LazyVStack, Bound, Calendar, RoundedRectangle, Toggle, toggle } from "swiftjs"
+import { Haptics, Color, Viewable, Environment, FetchRequest, PlainButtonStyle, Namespace, State, Binding, AppStorage, Image, Text, ZStack, HStack, ScrollView, Spacer, VStack, ForEach, withAnimation, Font, NavigationView, LazyHStack, Button, LazyVStack, Bound, Calendar, RoundedRectangle, Toggle, toggle } from "swiftjs"
 import { FetchedResults, NSSortDescriptor, ViewContext } from "swiftjs/CoreData"
-import { Haptics } from "./Haptics";
-import { categories, Item, ItemCategory, ItemCategoryType, ItemType, ViewContextMethods } from "./Models";
+import { categories,  ItemCategoryType, ItemType, ViewContextMethods } from "./Models";
 import { NewItem } from "./NewItem";
 import { Settings } from "./Settings";
 import { CategoryCards } from "./ViewModels/CategoryCards";

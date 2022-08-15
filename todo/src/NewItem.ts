@@ -10,10 +10,9 @@ import {
     Button, Viewable, State, Color, Image, Namespace, Binding, Environment, Font,
     ForEach, ScrollView, RoundedRectangle, Picker, Text, DatePicker, Spacer, Bound,
     Bindable, swifty, VStack, HStack, ZStack, BorderedButtonStyle, withAnimation,
-    UIApplication, TextEditor
+    UIApplication, TextEditor, MenuPickerStyle
 } from "swiftjs"
 import { categories, ItemType, ViewContextMethods } from "./Models";
-import { MenuPickerStyle } from "./View/PickerMixin";
 
 const { white, black } = Color;
 export interface NewItemConfig {
@@ -53,7 +52,8 @@ class NewItemClass extends Viewable<NewItemConfig> {
                         .frame({ maxWidth: '.infinity', alignment: '.leading' })
                         //.frame(height: 50)
                         .background(
-                            ZStack({ color: this.getCategoryColor(category)?.opacity(0.7) })
+                            ZStack()
+                                .color(this.getCategoryColor(category)?.opacity(0.7))
                                 .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
                                 .padding('.horizontal', 10)
                                 .padding('.vertical', 2),
@@ -62,7 +62,9 @@ class NewItemClass extends Viewable<NewItemConfig> {
                             )
                             .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
                                 .background('.thinMaterial', RoundedRectangle({ cornerRadius: 5 }))
-                        )), '.leading')
+                        )),
+                        // '.leading'
+                        )
                 .shadow({ color: black.opacity(0.1), radius: 20, x: 5, y: 10 })
                 .shadow({ color: black.opacity(0.1), radius: 1, x: 1, y: 1 })
                 .shadow({ color: white.opacity(1), radius: 5, x: -1, y: -1 })

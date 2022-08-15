@@ -10,6 +10,9 @@ class TextClass extends Viewable<TextConfig> {
     public constructor(private text: string) {
         super();
     }
+    render(): HTMLElement | DocumentFragment | Text | undefined {
+        return document.createTextNode(this.text);
+    }
 }
 
 
