@@ -74,3 +74,16 @@ export function applyMixins<T extends Constructor>(derivedCtor:T, ...constructor
   }
 
   export const toggle = (v:Bindable<Bool>)=>()=>v(!v())
+
+  export function isBindable<T>(v:unknown): v is (v?:T)=>T {
+    return typeof v === 'function' && has(v, 'on');
+  }
+  
+  type HasLength = {length:number};
+  export const isEmpty = (v?:HasLength|Bindable<HasLength>):boolean =>{
+    if (v == null){
+        return true;
+    }
+    const val = isBindable<{length:number}>(v) ? v() : v;
+    return has(val, 'length') ? val.length == 0 : false;
+  }
