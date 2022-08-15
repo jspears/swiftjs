@@ -17,6 +17,9 @@ export function watchable<T>(value:T, ...listen:Listen<T>[]):Bindable<T>{
         return currentValue;
     }, {
         clear:listening.clear.bind(listening),
+        valueOf(){
+            return currentValue;
+        },
         on(listen:Listen<T>) {
             listening.add(listen);
             return ()=> listening.delete(listen);

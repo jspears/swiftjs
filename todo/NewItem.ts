@@ -12,7 +12,8 @@ import {
     Bindable, swifty, VStack, HStack, ZStack, BorderedButtonStyle, withAnimation,
     UIApplication, TextEditor
 } from "swiftjs"
-import { categories, ViewContextMethods } from "./Models";
+import { categories, ItemType, ViewContextMethods } from "./Models";
+import { MenuPickerStyle } from "./View/PickerMixin";
 
 const { white, black } = Color;
 export interface NewItemConfig {
@@ -20,7 +21,7 @@ export interface NewItemConfig {
     newItemOpen: Bindable<boolean>;
 }
 class NewItemClass extends Viewable<NewItemConfig> {
-    @Environment('.managedObjectContext') private viewContext = new ViewContext();
+    @Environment('.managedObjectContext') private viewContext = new ViewContext<ItemType>();
 
     namespace: typeof Namespace['ID']
 
@@ -119,9 +120,9 @@ class NewItemClass extends Viewable<NewItemConfig> {
                 role: '.none',
                 action() {
                     ViewContextMethods.addItem(self.viewContext, self.dueDate, self.toDoText, self.category)
-                    withAnimation(() => {
-                        self.newItemOpen = false
-                    });
+                    withAnimation(() => 
+                        self.newItemOpen?.( false)
+                    );
                 },
                 label: HStack(
                     Text("New task "),
@@ -158,7 +159,7 @@ class NewItemClass extends Viewable<NewItemConfig> {
                             .padding()
                     )
                 )
-                    .matchedGeometryEffect({ id: "button", in: this.namespace }),
+                    ({ id: "button", in: this.namespace }),
 
                 Spacer()
             ))

@@ -3,12 +3,14 @@ import { Bindable, Bound, Bounds } from "../types";
 import { applyMixins, has, swifty, watchable } from "../utilit"
 import { Apperance } from "./Apperance";
 import { PaddingMixin } from "./PaddingMixin";
-import { PickerMixin } from "./Picker";
+import { PickerMixin } from "./PickerMixin";
 import { Searchable } from './Searchable';
 import { FontMixin } from "./FontMixin";
 import { Content, View } from "./types";
 import { EventsMixin } from "./EventsMixin";
 import { ShapeMixin } from './ShapeMixin';
+import { AnimationMixin } from './AnimationMixin';
+import { ControlMixin } from './ControlMixin';
 
 export class ViewableClass<T = any> extends View {
     private watch = new Map<string, Bindable<any>>;
@@ -56,7 +58,7 @@ export class ViewableClass<T = any> extends View {
     tag(v: string) {
         return this;
     }
-    matchedGeometryEffect(effect: { id: string, in: string }) {
+    matchedGeometryEffect(effect: { id: string, in?: string }) {
         return this;
     }
 
@@ -64,8 +66,7 @@ export class ViewableClass<T = any> extends View {
 }
 
 
-export interface ViewableClass extends Apperance, EventsMixin, FontMixin, PaddingMixin, PickerMixin,
- Searchable, ShapeMixin {
+export interface ViewableClass extends Apperance, AnimationMixin, EventsMixin, FontMixin, PaddingMixin, PickerMixin,ControlMixin, Searchable, ShapeMixin {
 
 }
-export const Viewable = applyMixins(ViewableClass, Apperance, EventsMixin, FontMixin, PaddingMixin, PickerMixin, Searchable, ShapeMixin)
+export const Viewable = applyMixins(ViewableClass, Apperance,AnimationMixin,  EventsMixin, FontMixin, PaddingMixin, PickerMixin, ControlMixin, Searchable, ShapeMixin)

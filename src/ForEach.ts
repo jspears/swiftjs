@@ -19,8 +19,8 @@ class ForEachClass<I> extends Viewable<{}> {
     }
 }
 
-export function ForEach<T>(...args:ConstructorParameters<typeof ForEachClass<T>>){
-    return new ForEachClass<T>(...args);
+export function ForEach<T>(...[data, content]:ConstructorParameters<typeof ForEachClass<T>>){
+    return new ForEachClass<T>(data, content);
 }  
 
 Object.assign(ForEach, ForEach['prototype'])  

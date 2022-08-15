@@ -1,17 +1,37 @@
-import { Viewable } from "./View"
 import {swifty} from './utilit';
-import {KeyOfTypeWithType} from './types';
+import {Dot, KeyOfTypeWithType} from './types';
 
 class AnimationClass {
     static get default(){
         return _default;
     }
+    static get easeInOut(){
+        return easeInOut;
+    }
+    static get easeIn(){
+        return easeIn;
+    }
+    static get easeOut(){
+        return easeOut;
+    }
+    static get linear(){
+        return linear;
+    }
 }
-type Callback = ()=>void;
 export const Animation = swifty(AnimationClass);
+
 const _default = Animation();
+const easeInOut = Animation();
+const linear = Animation();
+const easeIn = Animation();
+const easeOut = Animation();
 
 export type AnimationType = typeof AnimationClass;
+
+export type AnimationKey = AnimationType | Dot<Exclude<keyof AnimationType, 'prototype'>>;
+
+type Callback = ()=>void;
+
 
 export type UseAnimation = KeyOfTypeWithType<typeof AnimationClass, AnimationClass>
 

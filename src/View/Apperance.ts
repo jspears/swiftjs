@@ -74,10 +74,18 @@ export class Apperance<S extends Style = Style> {
     border(s: S, width?: Num) {
         return this;
     }
+    
+    opacity(num:Num){
+        return this;
+    }
+    
     overlay(alignment: AlignmentKey, content: Content | View) {
         return this;
     }
-    background(alignment: AlignmentKey, content: Content | View) {
+    
+    background(color:ColorKey):this;
+
+    background(alignment: AlignmentKey | ColorKey, content?: Content | View):this {
         return this;
     }
 

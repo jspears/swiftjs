@@ -9,11 +9,14 @@ export interface ButtonConfig {
     role?:ButtonRole;
     action?():void;
     label?:Content | string | View;
+    shape:'.roundedRectangle';
 
     
 }
 export class ButtonStyleConfiguration {
+    constructor(arg:ButtonConfig){
 
+    }
 }
 
 export const PlainButtonStyle = swifty(ButtonStyleConfiguration);

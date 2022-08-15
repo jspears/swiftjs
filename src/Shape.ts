@@ -10,7 +10,7 @@ export type RoundedRectangleConfig  =  {    style:RoundedCornerStyleKey; } |
 })
 
 export class Shape<T = unknown> extends Viewable<T>{
-    constructor(t:T){
+    constructor(t?:T){
         super(t);
     }
 }

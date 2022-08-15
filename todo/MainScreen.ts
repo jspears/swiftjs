@@ -90,6 +90,7 @@ export class MainScreen extends Viewable {
 
                                         // MARK: Today's tasks list view
                                         VStack(
+                                            { alignment: '.leading' },
                                             HStack(
                                                 Image({ systemName: toDoItem.isDone ? "circle.fill" : "circle" })
                                                     .resizable()
@@ -110,18 +111,16 @@ export class MainScreen extends Viewable {
                                             .frame({ maxWidth: '.infinity' })
                                             .frame({ height: 100 })
                                             .background(
-                                                ZStack(
-                                                    { color: self.getCategoryColor(toDoItem)?.opacity(0.7) })
+                                                ZStack({ color: self.getCategoryColor(toDoItem)?.opacity(0.7) })
                                                     .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
                                                     .padding('.horizontal', 30)
                                                     .padding('.vertical', 20),
                                                 VStack(
                                                     // empty VStack for the blur
-                                                )
-                                                    .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
-                                                    .background('.thinMaterial', { in: RoundedRectangle({ cornerRadius: 20 }) })
+                                                ).frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
+                                                 .background('.thinMaterial', { in: RoundedRectangle({ cornerRadius: 20 }) })
                                             ),
-                                        '.leading'
+                                       
                                     )
                                         .shadow({ color: black.opacity(0.1), radius: 20, x: 5, y: 10 })
                                         .shadow({ color: black.opacity(0.1), radius: 1, x: 1, y: 1 })
@@ -197,7 +196,7 @@ export class MainScreen extends Viewable {
 
 
                 // MARK: New item view
-                : NewItem({ namespace, newItemOpen: $newItemOpen })
+                : NewItem({ namespace: this.namespace || '', newItemOpen: $newItemOpen })
 
         )
 

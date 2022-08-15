@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 21.06.21.
 //
 
-import { Viewable, Color, VStack, Text, Font, LinearGradient, ZStack, RoundedRectangle, swifty, View } from 'swiftjs';
+import { Viewable, Color, VStack, Text, Font, LinearGradient, ZStack, RoundedRectangle, swifty, View, Bound } from 'swiftjs';
 interface CategoryCardsConfig {
     category:string,
     color:Color,
@@ -36,7 +36,7 @@ interface CategoryCardsConfig {
         return this.maxProgress * this.tasksDone / this.numberOfTasks;
     }
 
-    body = (bound, self = this)=> VStack({ alignment: '.leading' },
+    body = (bound:Bound<this>, self = this)=> VStack({ alignment: '.leading' },
         Text("\(numberOfTasks) tasks")
             .font('.callout')
             .foregroundColor('.secondary'),

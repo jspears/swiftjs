@@ -43,7 +43,7 @@ export class ToDoList extends Viewable {
                     )
                 ),
                 Section (
-                    ForEach(this.searchResults, (item)=>
+                    ForEach(this.searchResults, item=>
                         HStack (
                             Image({systemName: item.isDone?.() ? "circle.fill" : "circle"})
                                 .resizable()
@@ -145,7 +145,6 @@ export class ToDoList extends Viewable {
         })
     }
 }
-type Bindable = Exclude<(keyof ToDoList) & string, '$' | 'body'>;
 // private let itemFormatter: DateFormatter = {
 //     let formatter = DateFormatter()
 //     formatter.dateStyle = .short
