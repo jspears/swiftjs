@@ -1,7 +1,7 @@
 import { Content, View, Viewable } from "./View";
-import { swifty } from "./utilit";
+import { swifty } from "@jswift/util";
 import { AlignmentKey, VerticalAlignmentKey, HorizontalAlignmentKey } from "./Edge";
-import { Num } from './types';
+import { Num } from '@jswift/util';
 import { ColorKey } from "./Color";
 
 interface StackOptions<T> {

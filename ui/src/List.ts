@@ -1,6 +1,6 @@
 import { Content, View, Viewable } from "./View";
-import { swifty } from "./utilit";
-import { Bindable, Int } from "./types";
+import { swifty } from "@jswift/util";
+import { Bindable, Int } from "@jswift/util";
 import { On } from "./View/EventsMixin";
 
 export class ListStyle {

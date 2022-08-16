@@ -1,6 +1,6 @@
 import { Content, View, Viewable } from "./View";
-import { swifty } from "./utilit";
-import { Bindable } from "./types";
+import { swifty } from "@jswift/util";
+import { Bindable } from "@jswift/util";
 
 
 export interface PickerConfig {

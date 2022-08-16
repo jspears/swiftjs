@@ -1,5 +1,5 @@
-import { Dot, KeyOf, KeyOfTypeWithType } from "./types";
-import { applyMixins } from "./utilit";
+import { Dot, KeyOf, KeyOfTypeWithType } from "@jswift/util";
+import { applyMixins } from "@jswift/util";
 
 
 

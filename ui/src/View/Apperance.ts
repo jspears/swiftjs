@@ -1,7 +1,7 @@
 import { ColorKey } from "../Color";
 import { AlignmentKey, VerticalEdge, VirticalEdgeSetKey } from "../Edge";
 import { Shape } from "../Shape";
-import { Dot, KeyOf, KeyOfTypeWithType, Num } from "../types";
+import { Dot, KeyOf, KeyOfTypeWithType, Num } from "@jswift/util";
 import { Content, View } from "./View";
 
 export interface Style {

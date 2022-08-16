@@ -1,5 +1,5 @@
-import { Dot, Num } from "./types";
-import { swifty } from "./utilit";
+import { Dot, Num } from "@jswift/util";
+import { swifty } from "@jswift/util";
 
 type RGB = {red:number, blue:number, green:number, opacity?:number}
 type HSL = {hue:number, saturation:number, brightness:number, opacity?:number};

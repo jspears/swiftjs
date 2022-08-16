@@ -1,6 +1,6 @@
 import { Viewable } from "./View";
-import { isBindable, swifty } from "./utilit";
-import { Bindable, Bound, KeyOf } from "./types";
+import { isBindable, swifty } from "@jswift/util";
+import { Bindable, Bound, KeyOf } from "@jswift/util";
 
 export class TextInputAutocapitalization {
     static characters = new TextInputAutocapitalization

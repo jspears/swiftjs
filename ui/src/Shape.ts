@@ -1,5 +1,5 @@
-import { Num, Size } from "./types";
-import { swifty } from "./utilit";
+import { Num, Size } from "@jswift/util";
+import { swifty } from "@jswift/util";
 import { RoundedCornerStyleKey } from "./style";
 import { View, Viewable } from "./View";
 export type RoundedRectangleConfig  =  {    style:RoundedCornerStyleKey; } | 

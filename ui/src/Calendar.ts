@@ -1,5 +1,5 @@
-import { Dot } from './types';
-import { toEnum } from './utilit';
+import { Dot } from '@jswift/util';
+import { toEnum } from '@jswift/util';
 
 //        //            Calendar.current.isDate($0.dueDate ?? Date(), equalTo: Date(), toGranularity: .day)
 export enum Granularity {

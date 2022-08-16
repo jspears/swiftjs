@@ -1,5 +1,5 @@
 import { Viewable } from "./View";
-import { swifty } from "./utilit";
+import { swifty } from "@jswift/util";
 
 export interface TextEditorConfig {
 

@@ -1,4 +1,4 @@
-import { Int } from "./types";
+import { Int } from "@jswift/util";
 import { View, Viewable } from "./View";
 
 

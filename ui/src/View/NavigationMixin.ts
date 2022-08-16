@@ -1,4 +1,4 @@
-import { Bindable } from "../types";
+import { Bindable } from "@jswift/util";
 import { Content, View } from "./View";
 
 export class NavigationMixin {

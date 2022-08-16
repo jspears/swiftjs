@@ -1,6 +1,6 @@
 import { Content, View, Viewable } from "./View";
-import { swifty } from "./utilit";
-import { Dot } from "./types";
+import { swifty } from "@jswift/util";
+import { Dot } from "@jswift/util";
 export enum ButtonRole {
     cancel,
     destructive,

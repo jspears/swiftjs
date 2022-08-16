@@ -1,5 +1,5 @@
-import {swifty} from './utilit';
-import {Dot, KeyOf, KeyOfTypeWithType} from './types';
+import {swifty} from '@jswift/util';
+import {Dot, KeyOf, KeyOfTypeWithType} from '@jswift/util';
 
 class AnimationClass {
     static default = new AnimationClass;

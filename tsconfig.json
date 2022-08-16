@@ -1,0 +1,12 @@
+{
+    "extends": "./tsconfig.base.json",
+    "references": [
+        {"path": "./ui"},
+        {"path": "./CoreData"},
+        {"path": "./util"},
+        {"path": "./demo"},
+        {"path": "./todo"}
+       
+    ]
+    
+}

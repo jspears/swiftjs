@@ -1,5 +1,5 @@
-import { Bool } from "./types";
-import { swifty } from "./utilit";
+import { Bool } from "@jswift/util";
+import { swifty } from "@jswift/util";
 
 export class FillStyleClass {
     constructor(public isEOFilled:Bool, public  isAntialiased: Bool){

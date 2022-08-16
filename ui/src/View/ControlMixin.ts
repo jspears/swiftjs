@@ -1,4 +1,4 @@
-import { Dot } from "../types";
+import { Dot } from "@jswift/util";
 
 export enum Prominence {
     standard,

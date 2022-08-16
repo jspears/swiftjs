@@ -1,8 +1,8 @@
 import { Viewable } from './View';
 import { Font, FontKey, Weight } from './Font';
-import { swifty } from './utilit';
+import { swifty } from '@jswift/util';
 import { Color, ColorKey } from './Color';
-import { Dot, KeyOf, KeyOfTypeWithType } from './types';
+import { Dot, KeyOf, KeyOfTypeWithType } from '@jswift/util';
 interface TextConfig {
 
 }

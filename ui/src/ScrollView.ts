@@ -1,5 +1,5 @@
 import { Content, Viewable, ViewableClass } from "./View";
-import { swifty } from "./utilit";
+import { swifty } from "@jswift/util";
 import { AxisKey } from "./Axis";
 import { AlignmentKey } from "./Edge";
 

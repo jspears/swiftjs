@@ -1,4 +1,4 @@
-import { swifty } from "../utilit";
+import { swifty } from "@jswift/util";
 
 class MenuPickerStyleClass {
 
