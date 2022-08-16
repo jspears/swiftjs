@@ -1,27 +1,27 @@
 import { Int } from "@jswift/util";
 import { View, Viewable } from "./View";
 
-
 export type IndexSet = Set<Int>;
-export type OnDelete = (v:IndexSet)=>void;
+export type OnDelete = (v: IndexSet) => void;
 
-type ForEachFn<D> = (item:D, idx:number)=>View;
+type ForEachFn<D> = (item: D, idx: number) => View;
 
 class ForEachClass<I> extends Viewable<{}> {
-    constructor(private data:I[], private content:ForEachFn<I> ){
-        super();
-    }
-    
-    body = ()=>this.data.map(this.content);
+  constructor(private data: I[], private content: ForEachFn<I>) {
+    super();
+  }
 
-    onDelete(fn:OnDelete):this{
-        return this;
-    }
+  body = () => this.data.map(this.content);
+
+  onDelete(fn: OnDelete): this {
+    return this;
+  }
 }
 
-export function ForEach<T>(...[data, content]:ConstructorParameters<typeof ForEachClass<T>>){
-    return new ForEachClass<T>(data, content);
-}  
+export function ForEach<T>(
+  ...[data, content]: ConstructorParameters<typeof ForEachClass<T>>
+) {
+  return new ForEachClass<T>(data, content);
+}
 
-Object.assign(ForEach, ForEach['prototype'])  
-    
+Object.assign(ForEach, ForEach["prototype"]);

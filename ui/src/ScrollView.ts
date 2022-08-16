@@ -1,17 +1,16 @@
-import { Content, Viewable, ViewableClass } from "./View";
+import { Viewable } from "./View";
+import type { Content } from "./View";
 import { swifty } from "@jswift/util";
-import { AxisKey } from "./Axis";
-import { AlignmentKey } from "./Edge";
+import type { AxisKey } from "./Axis";
+import type { AlignmentKey } from "./Edge";
 
 export interface ScrollViewConfig {
-    axis?:AxisKey
-    showsIndicators?:boolean;
-    content:Content;
-    alignment?:AlignmentKey;
+  axis?: AxisKey;
+  showsIndicators?: boolean;
+  content: Content;
+  alignment?: AlignmentKey;
 }
 
-export class ScrollViewClass extends Viewable<ScrollViewConfig> {
-
-}
+export class ScrollViewClass extends Viewable<ScrollViewConfig> {}
 
 export const ScrollView = swifty(ScrollViewClass);

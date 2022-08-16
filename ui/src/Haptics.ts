@@ -1,8 +1,4 @@
-
-class HapticsClass  {
-    giveSmallHaptic():void {
-        
-    }
+class HapticsClass {
+  giveSmallHaptic(): void {}
 }
-export const Haptics = new HapticsClass
-    
+export const Haptics = new HapticsClass();

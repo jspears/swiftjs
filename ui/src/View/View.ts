@@ -1,17 +1,14 @@
+import { h, VNode, Fragment } from "preact";
 
 export class View {
+  children?: View[];
 
-    children?:View[];
-
-    render?():HTMLElement | DocumentFragment | Text | undefined {
-        const frag = document.createDocumentFragment();
-        if(this.children){
-            this.children?.forEach(v=>{
-                const child = v.render?.();
-                child && frag.appendChild(child);
-            });
-            return frag
-        }        
+  render(): VNode<any> {
+    if (this.children) {
+      return h(Fragment, {}, ...this.children.map((v) => v.render?.()));
     }
+    return h(Fragment, {});
+  }
 }
-export type Content = ()=>View;
+
+export type Content = () => View;

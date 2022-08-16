@@ -3,10 +3,12 @@
     "references": [
         {"path": "./ui"},
         {"path": "./CoreData"},
-        {"path": "./util"},
-        {"path": "./demo"},
-        {"path": "./todo"}
-       
+        {"path": "./util"}       
+    ],
+    "exclude": [
+            "todo/**",
+            "demo/**"
+        
     ]
-    
+
 }

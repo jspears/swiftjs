@@ -1,4 +1,4 @@
-# swiftjs
+# jswift
 Just playing around with TS syntax to make something swift like.
 
 [orig](https://github.com/roman-luzgin/TodoAppSwiftUI3)

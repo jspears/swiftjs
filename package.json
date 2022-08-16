@@ -1,11 +1,12 @@
 {
   "name": "@jswift/project",
   "version": "1.0.0",
-  "private":true,
+  "private": true,
   "description": "Just playing around with TS syntax to make something swift like.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "clean":"git clean -fdx"
+    "clean": "git clean -fdx",
+    "format":"yarn prettier ./*/src/ --write"
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/jspears/swiftjs#readme",
   "dependencies": {
+    "prettier": "^2.7.1",
     "typescript": "^4.7.4"
   },
   "workspaces": {

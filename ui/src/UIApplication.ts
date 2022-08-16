@@ -1,13 +1,12 @@
-
 export class UIApplication {
-    static get shared(){
-        if (_shared){
-            _shared = new UIApplication;
-        }
-        return _shared;
+  static get shared() {
+    if (_shared) {
+      _shared = new UIApplication();
     }
-    endEditing = ()=>{
-        return this;
-    }
+    return _shared;
+  }
+  endEditing = () => {
+    return this;
+  };
 }
-let _shared:UIApplication;
+let _shared: UIApplication;

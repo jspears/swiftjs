@@ -1,4 +1,1 @@
-
-export class ShapeStyle {
-
-}
+export class ShapeStyle {}

@@ -1,14 +1,12 @@
-import { Viewable } from "./View";
-import {  Bindable, Bool, swifty } from "@jswift/util";
+import { Bindable, Bool, swifty, Viewable } from "@jswift/ui";
 
 export interface ToggleConfig {
-    isOn?:boolean;
-    $isOn?:Bindable<boolean>;
+  isOn?: boolean;
+  $isOn?: Bindable<boolean>;
 }
 class ToggleClass extends Viewable<ToggleConfig> {
-    toggle(v?:Bool){
-        return this;
-    }
+  toggle(v?: Bool) {
+    return this;
+  }
 }
-export const Toggle = swifty(ToggleClass);    
-    
+export const Toggle = swifty(ToggleClass);

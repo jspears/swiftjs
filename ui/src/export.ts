@@ -1,2 +1,2 @@
-export * from '@jswift/CoreData';
-export * from '@jswift/ui';
+export * from "@jswift/CoreData";
+export * from "@jswift/util";

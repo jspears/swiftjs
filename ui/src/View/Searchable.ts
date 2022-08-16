@@ -1,12 +1,14 @@
 import { Dot } from "@jswift/util";
 
 export enum SearchFieldPlacement {
-    automatic
+  automatic,
 }
-export type SearchFieldPlacementKey = SearchFieldPlacement |  Dot<keyof typeof SearchFieldPlacement>;
+export type SearchFieldPlacementKey =
+  | SearchFieldPlacement
+  | Dot<keyof typeof SearchFieldPlacement>;
 
 export class Searchable {
-    searchable(label:string, query:string, placement:SearchFieldPlacementKey){
-        return this;
-    }
+  searchable(label: string, query: string, placement: SearchFieldPlacementKey) {
+    return this;
+  }
 }

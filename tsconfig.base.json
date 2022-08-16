@@ -105,13 +105,11 @@
       "declarationMap": true,
       "incremental": true,
       "baseUrl": ".",
-      "outDir": "./dist",
+      "noUnusedLocals":false,
       "paths": {
         "@jswift/ui":["./ui/src"],
         "@jswift/util":["./util/src"],
-        "@jswift/CoreData":["./CoreData/src"],
-        "@jswift/todo":["./todo/src"],
-        "@jswift/demo":["./demo/src"],
+        "@jswift/CoreData":["./CoreData/src"]
       }
     },
     "exclude": [

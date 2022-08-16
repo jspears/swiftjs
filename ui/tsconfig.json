@@ -1,9 +1,10 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../lib/ui",
+    "outDir": "./lib",
     "rootDir": ".",
-    "composite": true
+    "composite": true,
+    "tsBuildInfoFile": "./lib/.tsbuildinfo"
 
   },
   "references": [
