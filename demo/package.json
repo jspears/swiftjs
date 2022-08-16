@@ -14,7 +14,8 @@
     "vite": "^3.0.7"
   },
   "dependencies": {
+    "@jswift/ui": "^1.0.0",
     "preact": "^10.10.2",
-    "@jswift/ui":"^1.0.0"
+    "serve": "^14.0.1"
   }
 }

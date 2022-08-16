@@ -9,6 +9,13 @@ export default defineConfig({
       '@jswift/util':`${dirname}/../util/src/index.ts`,
       '@jswift/ui':`${dirname}/../ui/src/index.ts`,
     }
+
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: `${dirname}/public/index.html`,
+      }
+    }
   }
-  // ...
 })
