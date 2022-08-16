@@ -1,0 +1,9 @@
+#app {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  flex-grow: 100%;
+  text-align: center;
+}

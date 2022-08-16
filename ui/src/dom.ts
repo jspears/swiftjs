@@ -12,15 +12,17 @@ export function render(view: View, node: HTMLElement | string): void {
   }
 }
 
-export const toNode = (view?: View, ...views: View[]): VNode<any> => {
+export const toNode = (view?: View | View[], ...views: View[]): VNode<any> => {
   if (views.length == 0) {
-    if (view) {
+    if (view && !Array.isArray(view)) {
       return view.render?.() || h(Fragment, {});
     }
   }
   return h(
     Fragment,
     {},
-    [view, ...views].map((v) => v?.render?.())
+    [...(Array.isArray(view) ? view : [view]), ...views].map((v) =>
+      v?.render?.()
+    )
   );
 };

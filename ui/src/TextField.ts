@@ -42,14 +42,23 @@ class TextFieldClass extends Viewable<TextFieldConfig> {
   }
   render() {
     if (typeof this.config.text == 'string') {
-      return h('input', {});
+      return h('input', {
+        placeholder: this.config.label,
+        value: () => this.config.text,
+      } as any);
     } else {
-      return h(BoundInput, { value: this.config.text as any });
+      return h(BoundInput, {
+        placeholder: this.config.label,
+        value: this.config.text as any,
+      });
     }
   }
 }
 
-class BoundInput extends Component<{ value: Bindable<string> }> {
+class BoundInput extends Component<{
+  placeholder?: string | undefined;
+  value: Bindable<string>;
+}> {
   componentDidMount() {
     if (isBindable(this.props.value))
       this.componentWillUnmount = this.props.value.on((value) => {
@@ -60,7 +69,8 @@ class BoundInput extends Component<{ value: Bindable<string> }> {
   render() {
     return h('input', {
       value: this.props.value(),
-      onChange: (e: Event) => {
+      placeholder: this.props.placeholder,
+      onInput: (e: Event) => {
         const ele = e.target as HTMLInputElement;
         this.props.value(ele.value);
       },

@@ -14,6 +14,7 @@ import { AnimationMixin } from './AnimationMixin';
 import { ControlMixin } from './ControlMixin';
 import { NavigationMixin } from './NavigationMixin';
 import { toNode } from '../dom';
+import { h, Component, Fragment } from 'preact';
 
 export class ViewableClass<T = any> extends View {
   private watch = new Map<string, Bindable<any>>();
@@ -76,8 +77,8 @@ export class ViewableClass<T = any> extends View {
 
   render() {
     if (this.body) {
-      const resp = this.body(this.bound(), this);
-      return toNode(...(Array.isArray(resp) ? resp : [resp]));
+      const body = () => this.body?.(this.bound(), this);
+      return h(ViewComponent as any, { watch: this.watch, body });
     }
     return super.render?.();
   }
@@ -90,6 +91,22 @@ export class ViewableClass<T = any> extends View {
         }
       },
     }) as any;
+  }
+}
+type Props = { watch: Map<string, Bindable<any>>; body: () => View | View[] };
+class ViewComponent extends Component<Props> {
+  constructor(props: Props) {
+    super(props);
+    this.componentWillUnmount = watchable(
+      null,
+      ...Array.from(props.watch.entries()).map(([key, value]) =>
+        value.on((v) => this.setState({ [key]: value }))
+      )
+    );
+  }
+
+  render() {
+    return toNode(this.props.body());
   }
 }
 
