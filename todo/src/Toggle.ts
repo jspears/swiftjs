@@ -1,4 +1,4 @@
-import { Bindable, Bool, swifty, Viewable } from "@jswift/ui";
+import { Bindable, Bool, swifty, Viewable } from '@jswift/ui';
 
 export interface ToggleConfig {
   isOn?: boolean;

@@ -1,4 +1,4 @@
-import { render, Viewable, HStack, Text } from "@jswift/ui";
-import { MainScreen } from "./MainScreen";
+import { render, Viewable, HStack, Text } from '@jswift/ui';
+import { MainScreen } from './MainScreen';
 
-render("#app", new MainScreen());
+render('#app', new MainScreen());

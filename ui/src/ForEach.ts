@@ -1,5 +1,5 @@
-import { Int } from "@jswift/util";
-import { View, Viewable } from "./View";
+import { Int } from '@jswift/util';
+import { View, Viewable } from './View';
 
 export type IndexSet = Set<Int>;
 export type OnDelete = (v: IndexSet) => void;
@@ -24,4 +24,4 @@ export function ForEach<T>(
   return new ForEachClass<T>(data, content);
 }
 
-Object.assign(ForEach, ForEach["prototype"]);
+Object.assign(ForEach, ForEach['prototype']);

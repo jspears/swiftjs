@@ -1,6 +1,6 @@
-import { Viewable } from "./View";
-import { swifty } from "@jswift/util";
-import { h, Fragment } from "preact";
+import { Viewable } from './View';
+import { swifty } from '@jswift/util';
+import { h, Fragment } from 'preact';
 interface TextConfig {}
 class TextClass extends Viewable<TextConfig> {
   public constructor(private text: string) {

@@ -4,9 +4,9 @@
 //
 //  Created by Roman Luzgin on 22.06.21.
 //
-import { withAnimation } from "@jswift/ui";
-import { ViewContext } from "@jswift/CoreData";
-import { Item, ItemType } from "./Categories";
+import { withAnimation } from '@jswift/ui';
+import { ViewContext } from '@jswift/CoreData';
+import { Item, ItemType } from './Categories';
 
 type AddItem = {
   context: ViewContext<ItemType>;

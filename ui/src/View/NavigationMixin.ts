@@ -1,6 +1,6 @@
-import type { Bindable } from "@jswift/util";
-import { View } from "./View";
-import type { Content } from "./View";
+import type { Bindable } from '@jswift/util';
+import { View } from './View';
+import type { Content } from './View';
 
 export class NavigationMixin {
   sheet(opts: {

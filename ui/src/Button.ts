@@ -1,7 +1,7 @@
-import { View, Viewable } from "./View";
-import type { Content } from "./View";
-import { swifty } from "@jswift/util";
-import type { Dot } from "@jswift/util";
+import { View, Viewable } from './View';
+import type { Content } from './View';
+import { swifty } from '@jswift/util';
+import type { Dot } from '@jswift/util';
 export enum ButtonRole {
   cancel,
   destructive,
@@ -11,7 +11,7 @@ export interface ButtonConfig {
   role?: ButtonRole | Dot<keyof typeof ButtonRole>;
   action?(): void;
   label?: Content | string | View;
-  shape?: ".roundedRectangle";
+  shape?: '.roundedRectangle';
 }
 export class ButtonStyleConfiguration {
   constructor(arg?: ButtonConfig) {}

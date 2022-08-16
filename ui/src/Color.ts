@@ -1,5 +1,5 @@
-import { Dot, Num } from "@jswift/util";
-import { swifty } from "@jswift/util";
+import { Dot, Num } from '@jswift/util';
+import { swifty } from '@jswift/util';
 
 type RGB = { red: number; blue: number; green: number; opacity?: number };
 type HSL = {
@@ -76,21 +76,21 @@ export class Color {
   }
 }
 
-const black = new Color("black");
-const blue = new Color("blue");
-const brown = new Color("brown");
-const clear = new Color("clear");
-const cyan = new Color("cyan");
-const gray = new Color("gray");
-const green = new Color("green");
-const indigo = new Color("indigo");
-const mint = new Color("mint");
-const orange = new Color("orange");
-const pink = new Color("pink");
-const purple = new Color("purple");
-const red = new Color("red");
-const teal = new Color("teal");
-const white = new Color("white");
-const yellow = new Color("yellow");
+const black = new Color('black');
+const blue = new Color('blue');
+const brown = new Color('brown');
+const clear = new Color('clear');
+const cyan = new Color('cyan');
+const gray = new Color('gray');
+const green = new Color('green');
+const indigo = new Color('indigo');
+const mint = new Color('mint');
+const orange = new Color('orange');
+const pink = new Color('pink');
+const purple = new Color('purple');
+const red = new Color('red');
+const teal = new Color('teal');
+const white = new Color('white');
+const yellow = new Color('yellow');
 
 export type ColorKey = Color | Dot<keyof typeof Color>;

@@ -1,3 +1,3 @@
-export * from "./Fetch";
-export * from "./NSManagedObjectContext";
-export * from "./NSPersistentContainer";
+export * from './Fetch';
+export * from './NSManagedObjectContext';
+export * from './NSPersistentContainer';

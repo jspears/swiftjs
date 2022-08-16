@@ -1,4 +1,4 @@
-import { ReadonlyMap } from "typescript";
+import { ReadonlyMap } from 'typescript';
 
 interface NSFetchRequest<T> {}
 interface NSFetchRequestResult {}
@@ -53,7 +53,7 @@ type NeededUnionType<T extends string[]> = T[number];
 export class NSDictionaryClass implements Record<string, unknown> {
   protected dict = new Map<string, unknown>();
 
-  public description: string = "";
+  public description: string = '';
 
   constructor();
   constructor(url: URL, onError?: ErrorFn);
@@ -75,7 +75,7 @@ export class NSDictionaryClass implements Record<string, unknown> {
       for (let i = 0; i < keys.length; i++) {
         this.dict.set(keys[i], objects[i]);
       }
-    } else if (typeof keys === "string") {
+    } else if (typeof keys === 'string') {
       this.dict.set(keys, objects);
     } else if (objects instanceof Map<String, unknown>) {
       if (!keys) {
@@ -167,7 +167,7 @@ export const NSDictionary = (
 
   return new Proxy(dic, {
     get(target, key) {
-      if (typeof key === "string") return target.value(key);
+      if (typeof key === 'string') return target.value(key);
     },
     ownKeys(target) {
       return Array.from(target.allKeys);
@@ -180,20 +180,20 @@ export const NSMutableDictionary = (
   const dic = new NSMutableDictionaryClass(...args);
   return new Proxy(dic, {
     get(target, key) {
-      if (typeof key === "string") return target.value(key);
+      if (typeof key === 'string') return target.value(key);
     },
     ownKeys(target) {
       return Array.from(target.allKeys);
     },
     deleteProperty(target, p) {
-      if (typeof p === "string") {
+      if (typeof p === 'string') {
         target.removeObject(p);
         return true;
       }
       return false;
     },
     set(target, key, value) {
-      if (typeof key === "string") {
+      if (typeof key === 'string') {
         target.setObject(key, value);
         return true;
       }

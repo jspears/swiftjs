@@ -1,14 +1,14 @@
-import { Viewable } from "./View";
-import type { Content } from "./View";
-import { swifty } from "@jswift/util";
+import { Viewable } from './View';
+import type { Content } from './View';
+import { swifty } from '@jswift/util';
 import type {
   AlignmentKey,
   VerticalAlignmentKey,
   HorizontalAlignmentKey,
-} from "./Edge";
-import type { Num } from "@jswift/util";
-import { ColorKey } from "./Color";
-import { h } from "preact";
+} from './Edge';
+import type { Num } from '@jswift/util';
+import { ColorKey } from './Color';
+import { h } from 'preact';
 
 interface StackOptions<T> {
   alignment?: T;
@@ -31,7 +31,7 @@ class StackClass<T> extends Viewable<StackOptions<T>> {
   }
   render() {
     const descend = super.render();
-    return h("div", {}, descend);
+    return h('div', {}, descend);
   }
 }
 

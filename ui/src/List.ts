@@ -1,8 +1,8 @@
-import { View, Viewable } from "./View";
-import { swifty } from "@jswift/util";
-import type { Bindable, Int } from "@jswift/util";
-import type { On } from "./View/EventsMixin";
-import type { Content } from "./View";
+import { View, Viewable } from './View';
+import { swifty } from '@jswift/util';
+import type { Bindable, Int } from '@jswift/util';
+import type { On } from './View/EventsMixin';
+import type { Content } from './View';
 export class ListStyle {}
 export const DefaultListStyle = swifty(ListStyle);
 export const BorderedListStyle = swifty(ListStyle);

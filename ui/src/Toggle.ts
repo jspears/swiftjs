@@ -1,6 +1,6 @@
-import { Viewable } from "./View/Viewable";
-import { swifty } from "@jswift/util";
-import { Bindable, Bool } from "@jswift/util";
+import { Viewable } from './View/Viewable';
+import { swifty } from '@jswift/util';
+import { Bindable, Bool } from '@jswift/util';
 
 export interface ToggleConfig {
   isOn?: boolean;

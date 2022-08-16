@@ -1,5 +1,5 @@
-import { Viewable } from "./View";
-import { swifty } from "@jswift/util";
+import { Viewable } from './View';
+import { swifty } from '@jswift/util';
 
 export interface LinearGradientConfig {}
 

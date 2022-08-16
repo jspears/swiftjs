@@ -1,19 +1,19 @@
-import type { AlignmentKey } from "../Edge";
-import { isString, applyMixins, has, watchable } from "@jswift/util";
-import type { Bindable, Bound, Bounds } from "@jswift/util";
-import { Apperance } from "./Apperance";
-import { PaddingMixin } from "./PaddingMixin";
-import { PickerMixin } from "./PickerMixin";
-import { Searchable } from "./Searchable";
-import { FontMixin } from "./FontMixin";
-import { View } from "./View";
-import type { Content } from "./View";
-import { EventsMixin } from "./EventsMixin";
-import { ShapeMixin } from "./ShapeMixin";
-import { AnimationMixin } from "./AnimationMixin";
-import { ControlMixin } from "./ControlMixin";
-import { NavigationMixin } from "./NavigationMixin";
-import { toNode } from "../dom";
+import type { AlignmentKey } from '../Edge';
+import { isString, applyMixins, has, watchable } from '@jswift/util';
+import type { Bindable, Bound, Bounds } from '@jswift/util';
+import { Apperance } from './Apperance';
+import { PaddingMixin } from './PaddingMixin';
+import { PickerMixin } from './PickerMixin';
+import { Searchable } from './Searchable';
+import { FontMixin } from './FontMixin';
+import { View } from './View';
+import type { Content } from './View';
+import { EventsMixin } from './EventsMixin';
+import { ShapeMixin } from './ShapeMixin';
+import { AnimationMixin } from './AnimationMixin';
+import { ControlMixin } from './ControlMixin';
+import { NavigationMixin } from './NavigationMixin';
+import { toNode } from '../dom';
 
 export class ViewableClass<T = any> extends View {
   private watch = new Map<string, Bindable<any>>();
@@ -85,7 +85,7 @@ export class ViewableClass<T = any> extends View {
   private bound(): Bound<this> {
     return new Proxy(this, {
       get(target, key) {
-        if (isString(key) && key["0"] === "$") {
+        if (isString(key) && key['0'] === '$') {
           return target.$(key.slice(1) as any);
         }
       },

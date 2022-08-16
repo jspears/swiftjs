@@ -17,23 +17,23 @@ import {
   TextField,
   Viewable,
   swifty,
-} from "@jswift/ui";
+} from '@jswift/ui';
 
 export class SettingsClass extends Viewable {
   @FocusState userNameIsFocused: boolean = false;
-  @Environment(".dismiss") dismiss?: () => void;
-  @AppStorage("userName") username = "";
+  @Environment('.dismiss') dismiss?: () => void;
+  @AppStorage('userName') username = '';
 
   body = ({ $username, dismiss, $userNameIsFocused }: Bound<this>) =>
     NavigationView(
       Form(
-        TextField({ label: "Username", text: $username })
+        TextField({ label: 'Username', text: $username })
           .focused($userNameIsFocused)
-          .submitLabel(".done")
+          .submitLabel('.done')
       )
         .navigationBarItems({
-          trailing: Button({ label: "Done", action: dismiss }).accentColor(
-            ".indigo"
+          trailing: Button({ label: 'Done', action: dismiss }).accentColor(
+            '.indigo'
           ),
         })
         .onSubmit(() => {

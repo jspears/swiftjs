@@ -1,8 +1,8 @@
-import { Viewable } from "./View";
-import type { Content } from "./View";
-import { swifty } from "@jswift/util";
-import type { AxisKey } from "./Axis";
-import type { AlignmentKey } from "./Edge";
+import { Viewable } from './View';
+import type { Content } from './View';
+import { swifty } from '@jswift/util';
+import type { AxisKey } from './Axis';
+import type { AlignmentKey } from './Edge';
 
 export interface ScrollViewConfig {
   axis?: AxisKey;

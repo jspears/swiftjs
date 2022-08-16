@@ -1,8 +1,8 @@
-import { View } from "./View";
-import { Fragment, h, render as _render, VNode } from "preact";
+import { View } from './View';
+import { Fragment, h, render as _render, VNode } from 'preact';
 
 export function render(view: View, node: HTMLElement | string): void {
-  const root = typeof node === "string" ? document.querySelector(node) : node;
+  const root = typeof node === 'string' ? document.querySelector(node) : node;
   if (!root) {
     throw new Error(`no node vound '${node}'`);
   }

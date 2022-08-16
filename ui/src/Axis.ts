@@ -1,4 +1,4 @@
-import { Dot } from "@jswift/util";
+import { Dot } from '@jswift/util';
 
 export enum Axis {
   horizontal,

@@ -1,4 +1,4 @@
-import { Color, Toggle, swifty, watchable } from "@jswift/ui";
+import { Color, Toggle, swifty, watchable } from '@jswift/ui';
 export type NSManagedObjectContext = {
   save(): void;
   add(v: unknown): void;
@@ -29,7 +29,7 @@ export const ItemCategory = swifty(ItemCategoryClass);
 export type ItemCategoryType = InstanceType<typeof ItemCategoryClass>;
 
 export const categories = [
-  ItemCategory("Business", Color.cyan),
-  ItemCategory("Personal", Color.indigo),
-  ItemCategory("Other", Color.mint),
+  ItemCategory('Business', Color.cyan),
+  ItemCategory('Personal', Color.indigo),
+  ItemCategory('Other', Color.mint),
 ];

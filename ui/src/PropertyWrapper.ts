@@ -1,9 +1,9 @@
-import { AnimationKey } from "./Animation";
-import { View, ViewableClass } from "./View/index";
+import { AnimationKey } from './Animation';
+import { View, ViewableClass } from './View/index';
 
 export const Namespace = Object.assign(
   (target: Object, propertyKey: string) => {},
-  { ID: "ID" }
+  { ID: 'ID' }
 );
 
 export function FocusState(target: Object, propertyKey: PropertyKey) {}
@@ -11,11 +11,11 @@ export function State(target: Object, propertyKey: PropertyKey) {
   const desc = Reflect.getOwnPropertyDescriptor(target, propertyKey);
   Reflect.defineProperty(target, propertyKey, {
     get() {
-      console.log("got state", propertyKey);
+      console.log('got state', propertyKey);
       return this.$(propertyKey)();
     },
     set(v) {
-      console.log("set state", propertyKey, v);
+      console.log('set state', propertyKey, v);
       this.$(propertyKey)(v);
     },
   });
@@ -23,7 +23,7 @@ export function State(target: Object, propertyKey: PropertyKey) {
 
 export function Environment(property: string) {
   return function (target: Object, propertyKey: PropertyKey) {
-    console.log("Environment(): called");
+    console.log('Environment(): called');
   };
 }
 // @FetchRequest(
@@ -39,7 +39,7 @@ export function FetchRequest(req: {
   animation?: AnimationKey;
 }) {
   return function (target: Object, propertyKey: PropertyKey) {
-    console.log("Environment(): called");
+    console.log('Environment(): called');
   };
 }
 

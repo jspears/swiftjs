@@ -1,9 +1,9 @@
-import type { ColorKey } from "../Color";
-import type { AlignmentKey, VerticalEdge, VirticalEdgeSetKey } from "../Edge";
-import { Shape } from "../Shape";
-import type { Dot, KeyOf, KeyOfTypeWithType, Num } from "@jswift/util";
-import { View } from "./View";
-import type { Content } from "./View";
+import type { ColorKey } from '../Color';
+import type { AlignmentKey, VerticalEdge, VirticalEdgeSetKey } from '../Edge';
+import { Shape } from '../Shape';
+import type { Dot, KeyOf, KeyOfTypeWithType, Num } from '@jswift/util';
+import { View } from './View';
+import type { Content } from './View';
 export interface Style {}
 
 export enum ColorScheme {

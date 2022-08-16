@@ -8,7 +8,7 @@ export type Bindable<T> = ((t?: T) => T) & {
   on(listen: Listen<T>): () => void;
   clear(): void;
 };
-export type Num = number | ".infinity";
+export type Num = number | '.infinity';
 
 export interface Size {
   width: Num;
@@ -67,7 +67,7 @@ export type Bool = boolean;
 type Never<T> = {
   [K in keyof T as T[K] extends never
     ? never
-    : K extends "prototype"
+    : K extends 'prototype'
     ? never
     : K]: T[K];
 };

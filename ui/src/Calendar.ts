@@ -1,21 +1,21 @@
-import { Dot } from "@jswift/util";
-import { toEnum } from "@jswift/util";
+import { Dot } from '@jswift/util';
+import { toEnum } from '@jswift/util';
 
 //        //            Calendar.current.isDate($0.dueDate ?? Date(), equalTo: Date(), toGranularity: .day)
 export enum Granularity {
-  era = "",
-  year = "getFullYear",
-  quarter = "getFullYear",
-  month = "getMonth",
-  weekOfYear = "",
-  weekOfMonth = "",
-  weekday = "",
-  weekdayOrdinal = "",
-  day = "getDay",
-  hour = "getHours",
-  minute = "getMinutes",
-  second = "getSeconds",
-  nanosecond = "getMilliseconds",
+  era = '',
+  year = 'getFullYear',
+  quarter = 'getFullYear',
+  month = 'getMonth',
+  weekOfYear = '',
+  weekOfMonth = '',
+  weekday = '',
+  weekdayOrdinal = '',
+  day = 'getDay',
+  hour = 'getHours',
+  minute = 'getMinutes',
+  second = 'getSeconds',
+  nanosecond = 'getMilliseconds',
 }
 
 type GranularityKey = Granularity | Dot<keyof typeof Granularity>;

@@ -1,5 +1,5 @@
-import { swifty } from "@jswift/util";
-import { Dot, KeyOf, KeyOfTypeWithType } from "@jswift/util";
+import { swifty } from '@jswift/util';
+import { Dot, KeyOf, KeyOfTypeWithType } from '@jswift/util';
 
 class AnimationClass {
   static default = new AnimationClass();
@@ -32,6 +32,6 @@ export function withAnimation(
 function isAnimation(v: unknown): v is AnimationClass {
   return (
     v instanceof AnimationClass ||
-    (typeof v === "string" && Object.hasOwnProperty.call(AnimationClass, v))
+    (typeof v === 'string' && Object.hasOwnProperty.call(AnimationClass, v))
   );
 }
