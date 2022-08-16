@@ -1,5 +1,5 @@
 import { AlignmentKey } from "../Edge";
-import { Bindable, Bound, Bounds, applyMixins, has, isString, swifty, watchable } from "@jswift/util"
+import { Bindable, Bound, Bounds, applyMixins, has, isString, watchable } from "@jswift/util"
 import { Apperance } from "./Apperance";
 import { PaddingMixin } from "./PaddingMixin";
 import { PickerMixin } from "./PickerMixin";
@@ -70,20 +70,23 @@ export class ViewableClass<T = any> extends View {
 
     render(){
         if (this.body){
-            const resp = this.body(bound(this), this);
+            const resp = this.body(this.bound(), this);
             return toNode(...(Array.isArray(resp) ? resp : [resp]));
         }
         return super.render?.();
     }
-}
-
-const bound = <T>(v:T)=>new Proxy<Bound<T>>(v as Bound<T>, {
-    get(target, key){
-        if (isString(key) && key['0']=== '$'){
-            return target.$(key.slice(1) as any);
-        }
+    
+    private bound():Bound<this>{
+        return new Proxy(this, {
+            get(target, key){
+                if (isString(key) && key['0']=== '$'){
+                return target.$(key.slice(1) as any);
+                }
+            }
+        }) as any;
     }
-});
+    
+}
 
 export interface ViewableClass extends Apperance, AnimationMixin, ControlMixin, EventsMixin, FontMixin, NavigationMixin, PaddingMixin, PickerMixin, Searchable, ShapeMixin {
 

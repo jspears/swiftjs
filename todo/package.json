@@ -10,9 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@jswift/CoreData":"^1.0.0",
-    "@jswift/ui":"^1.0.0",
-    "@jswift/util":"^1.0.0"
+    "@jswift/ui":"^1.0.0"
   },
   "devDependencies": {
     "typescript": "^4.6.4",

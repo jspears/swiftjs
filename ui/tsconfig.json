@@ -1,6 +1,13 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "../lib/ui",
+    "rootDir": ".",
     "composite": true
-  }
+
+  },
+  "references": [
+    {"path":"../util"},
+    {"path":"../CoreData"}
+  ]
 }

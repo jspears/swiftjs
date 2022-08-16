@@ -15,8 +15,6 @@
   },
   "dependencies": {
     "preact": "^10.10.2",
-    "@jswift/CoreData":"^1.0.0",
-    "@jswift/ui":"^1.0.0",
-    "@jswift/util":"^1.0.0"
+    "@jswift/ui":"^1.0.0"
   }
 }
