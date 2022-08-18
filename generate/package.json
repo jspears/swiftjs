@@ -1,5 +1,5 @@
 {
-  "name": "@jswift/generate",
+  "name": "@tswift/generate",
   "version": "1.0.0",
   "description": "Just playing around with TS syntax to make something swift like.",
   "main": "index.js",
@@ -22,7 +22,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@jswift/util": "^1.0.0",
+    "@tswift/util": "^1.0.0",
     "code-block-writer": "^11.0.3",
     "isomorphic-fetch": "^3.0.0",
     "ts-morph": "^15.1.0",

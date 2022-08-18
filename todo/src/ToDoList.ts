@@ -31,12 +31,12 @@ import {
   Bound,
   Int,
   isEmpty,
-} from '@jswift/ui';
+} from '@tswift/ui';
 import {
   FetchedResults,
   NSSortDescriptor,
   ViewContext,
-} from '@jswift/CoreData';
+} from '@tswift/CoreData';
 import { Item, ViewContextMethods, categories, ItemType } from './Models';
 
 //https://raw.githubusercontent.com/roman-luzgin/TodoAppSwiftUI3/main/TodoAppSwiftUI3/ToDoList.swift

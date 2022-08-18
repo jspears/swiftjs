@@ -35,12 +35,12 @@ import {
   RoundedRectangle,
   Toggle,
   toggle,
-} from '@jswift/ui';
+} from '@tswift/ui';
 import {
   FetchedResults,
   NSSortDescriptor,
   ViewContext,
-} from '@jswift/CoreData';
+} from '@tswift/CoreData';
 import {
   categories,
   ItemCategoryType,

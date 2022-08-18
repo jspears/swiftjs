@@ -1,5 +1,5 @@
 import { View, Viewable } from './View';
-import { swifty } from '@jswift/util';
+import { swifty } from '@tswift/util';
 
 class SectionClass extends Viewable {
   constructor(...views: View[]) {

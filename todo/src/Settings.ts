@@ -17,7 +17,7 @@ import {
   TextField,
   Viewable,
   swifty,
-} from '@jswift/ui';
+} from '@tswift/ui';
 
 export class SettingsClass extends Viewable {
   @FocusState userNameIsFocused: boolean = false;

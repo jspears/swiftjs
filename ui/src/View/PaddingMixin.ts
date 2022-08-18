@@ -1,5 +1,5 @@
 import { AlignmentKey } from '../Edge';
-import { Num } from '@jswift/util';
+import { Num } from '@tswift/util';
 
 /*
 var top: CGFloat

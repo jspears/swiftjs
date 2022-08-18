@@ -1,4 +1,4 @@
-import { swifty } from '@jswift/util';
+import { swifty } from '@tswift/util';
 
 export interface FetchedResults<T> extends Array<T> {}
 

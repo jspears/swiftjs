@@ -1,6 +1,6 @@
 import { Viewable } from './View';
 import type { Content } from './View';
-import { swifty } from '@jswift/util';
+import { swifty } from '@tswift/util';
 import type { AxisKey } from './Axis';
 import type { AlignmentKey } from './Edge';
 

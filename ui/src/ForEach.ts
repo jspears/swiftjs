@@ -1,4 +1,4 @@
-import { Int } from '@jswift/util';
+import { Int } from '@tswift/util';
 import { View, Viewable } from './View';
 
 export type IndexSet = Set<Int>;

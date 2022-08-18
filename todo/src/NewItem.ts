@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 28.06.21.
 //
 
-import { ViewContext } from '@jswift/CoreData';
+import { ViewContext } from '@tswift/CoreData';
 import {
   Button,
   Viewable,
@@ -34,7 +34,7 @@ import {
   UIApplication,
   TextEditor,
   MenuPickerStyle,
-} from '@jswift/ui';
+} from '@tswift/ui';
 import { categories, ItemType, ViewContextMethods } from './Models';
 
 const { white, black } = Color;

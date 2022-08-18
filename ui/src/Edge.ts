@@ -1,5 +1,5 @@
-import { Dot, KeyOf, KeyOfTypeWithType } from '@jswift/util';
-import { applyMixins } from '@jswift/util';
+import { Dot, KeyOf, KeyOfTypeWithType } from '@tswift/util';
+import { applyMixins } from '@tswift/util';
 
 export class VerticalAlignment {
   static top = new VerticalAlignment();

@@ -1,5 +1,5 @@
 import { Viewable } from './View';
-import { swifty } from '@jswift/util';
+import { swifty } from '@tswift/util';
 
 class SpacerClass extends Viewable<any> {}
 export const Spacer = swifty(SpacerClass);

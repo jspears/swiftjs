@@ -107,9 +107,9 @@
       "baseUrl": ".",
       "noUnusedLocals":false,
       "paths": {
-        "@jswift/ui":["./ui/src"],
-        "@jswift/util":["./util/src"],
-        "@jswift/CoreData":["./CoreData/src"]
+        "@tswift/ui":["./ui/src"],
+        "@tswift/util":["./util/src"],
+        "@tswift/CoreData":["./CoreData/src"]
       }
     },
     "exclude": [

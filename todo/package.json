@@ -1,5 +1,5 @@
 {
-  "name": "@jswift/todo",
+  "name": "@tswift/todo",
   "version": "1.0.0",
   "description": "todo app",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@jswift/ui":"^1.0.0"
+    "@tswift/ui":"^1.0.0"
   },
   "devDependencies": {
     "typescript": "^4.6.4",

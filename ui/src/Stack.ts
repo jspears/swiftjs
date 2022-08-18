@@ -1,12 +1,12 @@
 import { Viewable } from './View';
 import type { Content } from './View';
-import { swifty } from '@jswift/util';
+import { swifty } from '@tswift/util';
 import type {
   AlignmentKey,
   VerticalAlignmentKey,
   HorizontalAlignmentKey,
 } from './Edge';
-import type { Num } from '@jswift/util';
+import type { Num } from '@tswift/util';
 import { ColorKey } from './Color';
 import { h } from 'preact';
 

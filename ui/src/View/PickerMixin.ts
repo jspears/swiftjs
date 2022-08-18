@@ -1,4 +1,4 @@
-import { swifty } from '@jswift/util';
+import { swifty } from '@tswift/util';
 
 class MenuPickerStyleClass {}
 export const MenuPickerStyle = swifty(MenuPickerStyleClass);

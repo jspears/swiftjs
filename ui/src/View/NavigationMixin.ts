@@ -1,4 +1,4 @@
-import type { Bindable } from '@jswift/util';
+import type { Bindable } from '@tswift/util';
 import { View } from './View';
 import type { Content } from './View';
 

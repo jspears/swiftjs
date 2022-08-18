@@ -1,6 +1,6 @@
 import { Viewable } from './View';
-import { isBindable, swifty } from '@jswift/util';
-import { Bindable, Bound, KeyOf } from '@jswift/util';
+import { isBindable, swifty } from '@tswift/util';
+import { Bindable, Bound, KeyOf } from '@tswift/util';
 import { Component, h } from 'preact';
 
 export class TextInputAutocapitalization {

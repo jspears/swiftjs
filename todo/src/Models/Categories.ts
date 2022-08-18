@@ -1,4 +1,4 @@
-import { Color, Toggle, swifty, watchable } from '@jswift/ui';
+import { Color, Toggle, swifty, watchable } from '@tswift/ui';
 export type NSManagedObjectContext = {
   save(): void;
   add(v: unknown): void;

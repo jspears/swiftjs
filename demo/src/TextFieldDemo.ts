@@ -9,7 +9,7 @@ import {
   State,
   FocusState,
   Bound,
-} from '@jswift/ui';
+} from '@tswift/ui';
 
 function validate(t: unknown) {
   return () => console.log('figure this out', t);

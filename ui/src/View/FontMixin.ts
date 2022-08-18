@@ -1,5 +1,5 @@
 import { FontKey, WeightKey } from '../Font';
-import { Num } from '@jswift/util';
+import { Num } from '@tswift/util';
 
 export class FontMixin {
   font(f: FontKey) {

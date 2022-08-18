@@ -17,7 +17,7 @@ import {
   swifty,
   View,
   Bound,
-} from '@jswift/ui';
+} from '@tswift/ui';
 interface CategoryCardsConfig {
   category: string;
   color: Color;

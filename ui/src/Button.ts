@@ -1,7 +1,7 @@
 import { View, Viewable } from './View';
 import type { Content } from './View';
-import { swifty } from '@jswift/util';
-import type { Dot } from '@jswift/util';
+import { swifty } from '@tswift/util';
+import type { Dot } from '@tswift/util';
 export enum ButtonRole {
   cancel,
   destructive,

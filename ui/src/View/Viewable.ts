@@ -1,6 +1,6 @@
 import type { AlignmentKey } from '../Edge';
-import { isString, applyMixins, has, watchable } from '@jswift/util';
-import type { Bindable, Bound, Bounds } from '@jswift/util';
+import { isString, applyMixins, has, watchable } from '@tswift/util';
+import type { Bindable, Bound, Bounds } from '@tswift/util';
 import { Apperance } from './Apperance';
 import { PaddingMixin } from './PaddingMixin';
 import { PickerMixin } from './PickerMixin';
