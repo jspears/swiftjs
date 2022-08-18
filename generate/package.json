@@ -5,6 +5,8 @@
   "main": "index.js",
   "types": "src",
   "scripts": {
+    "download":"ts-node ./src/download",
+    "generate":"ts-node ./src/run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
