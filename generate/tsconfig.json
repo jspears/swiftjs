@@ -5,8 +5,7 @@
     "rootDir": ".",
     "composite": true,
     "tsBuildInfoFile": "./lib/.tsbuildinfo"
+
   },
-  "references": [
-    {"path":"../util"}
-  ]
+  "exclude": ["out/project/**"]
 }

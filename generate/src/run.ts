@@ -1,28 +1,21 @@
+import { References, SwiftDoc } from './types';
+import { Generator } from "./Generator";
+import { readDoc, } from './util';
 
-export async function run(){
-   const json = await (await fetch("https://developer.apple.com/tutorials/data/documentation/swiftui/view.json", {
-  "headers": {
-    "accept": "*/*",
-    "accept-language": "en-US,en;q=0.9",
-    "cache-control": "no-cache",
-    "pragma": "no-cache",
-    "sec-ch-ua": "\"Chromium\";v=\"104\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"104\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"macOS\"",
-    "sec-fetch-dest": "empty",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-site": "same-origin"
-  },
-  "referrer": "https://developer.apple.com/documentation/swiftui/view",
-  "referrerPolicy": "strict-origin-when-cross-origin",
-  "body": null,
-  "method": "GET",
-  "mode": "cors",
-  "credentials": "include"
-})).json();
-    console.log(json);
+export async function run(name: string = 'ModifiedContent') {
+    if (!name) {
+        console.warn('no name?')
+        return;
+    }
+    await (new Generator(readDoc).registerType(name)).save();
+    //  "kind": "declarations"
+    // await Promise.all(doc.relationshipsSections?.filter(v => v?.type == "inheritedBy")
+    //     .map({ identifiers =[] } => Promise.all(identifiers.map(v => run(urlById(v, doc))): [])
+
+    //     ));
+
 }
 //@ts-ignore
 if (require.main === module) {
-    run().then(console.log, console.error);
+    run(...process.argv.slice(2)).then(v => console.dir(v, { depth: 10 }), console.error);
 }
