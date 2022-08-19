@@ -4,8 +4,13 @@
     "outDir": "./lib",
     "rootDir": ".",
     "composite": true,
-    "tsBuildInfoFile": "./lib/.tsbuildinfo"
-
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "skipLibCheck": true,
+    "lib":["ES2022", "DOM"],
+    "baseUrl": "./src/",
+    "paths": {
+      "@tswift/generate":["./src/index.ts"]
+    }
   },
   "exclude": ["out/project/**"]
 }

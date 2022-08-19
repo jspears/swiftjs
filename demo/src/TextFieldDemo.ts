@@ -15,8 +15,10 @@ function validate(t: unknown) {
   return () => console.log('figure this out', t);
 }
 
+//import '@tswift/UI'
+
 //https://developer.apple.com/documentation/swiftui/textfield
-export class TextFieldDemo extends Viewable<{}> {
+export const TextFieldDemo = class extends Viewable<{}> {
   @State username: string = '';
   @FocusState emailFieldIsFocused: Bool = false;
 

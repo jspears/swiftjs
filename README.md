@@ -1,4 +1,4 @@
-# TSwift
+# TS-wift
 Just playing around with TypeScript to make something swift like.
 
 [orig](https://github.com/roman-luzgin/TodoAppSwiftUI3)

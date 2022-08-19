@@ -1,10 +1,22 @@
 import 'isomorphic-fetch';
-import { writeFile, readFile, open, stat, mkdir } from 'fs/promises';
+import { writeFile, readFile, open, unlink, stat, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { SwiftDoc, References } from './types';
 //@ts-ignore
 const dirname = __dirname;
-
+export const BUILT_IN = new Set([
+  'Bool',
+  'Int',
+  'Optional',
+  'String',
+  'Float',
+  'Character',
+  'Double',
+  'Void',
+]);
+export function isBuiltin(v: string) {
+  return BUILT_IN.has(v);
+}
 export const out = (name: string) =>
   join(
     dirname,
@@ -42,7 +54,7 @@ export const urlById = (id: keyof References, doc: SwiftDoc) => {
   return doc?.references?.[id]?.url;
 };
 
-export async function readDoc(name: string): Promise<SwiftDoc> {
+export async function readDoc(name: string): Promise<SwiftDoc| undefined> {
   name = name
     .replace('/documentation/swiftui/', '')
     .replace(/(?:\.json)?$/, '.json');
@@ -61,30 +73,36 @@ export async function readDoc(name: string): Promise<SwiftDoc> {
   //https://developer.apple.com/tutorials/data/documentation/swiftui/view-layout.json
   const fullUrl = `https://developer.apple.com/tutorials/data/documentation/swiftui/${name}`;
   console.log('fetching', fullUrl);
-  const json = await (
-    await fetch(fullUrl, {
-      headers: {
-        accept: '*/*',
-        'accept-language': 'en-US,en;q=0.9',
-        'cache-control': 'no-cache',
-        pragma: 'no-cache',
-        'sec-ch-ua':
-          '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"macOS"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
-      },
-      referrer: 'https://developer.apple.com/documentation/swiftui/view',
-      referrerPolicy: 'strict-origin-when-cross-origin',
-      body: null,
-      method: 'GET',
-    })
-  ).json();
+  try {
+    const json = await (
+      await fetch(fullUrl, {
+        headers: {
+          accept: '*/*',
+          'accept-language': 'en-US,en;q=0.9',
+          'cache-control': 'no-cache',
+          pragma: 'no-cache',
+          'sec-ch-ua':
+            '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
+          'sec-ch-ua-mobile': '?0',
+          'sec-ch-ua-platform': '"macOS"',
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-origin',
+        },
+        referrer: 'https://developer.apple.com/documentation/swiftui/view',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        body: null,
+        method: 'GET',
+      })
+    ).json();
 
-  await writeFile(fd, JSON.stringify(json, null, 2), 'utf-8');
-  await fd.close();
-  console.log('wrote', outFileName);
-  return json;
+    await writeFile(fd, JSON.stringify(json, null, 2), 'utf-8');
+    console.log('wrote', outFileName);
+    return json;
+  } catch (e) {
+    console.warn(`error getting ${name}`);
+    console.trace(e);
+  } finally {
+    await fd.close();
+  }
 }

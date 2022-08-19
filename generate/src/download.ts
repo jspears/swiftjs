@@ -18,7 +18,7 @@ const download = async (url: string | undefined) => {
     );
     const urls = rest
       ?.flatMap(
-        ({ identifiers }: { identifiers: keyof References[] }) => identifiers
+        ({ identifiers }) => identifiers
       )
       .map((v: string) => v && urlById(v as keyof References, doc)) as string[];
     await Promise.all(urls.map((v) => download(`${v}.json`)));

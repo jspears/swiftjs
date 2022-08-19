@@ -6,8 +6,11 @@ import {
   RelationshipsSection,
 } from './types';
 import { ClassDeclaration, Project, SourceFile } from 'ts-morph';
-import { fragToMethod, has, isClosure } from './create';
+import { has, isClosure, split } from './create';
 import { Generator } from './Generator';
+import { ClosureImpl, Params } from './ParamParse';
+
+const ignore = new Set(['', ',', ':']);
 
 export class SwiftDocImpl {
   public title?: string = '';
@@ -72,7 +75,7 @@ export class SwiftDocImpl {
     }
     return Object.values(this.references).filter((v: ReferenceType) => {
       return (
-        v?.identifier.startsWith(this.identifier + '/') && v?.role === 'symbol'
+        v?.identifier.startsWith(this.identifier + '/') && has(v, 'role') && v?.role === 'symbol'
       );
     });
   }
@@ -88,12 +91,16 @@ export class SwiftDocImpl {
 
   addClass(ref: ReferenceType) {
     console.log('add class ', ref);
+    this.addProtocol(ref);
   }
-  addStruct(ref: ReferenceType) {}
+  addStruct(ref: ReferenceType) {
+    console.log('add struct ', ref);
+    this.addProtocol(ref);
+  }
   addProtocol(ref: ReferenceType) {
     const inherited = this.inherited();
     inherited.forEach(({ url }) =>
-      this.generator.registerType(url.replace('`/documentation/swiftui', ''))
+      this.generator.registerType((url as string)?.replace('/documentation/swiftui/', ''))
     );
 
     let clz: ClassDeclaration;
@@ -108,71 +115,87 @@ export class SwiftDocImpl {
       });
       clz = this.source.addClass({
         isExported: true,
-        name: `${this.title}`,
-        docs: [`${ref.identifier}`],
+        name: this.title,
+        docs: [ref.identifier],
+
       });
     } else {
       clz = this.source.addClass({
         isExported: true,
         extends:
           inherited[0]?.role === 'symbol' ? inherited[0]?.title : undefined,
-        name: `${this.title}`,
-        docs: [`${ref.identifier}`],
+        name: this.title,
+        docs: [ref.identifier],
       });
     }
     this.methods.forEach((v) => this.addPropertyTo(clz, v));
   }
-  addType(type: string) {
+  addImport(type: string, moduleSpecifier: string = `/${type}`) {
+    try {
+      const decl = this.source.getImportDeclarations().find(v => v.getModuleSpecifier().getText().includes(moduleSpecifier));
+      if (decl != null) {
+        const named = decl.getNamedImports().map(v => v.getText());
+        if (!named.includes(type)) {
+          decl.addNamedImport(type);
+        }
+        return this;
+      }
+      this.source.addImportDeclaration({
+        moduleSpecifier: `.${moduleSpecifier}`,
+        namedImports: [type]
+      });
+    } catch (e) {
+      console.trace(e);
+    }
+    return this;
+  }
+  addType = (type: string, templates: string[] = []) => {
+    //remove all array stuff.
+    type = type.replaceAll(/\[\]/g, '').replace(/(.+?)\..*$/, '$1');
+    console.log('checkType', type);
     if (isClosure(type)) {
       return;
     }
+    if (templates.includes(type)) {
+      return;
+    }
     if (this.generator.ignoreType(type)) {
+      this.addImport(type, './types');
       return;
     }
     if (
-      !this.source.getClass(type) &&
-      !this.source.getImportDeclaration(`./${type}`)
+      !this.source.getClass(type)
     ) {
-      this.source.addImportDeclaration({
-        moduleSpecifier: `./${type}`,
-        namedImports: [type],
-      });
+      this.addImport(type);
+      this.generator.registerType(type);
     }
-    this.generator.registerType(type);
   }
   addPropertyTo(clz: ClassDeclaration, type: ReferenceType): this {
-    const {
-      returnType = 'this',
-      returnTypeParameters = [],
-      imports,
-      ...method
-    } = fragToMethod(type['fragments']);
-    if (returnType && !returnTypeParameters.includes(returnType)) {
-      this.addType(returnType);
+    const orig = type['fragments']?.map(v=>v.text).join('');
+    const method = ClosureImpl.parseMethod(orig, this.addType);
+    const isSelfReturn = method.returnType === 'Self' || method.returnType.startsWith(`${clz.getName()}<`);
+
+    try {
+      const m = clz.addMethod({
+        ...method,
+        parameters: method.parameters,
+        returnType: w => w.write(isSelfReturn ? 'this' : method.returnType.replace(/\?$/, ' | unknown')),
+
+        docs: [type?.abstract?.[0]?.text].filter(Boolean) as string[],
+      });
+      m.setBodyText(isSelfReturn ? `return this` : method.body);
+    } catch (e) {
+      console.warn('error adding method', e);
+      console.warn(`orig '${orig}'`);
     }
-
-    method.parameters?.forEach(
-      (v) =>
-        v && !returnTypeParameters.includes(v.type) && this.addType(v?.type)
-    );
-
-    imports?.forEach((v) => this.addType(v.text));
-
-    const m = clz.addMethod({
-      ...method,
-      docs: [type?.abstract?.[0]?.text].filter(Boxrolean) as string[],
-      returnType: (writer) => {
-        writer.write(returnType);
-        if (returnTypeParameters.length) {
-          writer.write(
-            `<${returnTypeParameters
-              .map((v) => (v == 'Self' ? 'this' : v.trim()))
-              .join(',')}>`
-          );
-        }
-      },
-    });
-    m.setBodyText(`return ${returnType === 'this' ? 'this' : null}`);
     return this;
   }
+
 }
+
+interface NameType {
+  type: string;
+  name: string;
+}
+
+type Closure = { parameters: NameType[], returnType: string };
