@@ -97,7 +97,15 @@ export class SwiftDocImpl {
     console.log('add struct ', ref);
     this.addProtocol(ref);
   }
-  addProtocol(ref: ReferenceType) {
+  addProtocol(ref:ReferenceType){
+    try {
+      return this._addProtocol;
+    }catch(e){
+      console.warn(e);
+    }
+    return this;
+  }
+  _addProtocol(ref: ReferenceType) {
     const inherited = this.inherited();
     inherited.forEach(({ url }) =>
       this.generator.registerType((url as string)?.replace('/documentation/swiftui/', ''))
@@ -113,13 +121,15 @@ export class SwiftDocImpl {
           .filter(({ title, role }) => title && role === 'symbol')
           .map((v) => v?.title) as string[],
       });
+      
       clz = this.source.addClass({
         isExported: true,
         name: this.title,
         docs: [ref.identifier],
-
       });
+
     } else {
+
       clz = this.source.addClass({
         isExported: true,
         extends:
@@ -127,6 +137,7 @@ export class SwiftDocImpl {
         name: this.title,
         docs: [ref.identifier],
       });
+
     }
     this.methods.forEach((v) => this.addPropertyTo(clz, v));
   }

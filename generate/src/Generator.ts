@@ -1,17 +1,27 @@
 import { SwiftDoc, KindEnum, ReferenceType } from './types';
-import { Project } from 'ts-morph';
+import { Project, ScriptTarget } from 'ts-morph';
 import { SwiftDocImpl } from './SwiftDocImpl';
 import { createProject,  has } from './create';
 import { join } from 'path';
 import { isBuiltin } from './util';
-import { rmSync } from 'fs';
+import { existsSync, mkdirSync, rmdir, rmdirSync, rmSync } from 'fs';
+const refreshDir = (dir:string)=>{
+    if (dir && dir.length < 5){
+      return;
+    }
+    if (existsSync(dir)){
+      rmdirSync(dir, {recursive:true});
+    }
+    mkdirSync(dir, {recursive:true})
 
+}
 export class Generator {
   visited = new Map<string, SwiftDocImpl | undefined | Promise<SwiftDocImpl | undefined>>();
   public project: Project;
   constructor(
     private readDoc: (v: string) => Promise<SwiftDoc | undefined>,
     public projectDir: string = `${__dirname}/../out/project`,
+    private srcDir: string = `${projectDir}/src`,
     typesSource:string =  `
     export class Bool {
       static True = new Bool(true);
@@ -26,24 +36,31 @@ export class Generator {
         return this.value;
       }
     };
-    export type Int = number;
-    export class Optional<T> {
-         static none = new Optional<any>(null);
-         static some<T>(v:T){ return new Optional<T>(v)}
-         constructor(public value:T){
-    
-         }
+export type Int = number;
+export class Optional<T> {
+    static none = new Optional<any>(null);
+    static some<T>(v:T){ return new Optional<T>(v)}
+    constructor(public value:T){
     }
-    export type Float = number;
-    export type Character = string;
-    export type Double = number;
-    //unknown is more accurate than typescript void which should be avoided almost all the time.
-    export type Void = unknown;
+}
+export type Float = number;
+export type Character = string;
+export type Double = number;
+//unknown is more accurate than typescript void which should be avoided almost all the time.
+export type Void = unknown;
        
    `
   ) {
-    rmSync(`${projectDir}/src`, {recursive:true});
-    this.project = createProject(projectDir);
+    refreshDir(srcDir);
+    this.project = createProject(projectDir, {
+      "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "lib",
+        "lib":["DOM","ES2021"],
+        "target": ScriptTarget.ES2021,
+        "noEmit": true
+      }
+    });
     console.log('creating in ', projectDir);
     this.createSourceFile('types',typesSource);
   }
@@ -83,7 +100,7 @@ export class Generator {
     return doc;
   }
   createSourceFile(name: string, content: string = '') {
-    const source = join(this.projectDir, 'src', name + '.ts');
+    const source = join(this.srcDir, name + '.ts');
     const sourceFile = this.project.createSourceFile(source, content, {
       overwrite: true,
     });
@@ -92,7 +109,7 @@ export class Generator {
   }
   getSourceFile(name: string) {
     return this.project.getSourceFile(
-      join(this.projectDir, 'src', name + '.ts')
+      join(this.srcDir, name + '.ts')
     );
   }
   create = async (doc: SwiftDoc) => {

@@ -1,98 +1,86 @@
-import { Dot } from '@tswift/util';
+import { Dot, PickValue } from '@tswift/util';
+import { CSSProperties } from './types';
 
 export enum Weight {
-  black,
-  bold,
-  heavy,
-  light,
-  medium,
-  regular,
-  semibold,
-  thin,
-  ultralight,
+  black = '900',
+  bold = '700',
+  heavy = '600',
+  light = '300',
+  medium = '500',
+  regular = '400',
+  semibold = '600',
+  thin = '100',
+  ultralight = '200',
 }
 
 export enum Leading {
-  standard,
-  loose,
-  tight,
+  standard = '1',
+  loose = '1.5',
+  tight = '.75',
 }
 
+export type TextStyle = keyof PickValue<typeof Font, Font>;
+
 export class Font {
-  public constructor() {}
-  static $(key: Dot<keyof typeof Font>) {}
-  static get largeTitle() {
-    return largeTitle;
-  }
-  static get title() {
-    return title;
-  }
-  static get title2() {
-    return title2;
-  }
-  static get title3() {
-    return title3;
-  }
-  static get headline() {
-    return headline;
-  }
-  static get subheadline() {
-    return subheadline;
-  }
-  static get body() {
-    return body;
-  }
-  static get callout() {
-    return callout;
-  }
-  static get caption() {
-    return caption;
-  }
-  static get caption2() {
-    return caption2;
-  }
-  static get footnote() {
-    return footnote;
-  }
-  bold(): this {
-    return this;
-  }
-  italic(): this {
-    return this;
-  }
-  monospaced(): this {
-    return this;
-  }
-  smallCaps(): this {
-    return this;
-  }
-  lowercaseSmallCaps(): this {
-    return this;
-  }
-  uppercaseSmallCaps(): this {
-    return this;
+
+  public readonly style: CSSProperties = {
+    fontFamily: 'system-ui',
+    fontSize: '18px',
+
   }
 
-  weight(weight: WeightKey): this {
-    return this;
+
+  constructor(font?: Font | CSSProperties, css?: CSSProperties) {
+    Object.assign(this.style, font instanceof Font ? font.style : font, css);
   }
-  leading(leading: LeadingKey): this {
-    return this;
+
+  static largeTitle = new Font({ fontSize: '20px' });
+  static title = new Font({ fontSize: '18px' });
+  static title2 = new Font({ fontSize: '20px' });
+  static title3 = new Font({ fontSize: '20px' });
+  static headline = new Font({ fontSize: '20px' });
+  static subheadline = new Font({ fontSize: '20px' });
+  static body = new Font({ fontSize: '20px' });
+  static callout = new Font({ fontSize: '20px' });
+  static caption = new Font({ fontSize: '20px' });
+  static caption2 = new Font({ fontSize: '20px' });
+  static footnote = new Font({ fontSize: '20px' });
+  private apply(css: CSSProperties) {
+    return new Font(this, css);
+
   }
+  bold() {
+    return this.apply({ fontWeight: '600' });
+  }
+  italic() {
+    return this.apply({ fontStyle: 'italic' });
+  }
+  monospaced() {
+    return this.apply({ fontFamily: 'ui-monospace' });
+  }
+  smallCaps() {
+    return this.apply({ fontVariant: 'small-caps' });
+  }
+  lowercaseSmallCaps() {
+    return this.apply({ fontVariantCaps: 'all-small-caps', textTransform: 'lowercase' });
+  }
+  uppercaseSmallCaps() {
+    return this.apply({ fontVariant: 'all-small-caps', textTransform: 'uppercase' });
+  }
+  strikethrough() {
+    return this.apply({ fontStyle: 'strikethrough' });
+  }
+  weight(weight: WeightKey) {
+    return this.apply({ fontWeight: Weight[weight.slice(1) as keyof typeof Weight] || weight });
+  }
+  leading(leading: LeadingKey) {
+    return this.apply({ lineHeight: Leading[leading.slice(1) as keyof typeof Leading] || leading });
+  }
+
 }
 
 export type LeadingKey = Leading | Dot<keyof typeof Leading>;
 export type WeightKey = Weight | Dot<keyof typeof Weight>;
-const largeTitle = new Font();
-const title = new Font();
-const title2 = new Font();
-const title3 = new Font();
-const headline = new Font();
-const subheadline = new Font();
-const body = new Font();
-const callout = new Font();
-const caption = new Font();
-const caption2 = new Font();
-const footnote = new Font();
+
 
 export type FontKey = Font | Dot<keyof typeof Font>;

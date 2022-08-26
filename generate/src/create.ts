@@ -1,5 +1,5 @@
 import { KindEnum, ReferenceType } from './types';
-import { Project } from 'ts-morph';
+import { Project, ProjectOptions } from 'ts-morph';
 import { ModuleKind, ScriptTarget } from 'typescript';
 import { write } from 'fs';
 import { text } from 'stream/consumers';
@@ -33,10 +33,15 @@ export function has<T, K>(v: unknown, k: PropertyKey): k is keyof T {
  * @returns
  */
 export const createProject = (
-  tsConfigFilePath = `${__dirname}/../out/project`
+  tsConfigFilePath = `${__dirname}/../out/project`,
+  options:ProjectOptions ={ compilerOptions:{}}
 ) =>
   new Project({
-    tsConfigFilePath: `${tsConfigFilePath}/tsconfig.json`,
+    ...options,
+    compilerOptions:{
+      ...options?.compilerOptions,
+      rootDir:tsConfigFilePath,
+    }
   });
 
 

@@ -4,7 +4,7 @@
   "description": "Just playing around with TS syntax to make something swift like.",
   "types": "src",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -16,10 +16,22 @@
     "url": "https://github.com/jspears/swiftjs/issues"
   },
   "homepage": "https://github.com/jspears/swiftjs#readme",
+  "dependencies": {
+    "preact": "^10.10.2",
+    "ts-named-params": "^1.0.4",
+    "uuid": "^8.3.2"
+  },
   "devDependencies": {
-    "typescript": "^4.7.4"
+    "@types/uuid": "^8.3.4",
+    "@tswift/util": "^1.0.0",
+    "@types/mocha": "^9.1.1",
+    "@types/chai": "^4.3.3",
+    "@types/node": "^18.7.6",
+    "mocha": "^10.0.0",
+    "chai": "^4.3.6",
+    "typescript": "^4.7.4",
+    "tsconfig-paths": "^4.1.0",
+    "ts-node": "^10.9.1"
+
   }
-  ,"dependencies": {
-    "preact": "^10.10.2"
-    }
 }

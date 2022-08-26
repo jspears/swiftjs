@@ -15,6 +15,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: `${dirname}/public/index.html`,
+        text: `${dirname}/public/text.html`,
+
       }
     }
   }

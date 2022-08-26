@@ -7,3 +7,6 @@
   flex-grow: 100%;
   text-align: center;
 }
+body {
+  background: rgb(239, 238,245)
+}

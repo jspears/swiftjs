@@ -1,4 +1,5 @@
 import { Int } from '@tswift/util';
+import { h, Component, render, Fragment } from 'preact';
 import { View, Viewable } from './View';
 
 export type IndexSet = Set<Int>;
@@ -16,12 +17,17 @@ class ForEachClass<I> extends Viewable<{}> {
   onDelete(fn: OnDelete): this {
     return this;
   }
+
+  render(){
+    return h(Fragment, {}, this.body()?.map(v=>v?.render()));
+  }
 }
 
 export function ForEach<T>(
-  ...[data, content]: ConstructorParameters<typeof ForEachClass<T>>
+  ...args: ConstructorParameters<typeof ForEachClass<T>>
 ) {
-  return new ForEachClass<T>(data, content);
+  return new ForEachClass<T>(...args);
 }
+
 
 Object.assign(ForEach, ForEach['prototype']);

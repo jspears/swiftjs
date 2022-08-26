@@ -15,10 +15,11 @@ import { ControlMixin } from './ControlMixin';
 import { NavigationMixin } from './NavigationMixin';
 import { toNode } from '../dom';
 import { h, Component, Fragment } from 'preact';
+import { ListMixin } from './ListMixin';
 
 export class ViewableClass<T = any> extends View {
   private watch = new Map<string, Bindable<any>>();
-  protected config: Partial<T>;
+  protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
   private attrs = new Map<string, string | number>();
 
@@ -116,6 +117,7 @@ export interface ViewableClass
     ControlMixin,
     EventsMixin,
     FontMixin,
+    ListMixin,
     NavigationMixin,
     PaddingMixin,
     PickerMixin,
@@ -128,6 +130,7 @@ export const Viewable = applyMixins(
   ControlMixin,
   EventsMixin,
   FontMixin,
+  ListMixin,
   NavigationMixin,
   PaddingMixin,
   PickerMixin,

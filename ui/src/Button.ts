@@ -26,4 +26,6 @@ class ButtonClass extends Viewable<ButtonConfig> {
     return this;
   }
 }
+
+export const EditButton = swifty(ButtonClass);
 export const Button = swifty(ButtonClass);

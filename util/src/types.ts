@@ -2,7 +2,6 @@ export type Dot<T> = T extends string ? `.${T}` : never;
 //This is to support `.property` notation from swift.
 
 export type EnumOrString<T> = T | Dot<keyof T>;
-
 export type Listen<T> = (e: T) => unknown;
 export type Bindable<T> = ((t?: T) => T) & {
   on(listen: Listen<T>): () => void;
@@ -71,6 +70,12 @@ type Never<T> = {
     ? never
     : K]: T[K];
 };
+export type PickValue<T, V=T> = {
+  [K in keyof T as T[K] extends V
+  ? K extends 'prototype' ? never : K
+  : never
+  ]: T[K];
+}
 
 export type Constructor = new (...args: any) => any;
 
@@ -86,3 +91,16 @@ export type KeyOf<T extends Constructor, V extends Constructor = T> =
       }>
     >
   | InstanceType<V>;
+
+  export interface Identifiable {
+    id:string;
+  }
+
+  export type ID = Identifiable['id'];
+  
+  export interface Hashable {
+
+  }
+
+type D = '.' | ''
+export type KeyPath<T,S> = S extends `${D}${infer P extends keyof T & string}.${infer Rest}` ? KeyPath<T[P],Rest> : S extends keyof T ? T[S] : never;

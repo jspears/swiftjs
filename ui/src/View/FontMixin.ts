@@ -1,23 +1,37 @@
-import { FontKey, WeightKey } from '../Font';
-import { Num } from '@tswift/util';
+import { Font, FontKey, WeightKey } from '../Font';
+import { Num, PickValue } from '@tswift/util';
 
+type FontKeys = PickValue<Font>;
+type p=FontKeys
 export class FontMixin {
+  protected _font:Font = Font.body;
+
   font(f: FontKey) {
+    if (typeof f === 'string'){
+      this._font = Font[f.slice(1) as keyof typeof Font];
+    }else {
+      this._font = f;
+    }
     return this;
   }
   bold(f?: boolean) {
+    this._font = this._font?.bold()
     return this;
   }
   italic(f?: boolean) {
+    this._font = this._font.italic();
     return this;
   }
   strikethrough(f?: boolean) {
+    this._font = this._font.italic();
     return this;
   }
   underline(f?: boolean) {
+    this._font = this._font.underline();
     return this;
   }
   monospaced(f?: boolean) {
+    this._font = this._font.monospaced();
     return this;
   }
   fontWeight(f?: WeightKey) {
