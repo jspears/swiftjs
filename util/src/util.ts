@@ -1,4 +1,13 @@
-import { Bindable, Bool, Constructor, Dot, Identifiable, KeyOf, KeyPath, Listen } from './types';
+import {
+  Bindable,
+  Bool,
+  Constructor,
+  Dot,
+  Identifiable,
+  KeyOf,
+  KeyPath,
+  Listen,
+} from './types';
 import { v4 as uuidv4 } from 'uuid';
 
 export function swifty<T, A extends any[] = []>(clazz: {
@@ -11,22 +20,25 @@ export function swifty<T, A extends any[] = []>(clazz: {
 }
 const GSet = globalThis.Set;
 export type CountSet<T> = InstanceType<typeof GSet<T>> & {
-  count:number;
-}
-export const Set = <T>(...args:ConstructorParameters<typeof GSet<T>>):CountSet<T>=> {
-  
- const ret =  new GSet<T>(...args);
+  count: number;
+};
+export const Set = <T>(
+  ...args: ConstructorParameters<typeof GSet<T>>
+): CountSet<T> => {
+  const ret = new GSet<T>(...args);
 
- Object.defineProperty(ret, 'count', {get(){
-  return ret.size;
- }});
+  Object.defineProperty(ret, 'count', {
+    get() {
+      return ret.size;
+    },
+  });
 
- return ret as CountSet<T>;
-}
+  return ret as CountSet<T>;
+};
 
-export const UUID = ():Identifiable['id']=> {
+export const UUID = (): Identifiable['id'] => {
   return uuidv4();
-}
+};
 
 export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
   const listening = Set<Listen<T>>(listen);
@@ -96,7 +108,6 @@ export function toValue<T extends Constructor>(clazz: T, property?: KeyOf<T>) {
   return fn(property);
 }
 
-
 export function applyMixins<T extends Constructor>(
   derivedCtor: T,
   ...constructors: Constructor[]
@@ -116,16 +127,15 @@ export function applyMixins<T extends Constructor>(
 
 export const toggle = (v: Bindable<Bool>) => () => v(!v());
 
-
 export function isBindable<T>(v: unknown): v is Bindable<T> {
-    if (typeof v === 'function'){
-      if ('on' in v){
-        if (typeof (v as Bindable<T>).on === 'function'){
-            return true;
-        }
-      }      
+  if (typeof v === 'function') {
+    if ('on' in v) {
+      if (typeof (v as Bindable<T>).on === 'function') {
+        return true;
+      }
     }
-    return false;
+  }
+  return false;
 }
 
 type HasLength = { length: number };
@@ -136,28 +146,33 @@ export const isEmpty = (v?: HasLength | Bindable<HasLength>): boolean => {
   const val = isBindable<{ length: number }>(v) ? v() : v;
   return has(val, 'length') ? val.length == 0 : false;
 };
-export function isFunction(v:unknown):v is (...args:any)=>any{
+export function isFunction(v: unknown): v is (...args: any) => any {
   return typeof v === 'function';
 }
 
 /**
  * This should work with '.path' and 'path' the same.
- * @param t 
- * @param path 
- * @returns 
+ * @param t
+ * @param path
+ * @returns
  */
-export function keyPath<T, K extends string>(obj:T, path:K):KeyPath<T,K> {
-  const key:string = path[0] === '.' ? path.slice(1) : path;
-  let ret:any = obj;
-  let idx:number;
-  let from:number = 0;
-  while((idx = key.indexOf('.', from))> -1  && (ret = obj[key.slice(from, idx) as keyof unknown]) != null){
+export function keyPath<T, K extends string>(obj: T, path: K): KeyPath<T, K> {
+  const key: string = path[0] === '.' ? path.slice(1) : path;
+  let ret: any = obj;
+  let idx: number;
+  let from: number = 0;
+  while (
+    (idx = key.indexOf('.', from)) > -1 &&
+    (ret = obj[key.slice(from, idx) as keyof unknown]) != null
+  ) {
     from = idx + 1;
-  } 
+  }
   return ret?.[key.slice(from) as keyof unknown];
-
 }
 
-export function keyBind<T, K extends string>(t:T, path:K):Bindable<KeyPath<T,K>> {
+export function keyBind<T, K extends string>(
+  t: T,
+  path: K
+): Bindable<KeyPath<T, K>> {
   return null as any;
 }

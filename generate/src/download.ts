@@ -17,9 +17,7 @@ const download = async (url: string | undefined) => {
       (v: { type: string }) => v?.type == 'inheritedBy'
     );
     const urls = rest
-      ?.flatMap(
-        ({ identifiers }) => identifiers
-      )
+      ?.flatMap(({ identifiers }) => identifiers)
       .map((v: string) => v && urlById(v as keyof References, doc)) as string[];
     await Promise.all(urls.map((v) => download(`${v}.json`)));
   }

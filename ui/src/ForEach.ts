@@ -18,8 +18,12 @@ class ForEachClass<I> extends Viewable<{}> {
     return this;
   }
 
-  render(){
-    return h(Fragment, {}, this.body()?.map(v=>v?.render()));
+  render() {
+    return h(
+      Fragment,
+      {},
+      this.body()?.map((v) => v?.render())
+    );
   }
 }
 
@@ -28,6 +32,5 @@ export function ForEach<T>(
 ) {
   return new ForEachClass<T>(...args);
 }
-
 
 Object.assign(ForEach, ForEach['prototype']);

@@ -8,7 +8,7 @@ class TextClass extends Viewable<TextConfig> {
     super();
   }
   render() {
-    return h('span', {style:this._font?.style}, this.text);
+    return h('span', { style: this._font?.style }, this.text);
   }
 }
 

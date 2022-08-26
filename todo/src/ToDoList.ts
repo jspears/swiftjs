@@ -56,7 +56,7 @@ export class ToDoList extends Viewable {
   @State searchQuery = '';
   @State notDoneOnly = false;
 
-  body = ({ $notDoneOnly }:Bound<this>, self = this):View =>
+  body = ({ $notDoneOnly }: Bound<this>, self = this): View =>
     NavigationView(
       List<ItemType>(
         Section(

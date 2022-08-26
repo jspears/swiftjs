@@ -22,13 +22,10 @@ export enum Leading {
 export type TextStyle = keyof PickValue<typeof Font, Font>;
 
 export class Font {
-
   public readonly style: CSSProperties = {
     fontFamily: 'system-ui',
     fontSize: '18px',
-
-  }
-
+  };
 
   constructor(font?: Font | CSSProperties, css?: CSSProperties) {
     Object.assign(this.style, font instanceof Font ? font.style : font, css);
@@ -47,7 +44,6 @@ export class Font {
   static footnote = new Font({ fontSize: '20px' });
   private apply(css: CSSProperties) {
     return new Font(this, css);
-
   }
   bold() {
     return this.apply({ fontWeight: '600' });
@@ -62,25 +58,33 @@ export class Font {
     return this.apply({ fontVariant: 'small-caps' });
   }
   lowercaseSmallCaps() {
-    return this.apply({ fontVariantCaps: 'all-small-caps', textTransform: 'lowercase' });
+    return this.apply({
+      fontVariantCaps: 'all-small-caps',
+      textTransform: 'lowercase',
+    });
   }
   uppercaseSmallCaps() {
-    return this.apply({ fontVariant: 'all-small-caps', textTransform: 'uppercase' });
+    return this.apply({
+      fontVariant: 'all-small-caps',
+      textTransform: 'uppercase',
+    });
   }
   strikethrough() {
     return this.apply({ fontStyle: 'strikethrough' });
   }
   weight(weight: WeightKey) {
-    return this.apply({ fontWeight: Weight[weight.slice(1) as keyof typeof Weight] || weight });
+    return this.apply({
+      fontWeight: Weight[weight.slice(1) as keyof typeof Weight] || weight,
+    });
   }
   leading(leading: LeadingKey) {
-    return this.apply({ lineHeight: Leading[leading.slice(1) as keyof typeof Leading] || leading });
+    return this.apply({
+      lineHeight: Leading[leading.slice(1) as keyof typeof Leading] || leading,
+    });
   }
-
 }
 
 export type LeadingKey = Leading | Dot<keyof typeof Leading>;
 export type WeightKey = Weight | Dot<keyof typeof Weight>;
-
 
 export type FontKey = Font | Dot<keyof typeof Font>;

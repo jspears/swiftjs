@@ -1,5 +1,13 @@
 import { View, Viewable } from './View';
-import { swifty, Set,  CountSet, has, isBindable, isFunction, KeyPath } from '@tswift/util';
+import {
+  swifty,
+  Set,
+  CountSet,
+  has,
+  isBindable,
+  isFunction,
+  KeyPath,
+} from '@tswift/util';
 import type { Bindable, Constructor, Identifiable, Int } from '@tswift/util';
 import type { On } from './View/EventsMixin';
 import { Component, h, VNode } from 'preact';
@@ -7,26 +15,27 @@ import { DefaultListStyle, ListStyle } from './ListStyle';
 import { bindToState } from './state';
 
 type HasSelection<T> = {
-  selection: T extends Identifiable ? Bindable<CountSet<T['id'] | undefined>> | T['id'] | undefined : Bindable<CountSet<T> | T>;
+  selection: T extends Identifiable
+    ? Bindable<CountSet<T['id'] | undefined>> | T['id'] | undefined
+    : Bindable<CountSet<T> | T>;
 };
 
 type RowContent<T> = {
   content($0?: T): View;
-}
-
+};
 
 type HasData<T> = {
   data: T[];
-}
+};
 
-type HasId<T={id:string}> = {
+type HasId<T = { id: string }> = {
   id?: KeyPath<T, 'id'>;
-}
+};
 
-export type ListConfig<T> = HasData<T>
-  & HasId<T>
-  & HasSelection<T>
-  & RowContent<T>;
+export type ListConfig<T> = HasData<T> &
+  HasId<T> &
+  HasSelection<T> &
+  RowContent<T>;
 
 function hasContent<T>(v: unknown): v is RowContent<T> {
   return has(v, 'content');
@@ -41,25 +50,36 @@ function hasSelection<T>(v: unknown): v is HasSelection<T> {
   return has(v, 'selection');
 }
 
-type DataConfig<T> = HasData<T> & RowContent<T> & Partial<HasId<T>> & Partial<HasSelection<T>> ;
+type DataConfig<T> = HasData<T> &
+  RowContent<T> &
+  Partial<HasId<T>> &
+  Partial<HasSelection<T>>;
 
 export class ListClass<T> extends Viewable<ListConfig<T>> {
-
   style = DefaultListStyle();
 
   constructor(data: HasData<T>['data'], content: RowContent<T>['content']);
-  constructor(data: HasData<T>['data'], selection: HasSelection<T>['selection'], content: RowContent<T>['content']);
+  constructor(
+    data: HasData<T>['data'],
+    selection: HasSelection<T>['selection'],
+    content: RowContent<T>['content']
+  );
   constructor(selection: HasSelection<T>['selection'], ...views: View[]);
-  constructor(config:DataConfig<T>);
-  constructor(config:HasSelection<T>, ...views:View[]);
-  constructor(...views:View[]);
+  constructor(config: DataConfig<T>);
+  constructor(config: HasSelection<T>, ...views: View[]);
+  constructor(...views: View[]);
   constructor(...all: unknown[]) {
     super();
-    const first = all[0]
+    const first = all[0];
 
-    if (first != null && hasContent<T>(first) || hasData<T>(first) || hasId<T>(first) || hasSelection<T>(first)) {
-        this.config = Object.assign(this.config, first, {});
-        this.children  = all.slice(1) as View[];
+    if (
+      (first != null && hasContent<T>(first)) ||
+      hasData<T>(first) ||
+      hasId<T>(first) ||
+      hasSelection<T>(first)
+    ) {
+      this.config = Object.assign(this.config, first, {});
+      this.children = all.slice(1) as View[];
     } else {
       if (Array.isArray(all[0])) {
         this.config.data = all.shift() as any;
@@ -72,14 +92,15 @@ export class ListClass<T> extends Viewable<ListConfig<T>> {
       }
       this.children = all as View[];
     }
-
   }
-  body = ()=>{
-    if (this.config?.data && this.config?.content){
-      return this.config.data.map(this.config.content).filter(Boolean) as View[];
+  body = () => {
+    if (this.config?.data && this.config?.content) {
+      return this.config.data
+        .map(this.config.content)
+        .filter(Boolean) as View[];
     }
     return this.children || [];
-  }
+  };
   refreshable(fn: () => void) {
     return this;
   }
@@ -87,11 +108,17 @@ export class ListClass<T> extends Viewable<ListConfig<T>> {
     return this;
   }
   render(): VNode<any> {
-    return h(ListComponent, { body:this.body, style: this.style } as StyleListConfig, []);
+    return h(
+      ListComponent,
+      { body: this.body, style: this.style } as StyleListConfig,
+      []
+    );
   }
 }
 
-type StyleListConfig = {body():View[]} & HasSelection<unknown> & { style: ListStyle };
+type StyleListConfig = { body(): View[] } & HasSelection<unknown> & {
+    style: ListStyle;
+  };
 
 class ListComponent extends Component<StyleListConfig> {
   constructor(props: StyleListConfig) {
@@ -102,10 +129,10 @@ class ListComponent extends Component<StyleListConfig> {
     const { selection } = this.props;
 
     if (!selection) {
-      return
+      return;
     }
-    const idx = ((e.target) as HTMLElement).dataset.id;
-    if(!idx){
+    const idx = (e.target as HTMLElement).dataset.id;
+    if (!idx) {
       return;
     }
     const select = selection();
@@ -118,8 +145,8 @@ class ListComponent extends Component<StyleListConfig> {
     } else {
       selection(idx);
     }
-  }
-  
+  };
+
   isSelected(idx: number) {
     if (!this.props.selection) {
       return false;
@@ -128,19 +155,28 @@ class ListComponent extends Component<StyleListConfig> {
     if (select instanceof globalThis.Set) {
       return select.has(idx);
     }
-    return select === idx
+    return select === idx;
   }
 
   render() {
-    return h('ul', {
-      onClick: this.onClick,
-      style: this.props.style.style()
-    },
-      this.props.body().map((v, idx, all) => h('li', {
-        'data-id': idx,
-        style: this.props.style.itemStyle(idx, all.length),
-        ...(this.isSelected(idx) ? { 'data-selected': true } : {}),
-      }, v?.render())));
+    return h(
+      'ul',
+      {
+        onClick: this.onClick,
+        style: this.props.style.style(),
+      },
+      this.props.body().map((v, idx, all) =>
+        h(
+          'li',
+          {
+            'data-id': idx,
+            style: this.props.style.itemStyle(idx, all.length),
+            ...(this.isSelected(idx) ? { 'data-selected': true } : {}),
+          },
+          v?.render()
+        )
+      )
+    );
   }
 }
 

@@ -70,12 +70,13 @@ type Never<T> = {
     ? never
     : K]: T[K];
 };
-export type PickValue<T, V=T> = {
+export type PickValue<T, V = T> = {
   [K in keyof T as T[K] extends V
-  ? K extends 'prototype' ? never : K
-  : never
-  ]: T[K];
-}
+    ? K extends 'prototype'
+      ? never
+      : K
+    : never]: T[K];
+};
 
 export type Constructor = new (...args: any) => any;
 
@@ -92,15 +93,18 @@ export type KeyOf<T extends Constructor, V extends Constructor = T> =
     >
   | InstanceType<V>;
 
-  export interface Identifiable {
-    id:string;
-  }
+export interface Identifiable {
+  id: string;
+}
 
-  export type ID = Identifiable['id'];
-  
-  export interface Hashable {
+export type ID = Identifiable['id'];
 
-  }
+export interface Hashable {}
 
-type D = '.' | ''
-export type KeyPath<T,S> = S extends `${D}${infer P extends keyof T & string}.${infer Rest}` ? KeyPath<T[P],Rest> : S extends keyof T ? T[S] : never;
+type D = '.' | '';
+export type KeyPath<T, S> = S extends `${D}${infer P extends keyof T &
+  string}.${infer Rest}`
+  ? KeyPath<T[P], Rest>
+  : S extends keyof T
+  ? T[S]
+  : never;

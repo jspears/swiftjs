@@ -54,7 +54,7 @@ export const urlById = (id: keyof References, doc: SwiftDoc) => {
   return doc?.references?.[id]?.url;
 };
 
-export async function readDoc(name: string): Promise<SwiftDoc| undefined> {
+export async function readDoc(name: string): Promise<SwiftDoc | undefined> {
   name = name
     .replace('/documentation/swiftui/', '')
     .replace(/(?:\.json)?$/, '.json');

@@ -3,7 +3,7 @@ import { View } from './View';
 import type { Content } from './View';
 
 export class NavigationMixin {
-  protected _navigationTitle?:string;
+  protected _navigationTitle?: string;
   sheet(opts: {
     isPresented: Bindable<boolean>;
     onDismiss(): void;

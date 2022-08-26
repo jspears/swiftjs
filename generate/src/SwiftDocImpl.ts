@@ -75,7 +75,9 @@ export class SwiftDocImpl {
     }
     return Object.values(this.references).filter((v: ReferenceType) => {
       return (
-        v?.identifier.startsWith(this.identifier + '/') && has(v, 'role') && v?.role === 'symbol'
+        v?.identifier.startsWith(this.identifier + '/') &&
+        has(v, 'role') &&
+        v?.role === 'symbol'
       );
     });
   }
@@ -97,10 +99,10 @@ export class SwiftDocImpl {
     console.log('add struct ', ref);
     this.addProtocol(ref);
   }
-  addProtocol(ref:ReferenceType){
+  addProtocol(ref: ReferenceType) {
     try {
       return this._addProtocol;
-    }catch(e){
+    } catch (e) {
       console.warn(e);
     }
     return this;
@@ -108,7 +110,9 @@ export class SwiftDocImpl {
   _addProtocol(ref: ReferenceType) {
     const inherited = this.inherited();
     inherited.forEach(({ url }) =>
-      this.generator.registerType((url as string)?.replace('/documentation/swiftui/', ''))
+      this.generator.registerType(
+        (url as string)?.replace('/documentation/swiftui/', '')
+      )
     );
 
     let clz: ClassDeclaration;
@@ -121,15 +125,13 @@ export class SwiftDocImpl {
           .filter(({ title, role }) => title && role === 'symbol')
           .map((v) => v?.title) as string[],
       });
-      
+
       clz = this.source.addClass({
         isExported: true,
         name: this.title,
         docs: [ref.identifier],
       });
-
     } else {
-
       clz = this.source.addClass({
         isExported: true,
         extends:
@@ -137,15 +139,18 @@ export class SwiftDocImpl {
         name: this.title,
         docs: [ref.identifier],
       });
-
     }
     this.methods.forEach((v) => this.addPropertyTo(clz, v));
   }
   addImport(type: string, moduleSpecifier: string = `/${type}`) {
     try {
-      const decl = this.source.getImportDeclarations().find(v => v.getModuleSpecifier().getText().includes(moduleSpecifier));
+      const decl = this.source
+        .getImportDeclarations()
+        .find((v) =>
+          v.getModuleSpecifier().getText().includes(moduleSpecifier)
+        );
       if (decl != null) {
-        const named = decl.getNamedImports().map(v => v.getText());
+        const named = decl.getNamedImports().map((v) => v.getText());
         if (!named.includes(type)) {
           decl.addNamedImport(type);
         }
@@ -153,7 +158,7 @@ export class SwiftDocImpl {
       }
       this.source.addImportDeclaration({
         moduleSpecifier: `.${moduleSpecifier}`,
-        namedImports: [type]
+        namedImports: [type],
       });
     } catch (e) {
       console.trace(e);
@@ -174,23 +179,28 @@ export class SwiftDocImpl {
       this.addImport(type, './types');
       return;
     }
-    if (
-      !this.source.getClass(type)
-    ) {
+    if (!this.source.getClass(type)) {
       this.addImport(type);
       this.generator.registerType(type);
     }
-  }
+  };
   addPropertyTo(clz: ClassDeclaration, type: ReferenceType): this {
-    const orig = type['fragments']?.map(v=>v.text).join('');
+    const orig = type['fragments']?.map((v) => v.text).join('');
     const method = ClosureImpl.parseMethod(orig, this.addType);
-    const isSelfReturn = method.returnType === 'Self' || method.returnType.startsWith(`${clz.getName()}<`);
+    const isSelfReturn =
+      method.returnType === 'Self' ||
+      method.returnType.startsWith(`${clz.getName()}<`);
 
     try {
       const m = clz.addMethod({
         ...method,
         parameters: method.parameters,
-        returnType: w => w.write(isSelfReturn ? 'this' : method.returnType.replace(/\?$/, ' | unknown')),
+        returnType: (w) =>
+          w.write(
+            isSelfReturn
+              ? 'this'
+              : method.returnType.replace(/\?$/, ' | unknown')
+          ),
 
         docs: [type?.abstract?.[0]?.text].filter(Boolean) as string[],
       });
@@ -201,7 +211,6 @@ export class SwiftDocImpl {
     }
     return this;
   }
-
 }
 
 interface NameType {
@@ -209,4 +218,4 @@ interface NameType {
   name: string;
 }
 
-type Closure = { parameters: NameType[], returnType: string };
+type Closure = { parameters: NameType[]; returnType: string };

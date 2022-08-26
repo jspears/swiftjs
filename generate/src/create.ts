@@ -34,36 +34,37 @@ export function has<T, K>(v: unknown, k: PropertyKey): k is keyof T {
  */
 export const createProject = (
   tsConfigFilePath = `${__dirname}/../out/project`,
-  options:ProjectOptions ={ compilerOptions:{}}
+  options: ProjectOptions = { compilerOptions: {} }
 ) =>
   new Project({
     ...options,
-    compilerOptions:{
+    compilerOptions: {
       ...options?.compilerOptions,
-      rootDir:tsConfigFilePath,
-    }
+      rootDir: tsConfigFilePath,
+    },
   });
 
-
-
-
-export const isClosure = (v: string) =>{
-  const [_, parameters='', returnType=''] = /^\(\s*(.*)\s*\)\s*->\s*(.+?)$/.exec(v) || [];
-  if (!returnType){
+export const isClosure = (v: string) => {
+  const [_, parameters = '', returnType = ''] =
+    /^\(\s*(.*)\s*\)\s*->\s*(.+?)$/.exec(v) || [];
+  if (!returnType) {
     return;
   }
   return {
     parameters,
-    returnType
-  }
-}
+    returnType,
+  };
+};
 
-export function split(v?: string | undefined, pat = /\s*,\s*/): [string] | string[] {
+export function split(
+  v?: string | undefined,
+  pat = /\s*,\s*/
+): [string] | string[] {
   if (!v) {
     return [];
   }
   return v.split(pat).filter(Boolean);
 }
-export  function trim(v: string) {
+export function trim(v: string) {
   return v?.trim();
 }
