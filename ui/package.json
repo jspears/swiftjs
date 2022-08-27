@@ -28,7 +28,7 @@
     "ts-node": "^10.9.1"
   },
   "dependencies": {
-    "@tswift/CoreData":"^1.0.0",
+    "@tswift/coredata":"^1.0.0",
     "@tswift/util":"^1.0.0",
     "preact": "^10.10.2"
     }

@@ -21,14 +21,9 @@
     "url": "https://github.com/jspears/swiftjs/issues"
   },
   "homepage": "https://github.com/jspears/swiftjs#readme",
-  "dependencies": {
-    "lage": "^1.7.9",
-    "prettier": "^2.7.1",
-    "typescript": "^4.7.4"
-  },
   "workspaces": {
     "packages": [
-      "CoreData",
+      "coredata",
       "ui",
       "util",
       "todo",
@@ -37,6 +32,9 @@
     ]
   },
   "devDependencies": {
-    "lage": "1.7.9"
+    "lage": "^1.7.9",
+    "prettier": "^2.7.1",
+    "typescript": "^4.7.4"
+
   }
 }

@@ -21,7 +21,7 @@ var trailing: CGFloat*/
 export class PaddingMixin {
   protected _padding: CSSProperties = {};
 
-  padding(v: Config): this;
+  padding(v?: Config): this;
   padding(length: Num): this;
   padding(edge:EdgeKey[], l:Num):this;
   padding(edge: EdgeInsets, l:Num): this;

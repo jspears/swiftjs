@@ -6,7 +6,7 @@
 //
 
 //import 'SwiftUI';
-//import CoreData
+//import coredata
 import {
   Capsule,
   Color,
@@ -36,7 +36,7 @@ import {
   FetchedResults,
   NSSortDescriptor,
   ViewContext,
-} from '@tswift/CoreData';
+} from '@tswift/coredata';
 import { Item, ViewContextMethods, categories, ItemType } from './Models';
 
 //https://raw.githubusercontent.com/roman-luzgin/TodoAppSwiftUI3/main/TodoAppSwiftUI3/ToDoList.swift

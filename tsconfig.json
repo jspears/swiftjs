@@ -2,7 +2,7 @@
     "extends": "./tsconfig.base.json",
     "references": [
         {"path": "./ui"},
-        {"path": "./CoreData"},
+        {"path": "./coredata"},
         {"path": "./util"}       
     ],
     "exclude": [

@@ -13,7 +13,7 @@ class ItemCategoryClass {
     public id = UUID()
   ) {}
 }
-class ItemClass {
+export class ItemType {
   public dueDate?: Date;
   public toDoText?: string;
   public category?: string;
@@ -23,8 +23,7 @@ class ItemClass {
     context.add(this);
   }
 }
-export type ItemType = ItemClass;
-export const Item = swifty(ItemClass);
+export const Item = swifty(ItemType);
 export const ItemCategory = swifty(ItemCategoryClass);
 export type ItemCategoryType = InstanceType<typeof ItemCategoryClass>;
 

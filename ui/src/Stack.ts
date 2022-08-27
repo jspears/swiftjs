@@ -33,7 +33,7 @@ class StackClass extends Viewable<StackOptions> {
     height: 'fit-content',
   };
 
-  constructor(config:StackOptions | View, ...views:View[]){
+  constructor(config?:StackOptions | View, ...views:View[]){
     super(config, ...views);
     
     if (this.config?.alignment){

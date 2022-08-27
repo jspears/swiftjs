@@ -40,7 +40,7 @@ import {
   FetchedResults,
   NSSortDescriptor,
   ViewContext,
-} from '@tswift/CoreData';
+} from '@tswift/coredata';
 import {
   categories,
   ItemCategoryType,

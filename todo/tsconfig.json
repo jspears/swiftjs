@@ -7,7 +7,7 @@
   },
   "references": [
     {"path":"../util"},
-    {"path":"../CoreData"},
+    {"path":"../coredata"},
     {"path":"../ui"}
   ]
 }

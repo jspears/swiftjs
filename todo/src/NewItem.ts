@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 28.06.21.
 //
 
-import { ViewContext } from '@tswift/CoreData';
+import { ViewContext } from '@tswift/coredata';
 import {
   Button,
   Viewable,

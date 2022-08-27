@@ -9,6 +9,6 @@
   },
   "references": [
     {"path":"../util"},
-    {"path":"../CoreData"}
+    {"path":"../coredata"}
   ]
 }

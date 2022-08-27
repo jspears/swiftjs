@@ -65,7 +65,7 @@ describe('ParamParse', function(){
         expect(resp.params+'').to.eql('_:AccessibilityTraits');
         verify();
     });
-    it.only('should parse "func insert(AccessibilityTraits) -> (inserted: Bool, memberAfterInsert: AccessibilityTraits)"', function(){
+    it.skip('should parse "func insert(AccessibilityTraits) -> (inserted: Bool, memberAfterInsert: AccessibilityTraits)"', function(){
         const [addType, verify] = oneArg( 'Bool', 'AccessibilityTraits', 'Void');
 
 

@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 22.06.21.
 //
 import { withAnimation } from '@tswift/ui';
-import { ViewContext } from '@tswift/CoreData';
+import { ViewContext } from '@tswift/coredata';
 import { Item, ItemType } from './Categories';
 
 type AddItem = {

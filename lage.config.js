@@ -6,7 +6,9 @@ module.exports = {
     "test": [
       "build"
     ],
-    "lint": []
+    "lint": [
+      
+    ]
   },
   "npmClient": "yarn"
 };
