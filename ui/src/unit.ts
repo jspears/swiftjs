@@ -1,12 +1,19 @@
 import { Num } from '@tswift/util';
 
 export function isNum(v: unknown): v is Num {
+
   if (v === '.infinity') {
     return true;
   }
+
   if (typeof v === 'number') {
     return true;
   }
+
+  if (Number.isNaN(v)){
+    return false;
+  }
+
   return Number(v) + '' === v;
 }
 

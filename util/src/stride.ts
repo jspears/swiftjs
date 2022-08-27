@@ -1,26 +1,26 @@
-export function* stride(start: number, end?: number, step?: number) {
+export function* stride(from: number, to?: number, step?: number) {
   if (step == null) {
-    if (end == null) {
-      end = start;
-      start = 0;
+    if (to == null) {
+      to = from;
+      from = 0;
     }
     step = 1;
   } else {
-    if (end == null) {
-      end = start;
-      start = 0;
+    if (to == null) {
+      to = from;
+      from = 0;
     }
   }
-  if (start > end) {
-    for (; end <= start; start -= step) {
-      yield start;
+  if (from > to) {
+    for (; to <= from; from -= step) {
+      yield from;
     }
   } else {
-    for (; start < end; start += step) {
-      yield start;
+    for (; from < to; from += step) {
+      yield from;
     }
   }
-  return start;
+  return from;
 }
 
 interface Repeated<T> {
