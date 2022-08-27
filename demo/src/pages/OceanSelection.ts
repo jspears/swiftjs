@@ -30,7 +30,7 @@ const OceanRegion = swifty(
 );
 type OceanR = ReturnType<typeof OceanRegion>;
 
-export class OceanSeeView extends Viewable {
+export class OceanSelection extends Viewable<{}> {
   oceanRegions = [
     OceanRegion('Pacific', [
       Sea('Australasian Mediterranean'),
@@ -63,3 +63,5 @@ export class OceanSeeView extends Viewable {
       )
     ).navigationTitle('Oceans and Seas');
 }
+
+run(new OceanSelection())

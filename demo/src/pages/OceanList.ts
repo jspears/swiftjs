@@ -16,7 +16,7 @@ import {
   Viewable,
   CountSet,
 } from '@tswift/ui';
-import { run } from './run';
+import { run } from '../run';
 import Png from './SimpleList.png';
 
 class OceanClass implements Identifiable, Hashable {
@@ -52,3 +52,5 @@ export class OceanList extends Viewable {
     Text(`${multiSelection.count} selections`),
   ];
 }
+
+run(new OceanList());

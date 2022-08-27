@@ -1,13 +1,33 @@
 @import url("./reset.css");
 
 #app {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  justify-content: center;
-  flex-grow: 100%;
-  text-align: center;
+  background-image: none;
+  width: 321px;
+  height: 571px;
+  display: block;
 }
+
+h2 {
+  font-size: 1.5rem;
+  padding: 2em 0;
+  line-height: 2;
+}
+
+a {
+  padding: 1em 0;
+  display: block;
+}
+
+ul {
+  padding: .5em 0;
+}
+
+ul>li {
+  padding: .5em 0;
+}
+
 body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: rgb(239, 238, 245);
+  padding: 1em;
 }

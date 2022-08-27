@@ -16,7 +16,7 @@ import {
   Viewable,
   CountSet,
 } from '@tswift/ui';
-import { run } from './run';
+import { run } from '../run';
 import Png from './SimpleList.png';
 
 const Ocean = swifty(

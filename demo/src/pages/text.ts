@@ -1,5 +1,5 @@
-import { Text, VStack, Font, Color, Viewable } from '@tswift/ui';
-import { run } from './run';
+import { Text, VStack,  Color, Viewable } from '@tswift/ui';
+import { run } from '../run';
 import Png from './Text.png';
 
 export class TextExample extends Viewable {

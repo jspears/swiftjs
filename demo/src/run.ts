@@ -1,9 +1,5 @@
-// // import {MainScreen} from './MainScreen';
 
-// // console.log('hello', MainScreen);
-// import {render} from '@tswift/ui';
-import { Constructor, CSSProperties, render, View } from '@tswift/ui';
-import './style.css';
+import { CSSProperties, render, View } from '@tswift/ui';
 
 export function run(
   App: View,

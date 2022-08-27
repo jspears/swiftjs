@@ -10,6 +10,7 @@ import {
   FocusState,
   Bound,
 } from '@tswift/ui';
+import {run} from '../run';
 
 function validate(t: unknown) {
   return () => console.log('figure this out', t);
@@ -38,3 +39,4 @@ export class TextFieldDemo extends Viewable<{}> {
     Text(username).foregroundColor(emailFieldIsFocused ? '.red' : '.blue'),
   ];
 }
+run(new TextFieldDemo());
