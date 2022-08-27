@@ -4,11 +4,12 @@
   "private": true,
   "description": "Just playing around with TS syntax to make something swift like.",
   "scripts": {
-    "demo":"yarn workspace @tswift/demo dev",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "demo": "yarn workspace @tswift/demo dev",
+    "test": "lage test",
     "clean": "git clean -fdx",
-    "build":"tsc -b && cd demo && yarn build",
-    "format":"yarn prettier ./*/src/ --write"
+    "build": "lage build",
+    "format": "lage exec prettier ./src/ --write",
+    "lage": "lage"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/jspears/swiftjs#readme",
   "dependencies": {
+    "lage": "^1.7.9",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
   },
@@ -33,5 +35,8 @@
       "demo",
       "generate"
     ]
+  },
+  "devDependencies": {
+    "lage": "1.7.9"
   }
 }

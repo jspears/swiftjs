@@ -23,7 +23,6 @@
   },
   "devDependencies": {
     "@types/uuid": "^8.3.4",
-    "@tswift/util": "^1.0.0",
     "@types/mocha": "^9.1.1",
     "@types/chai": "^4.3.3",
     "@types/node": "^18.7.6",

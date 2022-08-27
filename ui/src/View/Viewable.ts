@@ -1,7 +1,7 @@
 import type { AlignmentKey } from '../Edge';
 import { isString, applyMixins, has, watchable } from '@tswift/util';
 import type { Bindable, Bound, Bounds } from '@tswift/util';
-import { Apperance } from './Apperance';
+import { ApperanceMixin } from './ApperanceMixin';
 import { PaddingMixin } from './PaddingMixin';
 import { PickerMixin } from './PickerMixin';
 import { Searchable } from './Searchable';
@@ -16,12 +16,14 @@ import { NavigationMixin } from './NavigationMixin';
 import { toNode } from '../dom';
 import { h, Component, Fragment } from 'preact';
 import { ListMixin } from './ListMixin';
+import { Font } from '../Font';
 
 export class ViewableClass<T = any> extends View {
   private watch = new Map<string, Bindable<any>>();
   protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
   private attrs = new Map<string, string | number>();
+  _font:Font = Font.body;
 
   constructor(config?: T | View, ...children: View[]) {
     super();
@@ -112,7 +114,7 @@ class ViewComponent extends Component<Props> {
 }
 
 export interface ViewableClass
-  extends Apperance,
+  extends ApperanceMixin,
     AnimationMixin,
     ControlMixin,
     EventsMixin,
@@ -125,7 +127,7 @@ export interface ViewableClass
     ShapeMixin {}
 export const Viewable = applyMixins(
   ViewableClass,
-  Apperance,
+  ApperanceMixin,
   AnimationMixin,
   ControlMixin,
   EventsMixin,
