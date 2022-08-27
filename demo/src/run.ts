@@ -17,14 +17,21 @@ export function run(
 
   render(App, appNode);
   Object.assign(appNode.style, unstyle);
-  document.querySelector('#background-input')
+  document
+    .querySelector('#background-input')
     ?.addEventListener('change', (e) => {
       if (appNode) {
         if ((e.target as HTMLInputElement).checked) {
-          Object.keys(unstyle).forEach( appNode.style.removeProperty, appNode.style)
+          Object.keys(unstyle).forEach(
+            appNode.style.removeProperty,
+            appNode.style
+          );
           Object.assign(appNode.style, style);
         } else {
-          Object.keys(style).forEach( appNode.style.removeProperty, appNode.style)
+          Object.keys(style).forEach(
+            appNode.style.removeProperty,
+            appNode.style
+          );
           Object.assign(appNode.style, unstyle);
         }
       }

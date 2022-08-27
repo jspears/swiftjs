@@ -8,7 +8,7 @@
     "test": "lage test",
     "clean": "git clean -fdx",
     "build": "lage build",
-    "format": "lage exec prettier ./src/ --write",
+    "format": "prettier ./*/{src,test}/**/*.ts --write",
     "lage": "lage"
   },
   "repository": {

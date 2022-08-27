@@ -85,11 +85,17 @@ export type KeyOfTypeWithType<
   V extends Constructor = T
 > = KeyOf<T, V>;
 
-export type KeyOf<T extends new (...args:any)=>any, V = InstanceType<T>> =
-  Dot<keyof {
-        [K in keyof T as T[K] extends V ?  K extends 'prototype' ? never : K : never]: true;
-  }> | InstanceType<T>;
-
+export type KeyOf<T extends new (...args: any) => any, V = InstanceType<T>> =
+  | Dot<
+      keyof {
+        [K in keyof T as T[K] extends V
+          ? K extends 'prototype'
+            ? never
+            : K
+          : never]: true;
+      }
+    >
+  | InstanceType<T>;
 
 export interface Identifiable {
   id: string;

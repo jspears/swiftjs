@@ -177,22 +177,24 @@ export function keyBind<T, K extends string>(
   return null as any;
 }
 
-export function fromKey<T extends Constructor, C extends KeyOf<T> >(type:T, key:C):C extends undefined ? undefined : InstanceType<T> {
-
-  if (typeof key === 'string'){
-    const ret =  type[key.slice(1) as keyof T] as InstanceType<T>;
-    if (!ret){
-      console.warn(`Did not find an instance for '${key}' on '${type?.name}'`)
+export function fromKey<T extends Constructor, C extends KeyOf<T>>(
+  type: T,
+  key: C
+): C extends undefined ? undefined : InstanceType<T> {
+  if (typeof key === 'string') {
+    const ret = type[key.slice(1) as keyof T] as InstanceType<T>;
+    if (!ret) {
+      console.warn(`Did not find an instance for '${key}' on '${type?.name}'`);
     }
-    return ret
+    return ret;
   }
   return key as InstanceType<T>;
 }
 
-export function fromEnum<T, C extends Dot<T> = Dot<T>>(e:T, key:C):T{
-  if (typeof key === 'string'){
+export function fromEnum<T, C extends Dot<T> = Dot<T>>(e: T, key: C): T {
+  if (typeof key === 'string') {
     const akey = key.slice(1);
-    if (has(e, akey)){
+    if (has(e, akey)) {
       return e[akey];
     }
   }

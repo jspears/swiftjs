@@ -23,21 +23,25 @@ export class TextExample extends Viewable {
       .navigationTitle('Fonts Sizes');
 }
 
-run(new TextExample(), {
-  backgroundRepeat: 'no-repeat',
-  backgroundPositionX:'0',
-  backgroundPositionY:'0',
-  backgroundImage: `url(${Png})`,
-  width: '321px',
-  height: '571px',
-  display: 'flex',
-  flex: '1',
-  alignItems: 'center'
-}, {
-  backgroundImage: 'none',
-  width: '321px',
-  height: '571px',
-  display: 'flex',
-  flex: '1',
-  alignItems: 'center'
-});
+run(
+  new TextExample(),
+  {
+    backgroundRepeat: 'no-repeat',
+    backgroundPositionX: '0',
+    backgroundPositionY: '0',
+    backgroundImage: `url(${Png})`,
+    width: '321px',
+    height: '571px',
+    display: 'flex',
+    flex: '1',
+    alignItems: 'center',
+  },
+  {
+    backgroundImage: 'none',
+    width: '321px',
+    height: '571px',
+    display: 'flex',
+    flex: '1',
+    alignItems: 'center',
+  }
+);

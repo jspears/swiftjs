@@ -25,20 +25,20 @@ export class Font {
   public readonly style: CSSProperties = {
     fontFamily: 'system-ui',
     fontSize: '18px',
-    lineHeight:'1.2'
+    lineHeight: '1.2',
   };
 
   constructor(font?: Font | CSSProperties, css?: CSSProperties) {
     Object.assign(this.style, font instanceof Font ? font.style : font, css);
   }
 
-  static largeTitle = new Font({ fontSize: '30px', lineHeight:'1.2' });
-  static title = new Font({ fontSize: '26px', });
-  static title2 = new Font({ fontSize: '18px', lineHeight:'1.6'});
-  static title3 = new Font({ fontSize: '18px'});
-  static headline = new Font({ fontSize: '16px', lineHeight:'1.6' });
+  static largeTitle = new Font({ fontSize: '30px', lineHeight: '1.2' });
+  static title = new Font({ fontSize: '26px' });
+  static title2 = new Font({ fontSize: '18px', lineHeight: '1.6' });
+  static title3 = new Font({ fontSize: '18px' });
+  static headline = new Font({ fontSize: '16px', lineHeight: '1.6' });
   static subheadline = new Font({ fontSize: '14px' });
-  static body = new Font({ fontSize: '16px', lineHeight:'1.2' });
+  static body = new Font({ fontSize: '16px', lineHeight: '1.2' });
   static callout = new Font({ fontSize: '16px' });
   static caption = new Font({ fontSize: '12px' });
   static caption2 = new Font({ fontSize: '20px' });
@@ -83,7 +83,7 @@ export class Font {
       lineHeight: Leading[leading.slice(1) as keyof typeof Leading] || leading,
     });
   }
-  underline(){
+  underline() {
     return this.apply({
       textDecoration: 'underline',
     });

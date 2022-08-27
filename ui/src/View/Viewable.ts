@@ -23,7 +23,7 @@ export class ViewableClass<T = any> extends View {
   protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
   private attrs = new Map<string, string | number>();
-  _font:Font = Font.body;
+  _font: Font = Font.body;
 
   constructor(config?: T | View, ...children: View[]) {
     super();

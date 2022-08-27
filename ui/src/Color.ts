@@ -11,7 +11,7 @@ type HSL = {
 };
 
 export class Color implements ShapeStyle {
-  constructor(public readonly value: string | RGB | HSL) { }
+  constructor(public readonly value: string | RGB | HSL) {}
   static black = new Color('black');
   static blue = new Color('blue');
   static brown = new Color('brown');
@@ -28,9 +28,9 @@ export class Color implements ShapeStyle {
   static teal = new Color('teal');
   static white = new Color('white');
   static yellow = new Color('yellow');
-  static accentColor: Color
-  static primary: Color
-  static secondary: Color
+  static accentColor: Color;
+  static primary: Color;
+  static secondary: Color;
 
   toString() {
     return this.value + '';
@@ -43,8 +43,4 @@ export class Color implements ShapeStyle {
   }
 }
 
-
-
-export type ColorKey = KeyOf<typeof Color>
-
-
+export type ColorKey = KeyOf<typeof Color>;
