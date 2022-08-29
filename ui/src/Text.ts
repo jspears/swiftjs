@@ -1,14 +1,14 @@
 import { Viewable } from './View';
 import { swifty } from '@tswift/util';
 import { h, Fragment } from 'preact';
-import { CSSProperties } from './types';
-interface TextConfig {}
-class TextClass extends Viewable<TextConfig> {
+class TextClass extends Viewable<string> {
   public constructor(private text: string) {
-    super();
+      super();
+    this.background('.white');
   }
+
   render() {
-    return h('span', { style: this._font?.style }, this.text);
+    return h('span', { style: this.asStyle({display:'block'}) }, this.text);
   }
 }
 

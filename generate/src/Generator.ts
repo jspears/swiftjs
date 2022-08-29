@@ -25,32 +25,7 @@ export class Generator {
     public projectDir: string = `${__dirname}/../out/project`,
     private srcDir: string = `${projectDir}/src`,
     typesSource: string = `
-    export class Bool {
-      static True = new Bool(true);
-      static False =  new Bool(false);
-      private constructor(private value:boolean){
-    
-      }
-      toggle(){
-        this.value = !this.value;
-      }
-      valueOf(){
-        return this.value;
-      }
-    };
-export type Int = number;
-export class Optional<T> {
-    static none = new Optional<any>(null);
-    static some<T>(v:T){ return new Optional<T>(v)}
-    constructor(public value:T){
-    }
-}
-export type Float = number;
-export type Character = string;
-export type Double = number;
-//unknown is more accurate than typescript void which should be avoided almost all the time.
-export type Void = unknown;
-       
+export {Bool, Int, Float, Character, Double, Void, Optional} from '@swiftui/util';    
    `
   ) {
     refreshDir(srcDir);

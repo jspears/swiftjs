@@ -3,7 +3,7 @@ export type Dot<T> = T extends string ? `.${T}` : never;
 
 export type EnumOrString<T> = T | Dot<keyof T>;
 export type Listen<T> = (e: T) => unknown;
-export type Bindable<T> = ((t?: T) => T) & {
+export type Bindable<T> = ((t?: T ) => T) & {
   on(listen: Listen<T>): () => void;
   clear(): void;
 };
@@ -61,15 +61,6 @@ export interface Bounds {
   maxHeight: Num;
 }
 
-export type Bool = boolean;
-
-type Never<T> = {
-  [K in keyof T as T[K] extends never
-    ? never
-    : K extends 'prototype'
-    ? never
-    : K]: T[K];
-};
 export type PickValue<T, V = T> = {
   [K in keyof T as T[K] extends V
     ? K extends 'prototype'
@@ -112,3 +103,15 @@ export type KeyPath<T, S> = S extends `${D}${infer P extends keyof T &
   : S extends keyof T
   ? T[S]
   : never;
+
+export class Optional<T> {
+    static none = new Optional<any>(null);
+    static some<T>(v:T){ return new Optional<T>(v)}
+    constructor(public value:T){
+    }
+}
+export type Float = number;
+export type Character = string;
+export type Double = number;
+//unknown is more accurate than typescript void which should be avoided almost all the time.
+export type Void = unknown;

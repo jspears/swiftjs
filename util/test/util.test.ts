@@ -1,4 +1,4 @@
-import { keyPath, watchable } from '@tswift/util';
+import { Dot, fromKey, KeyOf, keyPath, watchable } from '@tswift/util';
 import { expect } from 'chai';
 
 describe('util', function () {
@@ -50,3 +50,21 @@ const mockFn = <P extends any[]>(
     () => expect(args).to.eql(expected),
   ];
 };
+
+describe('fromKey', function(){
+
+  class Test {
+    static foo = new Test();
+    static bar = new Test();
+  }
+
+  type TestKey = KeyOf<typeof Test>;
+
+  it('should return a value for key', function(){
+    expect(fromKey(Test, '.foo' as TestKey)).to.eql(Test.foo);
+  })
+  it('should return a value for as value', function(){
+    expect(fromKey(Test, Test.foo)).to.eql(Test.foo);
+  })
+
+})

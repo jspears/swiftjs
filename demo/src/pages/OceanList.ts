@@ -15,6 +15,7 @@ import {
   UUID,
   Viewable,
   CountSet,
+  VStack,
 } from '@tswift/ui';
 import { run } from '../run';
 import Png from './SimpleList.png';
@@ -40,14 +41,12 @@ export class OceanList extends Viewable {
     { $multiSelection }: Bound<this>,
     { oceans, multiSelection }: this
   ) => [
-    NavigationView(
-      List({
-        data: oceans,
-        selection: $multiSelection,
-        content: ($0) => Text($0.name),
-      })
-        .navigationTitle('Oceans')
-        .toolbar(EditButton)
+    NavigationView (
+      List(oceans,  $multiSelection, 
+        $0=>Text($0.name)
+      )
+      .navigationTitle("Oceans")
+      .toolbar (EditButton() )
     ),
     Text(`${multiSelection.count} selections`),
   ];

@@ -2,35 +2,32 @@ import { Color } from '../Color';
 import type { ColorKey } from '../Color';
 import type {
   AlignmentKey,
-  EdgeKey,
   VerticalEdge,
   VirticalEdgeSetKey,
 } from '../Edge';
-import { Shape } from '../Shape';
 import {
   Dot,
-  fromEnum,
   fromKey,
   KeyOf,
-  KeyOfTypeWithType,
   Num,
 } from '@tswift/util';
 import { View } from './View';
 import type { Content } from './View';
 import type { ShapeStyle } from '../ShapeStyle';
 import { CSSProperties } from '../types';
+import { Inherit } from '../Inherit';
 
 export class ColorScheme {
   static readonly light = new ColorScheme('light');
   static readonly color = new ColorScheme('color');
-  constructor(public name: string) {}
+  constructor(public name: string) { }
 }
 
 export class Visibility {
   static readonly automatic = new Visibility('automatic');
   static readonly hidden = new Visibility('hidden');
   static readonly visible = new Visibility('visible');
-  constructor(public name: string) {}
+  constructor(public name: string) { }
 }
 
 export type VisibilityKey = KeyOf<typeof Visibility>;
@@ -42,28 +39,53 @@ class ToggleStyleClass {
   static button = new ToggleStyleClass('button');
   static switcher = new ToggleStyleClass('switcher');
   static automatic = new ToggleStyleClass('automatic');
-  constructor(protected name: string) {}
+  constructor(protected name: string) { }
 }
 
 export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   protected _border?: CSSProperties;
-  protected _color?: Color;
-  protected _accentColor?: Color;
-  protected _foregroundColor?: Color;
-  protected _listRowTint?: [Color, VirticalEdgeSetKey?];
-  protected _listSectionSeperatorTint?: [Color, VirticalEdgeSetKey?];
-  protected _tint?: Color;
-  protected _colorScheme?: ColorScheme;
+  @Inherit
+  _color?: Color;
+  @Inherit
+  _accentColor?: Color;
+  @Inherit
+  _foregroundColor?: Color;
+  @Inherit
+  _listRowTint?: [Color, VirticalEdgeSetKey?];
+  @Inherit
+  _listSectionSeperatorTint?: [Color, VirticalEdgeSetKey?];
+  @Inherit
+  _tint?: Color;
+  @Inherit
+  _colorScheme?: ColorScheme;
+  @Inherit
+  _backgroundColor?: CSSProperties;
+  @Inherit
+  _hidden?: boolean;
+  @Inherit
+  _labelsHidden?: boolean;
+  _shadow?: { color: ColorKey; radius: Num; x: Num; y: Num; };
+  _zIndex?: Num;
+  @Inherit
+  _listRowSeparator?: { visibility: Visibility; edges: VerticalEdge[] | undefined; };
+  _fixedSize?: { horizontal?: boolean; vertical?: boolean; } 
+ 
+  toCSS():CSSProperties {
+    const ret:CSSProperties = {};
 
+    return ret;
+  }
   color(c?: ColorKey | undefined): this {
-    this._color =
-      typeof c === 'string' ? Color[c.slice(1) as keyof typeof Color] : c;
+    if (c){
+      this._color = fromKey(Color, c);
+    }
     return this;
   }
 
   accentColor(c?: ColorKey): this {
-    this._accentColor =
-      typeof c === 'string' ? Color[c.slice(1) as keyof typeof Color] : c;
+    if(c){
+    this._accentColor = fromKey(Color, c);
+    }
     return this;
   }
 
@@ -86,8 +108,8 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
       typeof c === 'string'
         ? Color[c.slice(1) as keyof typeof Color]
         : c instanceof Color
-        ? c
-        : undefined;
+          ? c
+          : undefined;
     return this;
   }
 
@@ -127,29 +149,36 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   }
 
   background(
-    alignment: AlignmentKey | ColorKey | string | View,
+    alignment: AlignmentKey | ColorKey | View,
     content?: ShapeStyle
   ): this {
+    this._backgroundColor = fromKey(Color, alignment);
+
     return this;
   }
 
   hidden() {
+    this._hidden = true;
     return this;
   }
 
   labelsHidden() {
+    this._labelsHidden = true;
     return this;
   }
 
   shadow(def: { color: ColorKey; radius: Num; x: Num; y: Num }) {
+    this._shadow = def;
     return this;
   }
 
   zIndex(num: Num) {
+    this._zIndex = num;
     return this;
   }
 
   listRowSeparator(visibility: VisibilityKey, edges?: VerticalEdge[]) {
+    this._listRowSeparator = { visibility: fromKey(Visibility, visibility), edges };
     return this;
   }
 
@@ -157,14 +186,35 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  fixedSize(e?: Partial<Fixed>): this;
 
-  fixedSize(fixed?: boolean | Partial<Fixed>) {
+  fixedSize(fixed?: boolean | '.horizontal' | '.vertical') {
+    if (fixed != null) {
+      if (!this._fixedSize){
+        this._fixedSize = {}
+      }
+      if (typeof fixed === 'string'){
+        Object.assign(this._fixedSize, dotToProp(true, fixed));
+      }else{
+        Object.assign(this._fixedSize, dotToProp(fixed, '.vertical', '.horizontal'));
+      }
+    }
     return this;
   }
 }
 
-interface Fixed {
-  horizontal: boolean;
-  vertical: boolean;
+// const dotToProp = <T, K extends keyof T & string= keyof T & string, V extends T[K] = T[K]>( v:V, ...t:`.${K}`[]):{[B in K]:T[B]} => {
+//   return t.reduce((ret, k)=>{
+//     ret[k.slice(1)] = v;
+//     return ret;
+//   }, {} as any);
+// }
+type DotToProp<K extends string[], V> = K extends [infer First extends string, ...infer Rest extends string[] ] ? 
+  First extends `.${infer K extends string}` ? {[k in K]:V} & DotToProp<Rest, V> : {} : {};
+
+const dotToProp = <V, K extends string[] = string[]>(v:V, ...args:K):DotToProp<K,V>=>{
+    return args.reduce((ret, k)=>{
+    ret[k.slice(1)] = v;
+    return ret;
+  }, {} as any);
 }
+export const v = dotToProp(true, '.vertical', '.horizontal');

@@ -5,6 +5,9 @@
   width: 321px;
   height: 571px;
   display: block;
+  box-sizing: content-box;
+  outline: 10px solid black !important;
+  overflow: hidden;
 }
 
 h2 {

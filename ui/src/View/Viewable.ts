@@ -17,6 +17,7 @@ import { toNode } from '../dom';
 import { h, Component, Fragment } from 'preact';
 import { ListMixin } from './ListMixin';
 import { Font } from '../Font';
+import { CSSProperties } from '../types';
 
 export class ViewableClass<T = any> extends View {
   private watch = new Map<string, Bindable<any>>();
@@ -61,23 +62,26 @@ export class ViewableClass<T = any> extends View {
     return this;
   }
 
-  toolbar(id: string, content?: Content): this;
-  toolbar(content?: Content): this;
-  toolbar(id?: string | Content, content?: Content) {
-    return this;
-  }
+
   tag(v: string) {
     return this;
   }
   matchedGeometryEffect(effect: { id: string; in?: string }) {
     return this;
   }
-
+  asStyle(...css:CSSProperties[]):CSSProperties {
+    const background = this._backgroundColor;
+    const color = this._foregroundColor;
+    return Object.assign({}, this._font?.style, 
+      background,
+      color,
+      this._border, this._padding, ...css);
+  }
   body?(
     bound: Bound<this>,
     self: this
   ): View | (View | undefined)[] | undefined;
-
+    
   render() {
     if (this.body) {
       const body = () => this.body?.(this.bound(), this);

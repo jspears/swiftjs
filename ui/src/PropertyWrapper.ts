@@ -1,6 +1,7 @@
 import { AnimationKey } from './Animation';
 import { View, ViewableClass } from './View/index';
-
+import { EnvironmentValues, EnvironmentValuesKeys } from './EnvironmentValues';
+import { Dot } from '@tswift/util';
 export const Namespace = Object.assign(
   (target: Object, propertyKey: string) => {},
   { ID: 'ID' }
@@ -21,9 +22,13 @@ export function State(target: Object, propertyKey: PropertyKey) {
   });
 }
 
-export function Environment(property: string) {
+export function Environment(property: EnvironmentValuesKeys) {
   return function (target: Object, propertyKey: PropertyKey) {
-    console.log('Environment(): called');
+    Reflect.defineProperty(target, propertyKey, {
+      get(){
+        return EnvironmentValues[property.slice(1) as keyof typeof EnvironmentValues];
+      }
+    })
   };
 }
 // @FetchRequest(

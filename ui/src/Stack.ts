@@ -58,16 +58,18 @@ class StackClass extends Viewable<StackOptions> {
   render() {
     return h(
       'div',
-      { style: Object.assign({}, this._border, this._padding, this.style) },
+      { style:this.asStyle(this.style) },
       super.render()
     );
   }
 }
+
 class VStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
     gridAutoFlow: 'row',
   });
 }
+
 export const VStack = swifty(VStackClass);
 export const LazyVStack = VStack;
 

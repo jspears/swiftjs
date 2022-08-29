@@ -4,7 +4,8 @@ import {readdirSync, writeFileSync} from 'fs';
 const dirname = __dirname;
 
 const writeHtml = (name:string, 
-  content:string = `<h2>TSwift: ${name}</h2><a href="./index.html">&lt; back</a><div id="app"></div><script type="module" src="/src/pages/${name}.ts"></script>`,
+  content:string = `<h2>TSwift: ${name}</h2><a href="./index.html">&lt; back</a>
+  <div id="app"></div><script type="module" src="/src/pages/${name}.ts"></script>`,
   )=>{
   const html = `${dirname}/public/${name}.html`;
   writeFileSync(html, `<!DOCTYPE html>

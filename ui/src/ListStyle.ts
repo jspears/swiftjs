@@ -19,6 +19,7 @@ export class ListStyle {
       padding: '12px 0 10px 0',
     }
   ) {}
+ 
   style() {
     return this._style;
   }
@@ -26,6 +27,7 @@ export class ListStyle {
   itemStyle(idx: number, total: number): CSSProperties {
     return Object.assign({}, this._itemStyle, {
       borderColor: idx + 1 == total ? 'transparent' : 'rgb(226,226,228)',
+      cursor:'pointer'
     });
   }
   bordered(bool: boolean): this {

@@ -1,8 +1,8 @@
 
-import { CSSProperties, render, View } from '@tswift/ui';
+import { App, CSSProperties, render, View } from '@tswift/ui';
 
 export function run(
-  App: View,
+  View: View,
   style: CSSProperties = {},
   unstyle: CSSProperties = {},
   appNode: HTMLDivElement | null = document.querySelector('#app')
@@ -11,7 +11,7 @@ export function run(
     return;
   }
 
-  render(App, appNode);
+  render(App(View), appNode);
   Object.assign(appNode.style, unstyle);
   document
     .querySelector('#background-input')

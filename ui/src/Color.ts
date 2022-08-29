@@ -28,9 +28,9 @@ export class Color implements ShapeStyle {
   static teal = new Color('teal');
   static white = new Color('white');
   static yellow = new Color('yellow');
-  static accentColor: Color;
-  static primary: Color;
-  static secondary: Color;
+  static accentColor: Color = Color.blue;
+  static primary: Color = Color.black;
+  static secondary: Color = Color.gray;
 
   toString() {
     return this.value + '';

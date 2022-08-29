@@ -7,6 +7,7 @@ import {
   isBindable,
   isFunction,
   KeyPath,
+  OrigSet,
 } from '@tswift/util';
 import type { Bindable, Constructor, Identifiable, Int } from '@tswift/util';
 import type { On } from './View/EventsMixin';
@@ -16,8 +17,8 @@ import { bindToState } from './state';
 
 type HasSelection<T> = {
   selection: T extends Identifiable
-    ? Bindable<CountSet<T['id'] | undefined>> | T['id'] | undefined
-    : Bindable<CountSet<T> | T>;
+    ? Bindable<CountSet<T['id']>|  T['id']  | undefined>
+    : Bindable<CountSet<T> | T | undefined>;
 };
 
 type RowContent<T> = {
@@ -65,7 +66,7 @@ export class ListClass<T> extends Viewable<ListConfig<T>> {
     content: RowContent<T>['content']
   );
   constructor(selection: HasSelection<T>['selection'], ...views: View[]);
-  constructor(config: DataConfig<T>);
+  constructor(config: ListConfig<T>, ...views:View[]);
   constructor(config: HasSelection<T>, ...views: View[]);
   constructor(...views: View[]);
   constructor(...all: unknown[]) {
@@ -110,7 +111,7 @@ export class ListClass<T> extends Viewable<ListConfig<T>> {
   render(): VNode<any> {
     return h(
       ListComponent,
-      { body: this.body, style: this.style } as StyleListConfig,
+      { body: this.body, selection:this.config.selection, style: this.style } as StyleListConfig,
       []
     );
   }
@@ -131,12 +132,12 @@ class ListComponent extends Component<StyleListConfig> {
     if (!selection) {
       return;
     }
-    const idx = (e.target as HTMLElement).dataset.id;
+    const idx = findTarget((n)=>n.dataset?.id != null, e.target as HTMLElement)?.dataset.id;
     if (!idx) {
       return;
     }
     const select = selection();
-    if (select instanceof Set) {
+    if (select instanceof OrigSet) {
       const set = Set(select as Set<any>);
       if (set.size === set.add(idx).size) {
         set.delete(idx);
@@ -185,3 +186,11 @@ export const List = Object.assign(
     new ListClass<T>(...args),
   ListClass
 );
+
+const findTarget = (find:(v:HTMLElement)=>boolean, e?:HTMLElement | null, ):HTMLElement | undefined=>{
+  if (!e)return;
+  if (find(e)){
+    return e;
+  }
+  return findTarget(find, e.parentElement);
+}

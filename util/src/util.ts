@@ -1,6 +1,5 @@
 import {
   Bindable,
-  Bool,
   Constructor,
   Dot,
   Identifiable,
@@ -11,31 +10,24 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 export function swifty<T, A extends any[] = []>(clazz: {
-  new (...args: A): T;
+  new(...args: A): T;
 }) {
   return Object.assign(
     (...args: A): T => new clazz(...args),
     clazz.constructor
   );
 }
-const GSet = globalThis.Set;
-export type CountSet<T> = InstanceType<typeof GSet<T>> & {
-  count: number;
-};
+export const OrigSet = globalThis.Set;
+
 export const Set = <T>(
-  ...args: ConstructorParameters<typeof GSet<T>>
-): CountSet<T> => {
-  const ret = new GSet<T>(...args);
+  ...args: ConstructorParameters<typeof OrigSet<T>>
+) => new CountSet(...args);
 
-  Object.defineProperty(ret, 'count', {
-    get() {
-      return ret.size;
-    },
-  });
-
-  return ret as CountSet<T>;
-};
-
+export class CountSet<T> extends OrigSet<T> {
+  get count() {
+    return this.size;
+  }
+}
 export const UUID = (): Identifiable['id'] => {
   return uuidv4();
 };
@@ -86,12 +78,12 @@ export function isString(v: unknown): v is string {
 export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(
   clazz: T
 ): (
-  property: K
-) => K extends `.${infer R extends keyof T & string}`
-  ? T[R]
-  : K extends T
-  ? K
-  : never;
+    property: K
+  ) => K extends `.${infer R extends keyof T & string}`
+    ? T[R]
+    : K extends T
+    ? K
+    : never;
 
 //export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(clazz:T, property:K)=>K extends `.${infer R extends keyof T & string}` ? K extends T ? K : never;
 
@@ -118,14 +110,12 @@ export function applyMixins<T extends Constructor>(
         derivedCtor.prototype,
         name,
         Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
-          Object.create(null)
+        Object.create(null)
       );
     });
   });
   return derivedCtor;
 }
-
-export const toggle = (v: Bindable<Bool>) => () => v(!v());
 
 export function isBindable<T>(v: unknown): v is Bindable<T> {
   if (typeof v === 'function') {
@@ -156,7 +146,13 @@ export function isFunction(v: unknown): v is (...args: any) => any {
  * @param path
  * @returns
  */
-export function keyPath<T, K extends string>(obj: T, path: K): KeyPath<T, K> {
+export function keyPath<T, K extends string>(obj: T, path: K): T extends (undefined | null) ? undefined : K extends (undefined | null | '') ? T : KeyPath<T, K> {
+  if (obj == null){
+    return undefined as any;
+  }
+  if(!path){
+    return obj as any;
+  }
   const key: string = path[0] === '.' ? path.slice(1) : path;
   let ret: any = obj;
   let idx: number;
@@ -170,33 +166,18 @@ export function keyPath<T, K extends string>(obj: T, path: K): KeyPath<T, K> {
   return ret?.[key.slice(from) as keyof unknown];
 }
 
-export function keyBind<T, K extends string>(
-  t: T,
-  path: K
-): Bindable<KeyPath<T, K>> {
-  return null as any;
-}
+export function fromKey<T, K extends (Dot<keyof T> | (T extends Constructor ? InstanceType<T> : never)) = Dot<keyof T>>(type: T, key: K):
+  K extends `.${infer P extends keyof T & string}` ? T[P] : K extends string ? undefined : K {
 
-export function fromKey<T extends Constructor, C extends KeyOf<T>>(
-  type: T,
-  key: C
-): C extends undefined ? undefined : InstanceType<T> {
-  if (typeof key === 'string') {
-    const ret = type[key.slice(1) as keyof T] as InstanceType<T>;
-    if (!ret) {
-      console.warn(`Did not find an instance for '${key}' on '${type?.name}'`);
+  if (typeof key == 'string') {
+    const ret = (type as any)[key.slice(1)];
+    if (ret == null) {
+      console.warn(`Did not find an instance for '${key}' on '${type}'`);
+      return undefined as any;
     }
+
     return ret;
   }
-  return key as InstanceType<T>;
+  return key as any;
 }
 
-export function fromEnum<T, C extends Dot<T> = Dot<T>>(e: T, key: C): T {
-  if (typeof key === 'string') {
-    const akey = key.slice(1);
-    if (has(e, akey)) {
-      return e[akey];
-    }
-  }
-  return e;
-}

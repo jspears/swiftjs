@@ -1,4 +1,5 @@
 export * from './export';
+export * from './App';
 export * from './Animation';
 export * from './Axis';
 export * from './Button';
