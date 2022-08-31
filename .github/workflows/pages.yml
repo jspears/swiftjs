@@ -10,6 +10,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      pages: write
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
