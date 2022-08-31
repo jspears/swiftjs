@@ -7,6 +7,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     concurrency: ci-${{ github.ref }}
+    permissions:
+      id-token: write;
+      contents: read
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
@@ -24,7 +27,7 @@ jobs:
         with:
           # Upload entire repository
           path: './demo/dist'
-          
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
