@@ -49,6 +49,7 @@ export default defineConfig({
     jsxInject: `import * as React from 'preact';\n`
   },
   build: {
+    outDir:'../docs',
 
     rollupOptions: {
     
