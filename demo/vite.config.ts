@@ -53,7 +53,7 @@ export default defineConfig({
   base: './',
   
   build: {
-    outDir:'../../docs',  
+    outDir:`${dirname}/dist`,  
     rollupOptions: {
       
       input
