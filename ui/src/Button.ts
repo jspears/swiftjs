@@ -31,7 +31,10 @@ class ButtonClass extends Viewable<ButtonConfig> {
   constructor(config?: ButtonConfig);
   constructor(label?: ButtonConfig['label'], action?: ButtonConfig['action'])
   constructor(label?: ButtonConfig['label'] | ButtonConfig, action?: ButtonConfig['action']) {
-    super((label  == null ? null : has(label, 'label') ? label : { label, action }) as ButtonConfig);
+    super((label == null ? null : has(label, 'label') ? label : { label, action }) as ButtonConfig);
+  }
+  init() {
+    return this.foregroundColor('.accentColor');
   }
   buttonStyle(style: ButtonStyleConfiguration) {
     return this;
@@ -41,20 +44,20 @@ class ButtonClass extends Viewable<ButtonConfig> {
   label = this.config?.label;
 
   render() {
-    const r=  h(ButtonComponent, { action: this.onAction, label: this.$('label'), role: this.role } as ButtonProps);
-    
+    const style = this.asStyle();
+    const r = h(ButtonComponent, { action: this.onAction, label: this.$('label'), role: this.role, style } as ButtonProps);
+
     return r;
   }
 }
 
-type ButtonProps =  { label:Bindable<ButtonConfig['label']>, style: CSSProperties };
+type ButtonProps = { label: Bindable<ButtonConfig['label']>, style: CSSProperties, action(): void, role?: string };
 
 class ButtonComponent extends Component<ButtonProps>{
   constructor(props: ButtonProps) {
     super(props);
     bindToState(this, props);
   }
-  
   render() {
     return h('button', { onClick: this.props.action, role: this.props.role, style: this.props.style }, this.props.label());
   }
@@ -64,16 +67,22 @@ class EditButtonClass extends ButtonClass {
   editMode?: Bindable<EditMode>
 
   @State
-  label:string = 'Edit';
-
+  label: string = 'Edit';
+  constructor() {
+    super();
+    if (this.editMode)
+    this.onRecieve(this.editMode().isEditing, (v:boolean) => {
+      this.label = v ? 'Done' : 'Edit';
+    })
+  }
   onAction = () => {
     const editMode = this.editMode?.();
     if (!editMode) {
       return;
     }
-    if (editMode.isEditing.toggle()){
+    if (editMode.isEditing.toggle()) {
       this.label = 'Done';
-    }else{
+    } else {
       this.label = 'Edit';
     }
   }

@@ -25,20 +25,21 @@ export function Inherit(target: object, key: PropertyKey) {
         },
         get() {
             const r = ClassPropMap.get(this) as any;
-            if (r){
-                if (key in r) {
-                    return r[key];
-                }
+            if (r && key in r && r[key] !== undefined) {
+                return r[key];
             }
             if (ovalue !== undefined) {
                 return ovalue;
             }
-            if (target.parent == null) {
-                if (target.constructor.name != 'App') {
-                    console.warn(`component[${target.constructor.name}] asked for property ${String(key)} but no parent was available`)
+            const self = this as View;
+            if (self._parent == null) {
+                if (this.constructor.name != 'App') {
+                    console.warn(`component[${this.constructor.name}] asked for property ${String(key)} but no parent was available`)
                 }
-                return (target.parent as any)?.[key];
+                return;
             }
+            return (self._parent as any)?.[key];
+
         }
     });
 }

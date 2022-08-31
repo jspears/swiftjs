@@ -21,14 +21,6 @@ a {
   display: block;
 }
 
-ul {
-  padding: .5em 0;
-}
-
-ul>li {
-  padding: .5em 0;
-}
-
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: rgb(239, 238, 245);

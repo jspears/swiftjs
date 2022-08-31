@@ -4,7 +4,7 @@ export type Dot<T> = T extends string ? `.${T}` : never;
 export type EnumOrString<T> = T | Dot<keyof T>;
 export type Listen<T> = (e: T) => unknown;
 export type Bindable<T> = ((t?: T ) => T) & {
-  on(listen: Listen<T>): () => void;
+  sink(listen: Listen<T>): () => void;
   clear(): void;
 };
 export type Num = number | '.infinity';
@@ -97,12 +97,21 @@ export type ID = Identifiable['id'];
 export interface Hashable {}
 
 type D = '.' | '';
-export type KeyPath<T, S> = S extends `${D}${infer P extends keyof T &
+export type KeyValue<T, S> = S extends `${D}${infer P extends keyof T &
   string}.${infer Rest}`
-  ? KeyPath<T[P], Rest>
+  ? KeyValue<T[P], Rest>
   : S extends keyof T
   ? T[S]
   : never;
+
+
+export type KeyPath<T extends object, Key extends keyof T & string = keyof T & string> =
+  Key extends string
+  ? T[Key] extends object
+  ? `.${Key}` | `.${Key}${KeyPath<T[Key]>}` 
+  : `.${Key}`
+  : never
+
 
 export class Optional<T> {
     static none = new Optional<any>(null);
@@ -115,3 +124,14 @@ export type Character = string;
 export type Double = number;
 //unknown is more accurate than typescript void which should be avoided almost all the time.
 export type Void = unknown;
+
+export interface Subscriber<T> {
+
+}
+export interface Publisher<T> {
+  send(t: T): void;
+  recieve(s: Subscriber<T>): Void;
+  subscribe(s: Subscriber<T>): {
+    cancel():void
+  }
+}

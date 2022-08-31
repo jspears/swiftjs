@@ -2,11 +2,11 @@ import { Color } from '../Color';
 import type { ColorKey } from '../Color';
 import type {
   AlignmentKey,
+  EdgeSet,
   VerticalEdge,
   VirticalEdgeSetKey,
 } from '../Edge';
 import {
-  Dot,
   fromKey,
   KeyOf,
   Num,
@@ -51,15 +51,15 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   @Inherit
   _foregroundColor?: Color;
   @Inherit
-  _listRowTint?: [Color, VirticalEdgeSetKey?];
+  _listRowTint?: [Color, EdgeSet?];
   @Inherit
-  _listSectionSeperatorTint?: [Color, VirticalEdgeSetKey?];
+  _listSectionSeperatorTint?: {color:Color, edges?:VirticalEdgeSetKey};
   @Inherit
   _tint?: Color;
   @Inherit
   _colorScheme?: ColorScheme;
   @Inherit
-  _backgroundColor?: CSSProperties;
+  _backgroundColor?: Color;
   @Inherit
   _hidden?: boolean;
   @Inherit
@@ -152,8 +152,11 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     alignment: AlignmentKey | ColorKey | View,
     content?: ShapeStyle
   ): this {
-    this._backgroundColor = fromKey(Color, alignment);
+    if (typeof alignment === 'function' && alignment instanceof View){
 
+    }else{
+      this._backgroundColor = fromKey(Color, alignment);
+    }
     return this;
   }
 

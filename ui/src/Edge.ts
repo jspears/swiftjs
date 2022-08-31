@@ -43,14 +43,14 @@ export class HorizontalAlignment extends AlignmentBase {
   apply(css: CSSProperties) {
     switch (this) {
       case HorizontalAlignment.leading:
-        Object.assign(css, { textAlign: 'left' });
+        Object.assign(css, { justifyContent: 'start' });
         break;
       case HorizontalAlignment.trailing:
-        Object.assign(css, { textAlign: 'right' });
+        Object.assign(css, { justifyContent: 'end' });
         break;
 
       case HorizontalAlignment.center:
-        Object.assign(css, { textAlign: 'center' });
+        Object.assign(css, { justifyContent: 'center' });
         break;
     }
   }
@@ -83,7 +83,7 @@ export const Alignment: AlignmentType = Object.assign(
   VerticalAlignment
 );
 
-export type AlignmentKey = KeyOf<typeof Alignment>;
+export type AlignmentKey = Dot<keyof AlignmentType>;
 
 export class Edge {
   constructor(public name: string) {}

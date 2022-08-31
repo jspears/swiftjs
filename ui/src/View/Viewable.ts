@@ -1,5 +1,5 @@
 import type { AlignmentKey } from '../Edge';
-import { isString, applyMixins, has, watchable } from '@tswift/util';
+import { isString, applyMixins, has, watchable, Void } from '@tswift/util';
 import type { Bindable, Bound, Bounds } from '@tswift/util';
 import { ApperanceMixin } from './ApperanceMixin';
 import { PaddingMixin } from './PaddingMixin';
@@ -7,7 +7,6 @@ import { PickerMixin } from './PickerMixin';
 import { Searchable } from './Searchable';
 import { FontMixin } from './FontMixin';
 import { View } from './View';
-import type { Content } from './View';
 import { EventsMixin } from './EventsMixin';
 import { ShapeMixin } from './ShapeMixin';
 import { AnimationMixin } from './AnimationMixin';
@@ -16,20 +15,24 @@ import { NavigationMixin } from './NavigationMixin';
 import { toNode } from '../dom';
 import { h, Component, Fragment } from 'preact';
 import { ListMixin } from './ListMixin';
-import { Font } from '../Font';
 import { CSSProperties } from '../types';
-
+import { EnvironmentMixin } from './EnvironmentMixin';
+import { bindToState } from '../state';
 export class ViewableClass<T = any> extends View {
   private watch = new Map<string, Bindable<any>>();
   protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
-  private attrs = new Map<string, string | number>();
-  _font: Font = Font.body;
+  protected _tag?: string;
 
   constructor(config?: T | View, ...children: View[]) {
     super();
     this.config = config instanceof View ? {} : config || {};
-    this.children = config instanceof View ? [config, ...children] : children;
+    const allChildren = (config instanceof View ? [config, ...children] : children);
+    this.children = allChildren;
+  }
+  onRecieve<E>(p: Bindable<E>, perform: (e:E) => Void) {
+    p.sink(perform);
+    return this;
   }
   protected $ = <
     V extends typeof this = typeof this,
@@ -45,7 +48,7 @@ export class ViewableClass<T = any> extends View {
       if (pd) {
         pd.get = watch;
         if (pd.set) {
-          watch.on(pd.set);
+          watch.sink(pd.set);
         }
         pd.set = watch;
       } else {
@@ -61,31 +64,41 @@ export class ViewableClass<T = any> extends View {
   frame(conf: Partial<Bounds & { alignment: AlignmentKey }>) {
     return this;
   }
-
-
   tag(v: string) {
+    this._tag = v;
     return this;
   }
   matchedGeometryEffect(effect: { id: string; in?: string }) {
     return this;
   }
   asStyle(...css:CSSProperties[]):CSSProperties {
-    const background = this._backgroundColor;
-    const color = this._foregroundColor;
+    const backgroundColor = this._backgroundColor?.value;
+    const color = this._foregroundColor?.value;
     return Object.assign({}, this._font?.style, 
-      background,
-      color,
+      {backgroundColor,
+      color},
       this._border, this._padding, ...css);
   }
   body?(
     bound: Bound<this>,
     self: this
   ): View | (View | undefined)[] | undefined;
-    
+  exec = () => {
+    if (!this.body) {
+      return this.children;
+    }
+    const ret =  this.body?.(this.bound(), this);
+    if (Array.isArray(ret)){
+      ret.forEach(v=>v && (v.parent = this));
+    }else if (ret){
+      ret.parent = this;
+    }
+   return ret;
+
+  }  
   render() {
     if (this.body) {
-      const body = () => this.body?.(this.bound(), this);
-      return h(ViewComponent as any, { watch: this.watch, body });
+      return h(ViewComponent as any, { watch: this.watch, body:this.exec });
     }
     return super.render?.();
   }
@@ -104,12 +117,7 @@ type Props = { watch: Map<string, Bindable<any>>; body: () => View | View[] };
 class ViewComponent extends Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.componentWillUnmount = watchable(
-      null,
-      ...Array.from(props.watch.entries()).map(([key, value]) =>
-        value.on((v) => this.setState({ [key]: value }))
-      )
-    );
+    bindToState(this, this.props);
   }
 
   render() {
@@ -121,6 +129,7 @@ export interface ViewableClass
   extends ApperanceMixin,
     AnimationMixin,
     ControlMixin,
+    EnvironmentMixin,
     EventsMixin,
     FontMixin,
     ListMixin,
@@ -134,6 +143,7 @@ export const Viewable = applyMixins(
   ApperanceMixin,
   AnimationMixin,
   ControlMixin,
+  EnvironmentMixin,
   EventsMixin,
   FontMixin,
   ListMixin,

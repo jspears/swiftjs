@@ -103,6 +103,8 @@
     "noEmit": true,                               /* Skip type checking all .d.ts files. */
     "composite": false,
     "noUnusedLocals":false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
   },
   "exclude": [
     "**/vite.config.ts",

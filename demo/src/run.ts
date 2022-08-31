@@ -1,5 +1,6 @@
 
 import { App, CSSProperties, render, View } from '@tswift/ui';
+import 'preact/debug';
 
 export function run(
   View: View,
@@ -10,8 +11,8 @@ export function run(
   if (appNode == null || appNode.parentElement == null) {
     return;
   }
-
-  render(App(View), appNode);
+ 
+  render((  globalThis.__SWIFT_UI =App(View)), appNode);
   Object.assign(appNode.style, unstyle);
   document
     .querySelector('#background-input')

@@ -1,5 +1,7 @@
 import { swifty } from '@tswift/util';
-import { CSSProperties } from './types';
+import { VNode } from 'preact';
+import { CSSProperties } from '../types';
+import { View } from '../View';
 
 export class ListStyle {
   constructor(
@@ -23,10 +25,18 @@ export class ListStyle {
   style() {
     return this._style;
   }
-
+  list(children: View[]):VNode {
+    return null as any;
+  }
+  listItem(v: View, idx: number, total:number): VNode {
+    return null as any;
+  }
   itemStyle(idx: number, total: number): CSSProperties {
     return Object.assign({}, this._itemStyle, {
       borderColor: idx + 1 == total ? 'transparent' : 'rgb(226,226,228)',
+      flex:'1',
+      display:'flex',
+      flexDirection:'row',
       cursor:'pointer'
     });
   }

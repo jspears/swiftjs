@@ -1,7 +1,7 @@
 import type { View } from './View';
 
 class NavigationConfigClass {
-  _toolbar: any[] = [];
+  _toolbar: View[] = [];
   public navigationTitle?: string;
   toolbar(...views: View[]) {
     this._toolbar = views;

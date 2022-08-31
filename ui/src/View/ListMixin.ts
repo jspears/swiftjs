@@ -1,20 +1,16 @@
-import { DefaultListStyle, ListStyle } from '../ListStyle';
+import { DefaultListStyle, ListStyle } from '../List/ListStyle';
 
 export class ListMixin {
-  #listStyle: ListStyle = DefaultListStyle();
-  #tableStyle: ListStyle = DefaultListStyle();
-  tableStyle(style?: ListStyle): this {
-    if (style) this.#tableStyle = style;
+  _listStyle:ListStyle = DefaultListStyle();
+  _tableStyle:ListStyle = DefaultListStyle();
+  tableStyle(style?: ListStyle) {
+    if (style) this._tableStyle = style;
     return this;
   }
-  listStyle(style?: ListStyle): this {
+  listStyle(style?: ListStyle){
     if (style) {
-      this.#listStyle = style;
+      this._listStyle = style;
     }
     return this;
-  }
-
-  getListStyle(): ListStyle {
-    return this.#listStyle;
   }
 }

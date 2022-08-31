@@ -4,7 +4,7 @@
   "private": true,
   "description": "Just playing around with TS syntax to make something swift like.",
   "scripts": {
-    "demo": "yarn workspace @tswift/demo dev",
+    "dev": "yarn workspace @tswift/demo dev",
     "test": "lage test",
     "clean": "git clean -fdx",
     "build": "lage build",

@@ -13,17 +13,18 @@ export class AppClass extends Viewable {
         this.accentColor(Color.accentColor);
         this.foregroundColor(Color.primary);
     }
+
     render(){
-        return h('div', {style:this.asStyle({
+        const style = this.asStyle({
             display:'flex',
             flex:'1',
             flexDirection:'column',
-            overflow:'scroll',
+            overflow:'hidden',
             height:'100%',
             justifyContent: 'center',
-    alignItems: 'center'
-
-        })}, [super.render()]);
+            alignItems: 'center'
+        });
+        return h('div', {style}, [super.render()]);
     }
 }
 

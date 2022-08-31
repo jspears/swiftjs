@@ -5,18 +5,19 @@ import {
   Identifiable,
   KeyOf,
   KeyPath,
+  KeyValue,
   Listen,
 } from './types';
 import { v4 as uuidv4 } from 'uuid';
 
-export function swifty<T, A extends any[] = []>(clazz: {
-  new(...args: A): T;
-}) {
+
+export function swifty<A extends Constructor, Arg extends any[]= ConstructorParameters<A>>(clazz:A):(...args:Arg)=>(InstanceType<A> & Pick<A, keyof A>) {
   return Object.assign(
-    (...args: A): T => new clazz(...args),
+    (...args:Arg) => new clazz(...args),
     clazz.constructor
   );
 }
+
 export const OrigSet = globalThis.Set;
 
 export const Set = <T>(
@@ -37,9 +38,9 @@ export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
   let currentValue: T = value;
 
   return Object.assign(
-    (newValue?: T) => {
-      if (newValue !== undefined && newValue !== currentValue) {
-        currentValue = newValue;
+    (...args:any[]) => {
+      if (args.length > 0) {
+        currentValue = args[0];
         listening.forEach((v) => v(currentValue));
       }
       return currentValue;
@@ -49,7 +50,7 @@ export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
       valueOf() {
         return currentValue;
       },
-      on(listen: Listen<T>) {
+      sink(listen: Listen<T>) {
         listening.add(listen);
         return () => listening.delete(listen);
       },
@@ -119,8 +120,8 @@ export function applyMixins<T extends Constructor>(
 
 export function isBindable<T>(v: unknown): v is Bindable<T> {
   if (typeof v === 'function') {
-    if ('on' in v) {
-      if (typeof (v as Bindable<T>).on === 'function') {
+    if ('sink' in v) {
+      if (typeof (v as Bindable<T>).sink === 'function') {
         return true;
       }
     }
@@ -146,7 +147,7 @@ export function isFunction(v: unknown): v is (...args: any) => any {
  * @param path
  * @returns
  */
-export function keyPath<T, K extends string>(obj: T, path: K): T extends (undefined | null) ? undefined : K extends (undefined | null | '') ? T : KeyPath<T, K> {
+export function keyPath<T extends object, K extends KeyPath<T> & string>(obj: T, path: K): T extends (undefined | null) ? undefined : K extends (undefined | null | '') ? T : KeyValue<T, K> {
   if (obj == null){
     return undefined as any;
   }

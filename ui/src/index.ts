@@ -17,7 +17,6 @@ export * from './Haptics';
 export * from './Image';
 export * from './LinearGradient';
 export * from './List';
-export * from './ListStyle';
 export * from './NavigationView';
 export * from './Picker';
 export * from './PropertyWrapper';

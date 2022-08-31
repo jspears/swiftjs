@@ -25,7 +25,7 @@ export const bindToState = <T>(comp: Component<T>, props: T): void => {
 
 const applyBindable = (ret: Bindable<unknown>, comp: Component<unknown>, key: string, value: unknown) => {
   if (isBindable(value) && !(comp.state && (key in comp.state))) {
-    ret.on(value.on(v => comp.setState({ [key]: v })));
+    ret.sink(value.sink(v => comp.setState({ [key]: v })));
     ((comp.state || (comp.state = {})) as Record<string, unknown>)[key] = value();
   }
 

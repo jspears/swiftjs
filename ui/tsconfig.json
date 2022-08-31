@@ -4,8 +4,9 @@
     "outDir": "./lib",
     "rootDir": ".",
     "composite": true,
-    "tsBuildInfoFile": "./lib/.tsbuildinfo"
-
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
   },
   "references": [
     {"path":"../util"},

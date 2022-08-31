@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
-import {readdirSync, writeFileSync} from 'fs';
+import { readdirSync, writeFileSync } from 'fs'
+
 //@ts-ignore
 const dirname = __dirname;
 
@@ -12,7 +13,6 @@ const writeHtml = (name:string,
   <html lang="en">
     <head>
       <meta charset="UTF-8" />
-      <link rel="icon" type="image/svg+xml" href="/vite.svg" />
       <link rel="stylesheet" type="text/css" href="../src/style.css"/>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>TSwift: ${name}</title>
@@ -45,8 +45,13 @@ export default defineConfig({
     }
 
   },
+  esbuild: {
+    jsxInject: `import * as React from 'preact';\n`
+  },
   build: {
+
     rollupOptions: {
+    
       input: {
         main: `${dirname}/public/index.html`,
         text: `${dirname}/public/text.html`,

@@ -1,9 +1,11 @@
-import { Viewable,  } from './View';
+import { View, Viewable,  } from './View';
 import { Bindable, BoolType, False, swifty } from '@tswift/util';
-import { h } from 'preact';
+import { h, VNode } from 'preact';
 import { Text } from './Text';
 import { NavigationConfig } from './NavigationConfig';
 import { Font } from './Font';
+import { Color } from './Color';
+import { HStack } from './Stack';
 
 export class EditMode {
   static active = new EditMode('active');
@@ -32,15 +34,25 @@ export class EditMode {
 }
 
 class NavigationViewClass extends Viewable {
-  render() {
-    return h('div', {style:this.asStyle({padding:'1rem', flex:'1'}), id:'navigation'}, 
-      h('div', {style:{height:'1rem'}}, NavigationConfig._toolbar.map(v=>v.render())),
-      Text(NavigationConfig.navigationTitle || '')
-        .font(Font.title.bold())
-        .padding('.vertical', 10)
-        .render(),
-      super.render(),
-    );
+
+  body = ()=>[
+    HStack({alignment:'.trailing'}, ...NavigationConfig._toolbar).padding(10),
+    Text(NavigationConfig.navigationTitle || '')
+      .font(Font.title.bold()).padding('.vertical', 10)
+      .background('.clear')
+      ,
+    ...this.children
+  ]
+  init(){
+    this.background(Color.gray);
+    return this;
+  }
+  get _toolbar():View[]{
+    return NavigationConfig._toolbar || [];
+  }
+
+  render():VNode {
+    return h('div', {style:this.asStyle({padding:'1rem', flex:'1', width:'100%'}), id:'navigation'}, super.render());
   }
 }
 export const NavigationView = swifty(NavigationViewClass);

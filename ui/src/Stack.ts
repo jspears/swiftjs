@@ -25,10 +25,10 @@ interface FrameOptions {
 class StackClass extends Viewable<StackOptions> {
   protected style: CSSProperties = {
     display: 'grid',
-    width: 'fit-content',
-    height: 'fit-content',
+    // width: '100%',
+    // height: '100%',
   };
-
+  constructor(...views:View[]);
   constructor(config?: StackOptions | View, ...views: View[]) {
     super(config, ...views);
 
@@ -42,13 +42,13 @@ class StackClass extends Viewable<StackOptions> {
       }
       switch (alignment) {
         case Alignment.leading:
-          Object.assign(this.style, { textAlign: 'left' });
+          Object.assign(this.style, { justifyContent: 'start' });
           break;
         case Alignment.trailing:
-          Object.assign(this.style, { textAlign: 'right' });
+          Object.assign(this.style, { justifyContent: 'end' });
 
         case Alignment.center:
-          Object.assign(this.style, { textAlign: 'center' });
+          Object.assign(this.style, { justifyContent: 'center' });
       }
       if (alignment == Alignment.leading) {
       } else alignment?.apply(this.style);

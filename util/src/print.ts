@@ -1,3 +1,3 @@
-export const print =(str:string)=>{
+export const print =(str:unknown)=>{
     console.log(str);
 }
