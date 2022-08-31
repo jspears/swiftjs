@@ -4,7 +4,6 @@ export class View {
   _children: View[] = [];
   _parent?: View;
   set children(children) {
-    console.log('I am ', this.constructor.name);
     children?.forEach((v) => (v.parent = this));
     this._children = children;
   }
