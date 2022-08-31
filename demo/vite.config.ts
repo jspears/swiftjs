@@ -6,7 +6,7 @@ const dirname = __dirname;
 
 const writeHtml = (name:string, 
   content:string = `<h2>TSwift: ${name}</h2><a href="./index.html">&lt; back</a>
-  <div id="app"></div><script type="module" src="/src/pages/${name}.ts"></script>`,
+  <div id="app"></div><script type="module" src="../src/pages/${name}.ts"></script>`,
   )=>{
   const html = `${dirname}/public/${name}.html`;
   writeFileSync(html, `<!DOCTYPE html>
@@ -48,16 +48,15 @@ export default defineConfig({
   esbuild: {
     jsxInject: `import * as React from 'preact';\n`
   },
+  publicDir: 'assets',
+  root: './public',
+  base: './',
+  
   build: {
-    outDir:'../docs',
-
+    outDir:'../../docs',  
     rollupOptions: {
-    
-      input: {
-        main: `${dirname}/public/index.html`,
-        text: `${dirname}/public/text.html`,
-
-      }
+      
+      input
     }
   }
 })
