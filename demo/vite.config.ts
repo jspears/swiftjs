@@ -48,8 +48,7 @@ export default defineConfig({
   esbuild: {
     jsxInject: `import * as React from 'preact';\n`
   },
-  publicDir: 'assets',
-  root: './public',
+  ...(process.argv.find(v=>/^--base($|=)/.test(v)) ? {root: './public'} :{}),
   base: './',
   
   build: {

@@ -1,5 +1,5 @@
 import { BoolType, Set, OrigSet } from '@tswift/util';
-import { Component, h, VNode } from 'preact';
+import { Component } from 'preact';
 import { bindToState } from '../state';
 import { Color } from '../Color';
 import { ListStyle } from './ListStyle';

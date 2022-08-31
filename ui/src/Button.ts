@@ -70,13 +70,10 @@ class EditButtonClass extends ButtonClass {
   label: string = 'Edit';
   constructor() {
     super();
-    if (this.editMode)
-    this.onRecieve(this.editMode().isEditing, (v:boolean) => {
-      this.label = v ? 'Done' : 'Edit';
-    })
   }
   onAction = () => {
     const editMode = this.editMode?.();
+    console.log('editMode', editMode);
     if (!editMode) {
       return;
     }
