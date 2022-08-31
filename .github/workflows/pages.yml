@@ -10,6 +10,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      deployments: write
+      contents: write
+      packages: write
       pages: write
     steps:
       - name: Checkout 🛎️
