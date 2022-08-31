@@ -9,7 +9,6 @@ jobs:
     concurrency: ci-${{ github.ref }}
     permissions:
       id-token: read
-      contents: read
       deployments: write
       pages: write
     steps:
