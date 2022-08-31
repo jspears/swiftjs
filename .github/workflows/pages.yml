@@ -8,8 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     concurrency: ci-${{ github.ref }}
     permissions:
-      id-token: write
+      id-token: read
       contents: read
+      deployments: write
       pages: write
     steps:
       - name: Checkout 🛎️
