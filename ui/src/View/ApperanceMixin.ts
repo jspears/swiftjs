@@ -1,29 +1,25 @@
-import { Color } from '../Color';
-import type { ColorKey } from '../Color';
+import { Color } from "../Color";
+import type { ColorKey } from "../Color";
 import type {
   AlignmentKey,
   EdgeSet,
   VerticalEdge,
   VirticalEdgeSetKey,
-} from '../Edge';
-import {
-  fromKey,
-  KeyOf,
-  Num,
-} from '@tswift/util';
-import { View } from './View';
-import type { Content } from './View';
-import type { ShapeStyle } from '../ShapeStyle';
-import { CSSProperties } from '../types';
-import { Inherit } from '../Inherit';
-import { State } from '../PropertyWrapper';
-import { ColorScheme } from './ColorScheme';
+} from "../Edge";
+import { fromKey, KeyOf, Num } from "@tswift/util";
+import { View } from "./View";
+import type { Content } from "./View";
+import type { ShapeStyle } from "../ShapeStyle";
+import { CSSProperties } from "../types";
+import { Inherit } from "../Inherit";
+import { State } from "../PropertyWrapper";
+import { ColorScheme } from "./ColorScheme";
 
 export class Visibility {
-  static readonly automatic = new Visibility('automatic');
-  static readonly hidden = new Visibility('hidden');
-  static readonly visible = new Visibility('visible');
-  constructor(public name: string) { }
+  static readonly automatic = new Visibility("automatic");
+  static readonly hidden = new Visibility("hidden");
+  static readonly visible = new Visibility("visible");
+  constructor(public name: string) {}
 }
 
 export type VisibilityKey = KeyOf<typeof Visibility>;
@@ -31,11 +27,11 @@ export type VisibilityKey = KeyOf<typeof Visibility>;
 export type ColorSchemeKey = KeyOf<typeof ColorScheme>;
 
 class ToggleStyleClass {
-  static checkbox = new ToggleStyleClass('checkbox');
-  static button = new ToggleStyleClass('button');
-  static switcher = new ToggleStyleClass('switcher');
-  static automatic = new ToggleStyleClass('automatic');
-  constructor(protected name: string) { }
+  static checkbox = new ToggleStyleClass("checkbox");
+  static button = new ToggleStyleClass("button");
+  static switcher = new ToggleStyleClass("switcher");
+  static automatic = new ToggleStyleClass("automatic");
+  constructor(protected name: string) {}
 }
 
 export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
@@ -49,7 +45,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   @Inherit
   _listRowTint?: [Color, EdgeSet?];
   @Inherit
-  _listSectionSeperatorTint?: {color:Color, edges?:VirticalEdgeSetKey};
+  _listSectionSeperatorTint?: { color: Color; edges?: VirticalEdgeSetKey };
   @Inherit
   _tint?: Color;
   @Inherit
@@ -61,27 +57,30 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   _hidden?: boolean;
   @Inherit
   _labelsHidden?: boolean;
-  _shadow?: { color: ColorKey; radius: Num; x: Num; y: Num; };
+  _shadow?: { color: ColorKey; radius: Num; x: Num; y: Num };
   _zIndex?: Num;
   @Inherit
-  _listRowSeparator?: { visibility: Visibility; edges: VerticalEdge[] | undefined; };
-  _fixedSize?: { horizontal?: boolean; vertical?: boolean; } 
- 
-  toCSS():CSSProperties {
-    const ret:CSSProperties = {};
+  _listRowSeparator?: {
+    visibility: Visibility;
+    edges: VerticalEdge[] | undefined;
+  };
+  _fixedSize?: { horizontal?: boolean; vertical?: boolean };
+
+  toCSS(): CSSProperties {
+    const ret: CSSProperties = {};
 
     return ret;
   }
   color(c?: ColorKey | undefined): this {
-    if (c){
+    if (c) {
       this._color = fromKey(Color, c);
     }
     return this;
   }
 
   accentColor(c?: ColorKey): this {
-    if(c){
-    this._accentColor = fromKey(Color, c);
+    if (c) {
+      this._accentColor = fromKey(Color, c);
     }
     return this;
   }
@@ -96,17 +95,17 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
 
   foregroundColor(c?: ColorKey): this {
     this._foregroundColor =
-      typeof c === 'string' ? Color[c.slice(1) as keyof typeof Color] : c;
+      typeof c === "string" ? Color[c.slice(1) as keyof typeof Color] : c;
     return this;
   }
 
   tint(c: S | ColorKey): this {
     this._tint =
-      typeof c === 'string'
+      typeof c === "string"
         ? Color[c.slice(1) as keyof typeof Color]
         : c instanceof Color
-          ? c
-          : undefined;
+        ? c
+        : undefined;
     return this;
   }
 
@@ -149,9 +148,8 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     alignment: AlignmentKey | ColorKey | View,
     content?: ShapeStyle
   ): this {
-    if (typeof alignment === 'function' && alignment instanceof View){
-
-    }else{
+    if (typeof alignment === "function" && alignment instanceof View) {
+    } else {
       this._backgroundColor = fromKey(Color, alignment);
     }
     return this;
@@ -178,7 +176,10 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   }
 
   listRowSeparator(visibility: VisibilityKey, edges?: VerticalEdge[]) {
-    this._listRowSeparator = { visibility: fromKey(Visibility, visibility), edges };
+    this._listRowSeparator = {
+      visibility: fromKey(Visibility, visibility),
+      edges,
+    };
     return this;
   }
 
@@ -186,16 +187,18 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-
-  fixedSize(fixed?: boolean | '.horizontal' | '.vertical') {
+  fixedSize(fixed?: boolean | ".horizontal" | ".vertical") {
     if (fixed != null) {
-      if (!this._fixedSize){
-        this._fixedSize = {}
+      if (!this._fixedSize) {
+        this._fixedSize = {};
       }
-      if (typeof fixed === 'string'){
+      if (typeof fixed === "string") {
         Object.assign(this._fixedSize, dotToProp(true, fixed));
-      }else{
-        Object.assign(this._fixedSize, dotToProp(fixed, '.vertical', '.horizontal'));
+      } else {
+        Object.assign(
+          this._fixedSize,
+          dotToProp(fixed, ".vertical", ".horizontal")
+        );
       }
     }
     return this;
@@ -208,13 +211,22 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
 //     return ret;
 //   }, {} as any);
 // }
-type DotToProp<K extends string[], V> = K extends [infer First extends string, ...infer Rest extends string[] ] ? 
-  First extends `.${infer K extends string}` ? {[k in K]:V} & DotToProp<Rest, V> : {} : {};
+type DotToProp<K extends string[], V> = K extends [
+  infer First extends string,
+  ...infer Rest extends string[]
+]
+  ? First extends `.${infer K extends string}`
+    ? { [k in K]: V } & DotToProp<Rest, V>
+    : {}
+  : {};
 
-const dotToProp = <V, K extends string[] = string[]>(v:V, ...args:K):DotToProp<K,V>=>{
-    return args.reduce((ret, k)=>{
+const dotToProp = <V, K extends string[] = string[]>(
+  v: V,
+  ...args: K
+): DotToProp<K, V> => {
+  return args.reduce((ret, k) => {
     ret[k.slice(1)] = v;
     return ret;
   }, {} as any);
-}
-export const v = dotToProp(true, '.vertical', '.horizontal');
+};
+export const v = dotToProp(true, ".vertical", ".horizontal");

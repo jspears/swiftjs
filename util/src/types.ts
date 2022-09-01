@@ -3,11 +3,11 @@ export type Dot<T> = T extends string ? `.${T}` : never;
 
 export type EnumOrString<T> = T | Dot<keyof T>;
 export type Listen<T> = (e: T) => unknown;
-export type Bindable<T> = ((t?: T ) => T) & {
+export type Bindable<T> = ((t?: T) => T) & {
   sink(listen: Listen<T>): () => void;
   clear(): void;
 };
-export type Num = number | '.infinity';
+export type Num = number | ".infinity";
 
 export interface Size {
   width: Num;
@@ -63,7 +63,7 @@ export interface Bounds {
 
 export type PickValue<T, V = T> = {
   [K in keyof T as T[K] extends V
-    ? K extends 'prototype'
+    ? K extends "prototype"
       ? never
       : K
     : never]: T[K];
@@ -80,7 +80,7 @@ export type KeyOf<T extends new (...args: any) => any, V = InstanceType<T>> =
   | Dot<
       keyof {
         [K in keyof T as T[K] extends V
-          ? K extends 'prototype'
+          ? K extends "prototype"
             ? never
             : K
           : never]: true;
@@ -92,11 +92,11 @@ export interface Identifiable {
   id: string;
 }
 
-export type ID = Identifiable['id'];
+export type ID = Identifiable["id"];
 
 export interface Hashable {}
 
-type D = '.' | '';
+type D = "." | "";
 export type KeyValue<T, S> = S extends `${D}${infer P extends keyof T &
   string}.${infer Rest}`
   ? KeyValue<T[P], Rest>
@@ -104,20 +104,21 @@ export type KeyValue<T, S> = S extends `${D}${infer P extends keyof T &
   ? T[S]
   : never;
 
-
-export type KeyPath<T extends object, Key extends keyof T & string = keyof T & string> =
-  Key extends string
+export type KeyPath<
+  T extends object,
+  Key extends keyof T & string = keyof T & string
+> = Key extends string
   ? T[Key] extends object
-  ? `.${Key}` | `.${Key}${KeyPath<T[Key]>}` 
-  : `.${Key}`
-  : never
-
+    ? `.${Key}` | `.${Key}${KeyPath<T[Key]>}`
+    : `.${Key}`
+  : never;
 
 export class Optional<T> {
-    static none = new Optional<any>(null);
-    static some<T>(v:T){ return new Optional<T>(v)}
-    constructor(public value:T){
-    }
+  static none = new Optional<any>(null);
+  static some<T>(v: T) {
+    return new Optional<T>(v);
+  }
+  constructor(public value: T) {}
 }
 export type Float = number;
 export type Character = string;
@@ -125,13 +126,11 @@ export type Double = number;
 //unknown is more accurate than typescript void which should be avoided almost all the time.
 export type Void = unknown | void;
 
-export interface Subscriber<T> {
-
-}
+export interface Subscriber<T> {}
 export interface Publisher<T> {
   send(t: T): void;
   recieve(s: Subscriber<T>): Void;
   subscribe(s: Subscriber<T>): {
-    cancel():void
-  }
+    cancel(): void;
+  };
 }

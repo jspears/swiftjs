@@ -1,7 +1,7 @@
-import { View, Viewable } from './View';
-import type { Content } from './View';
-import { swifty } from '@tswift/util';
-import type { Bindable } from '@tswift/util';
+import { View, Viewable } from "./View";
+import type { Content } from "./View";
+import { swifty } from "@tswift/util";
+import type { Bindable } from "@tswift/util";
 
 export interface PickerConfig {
   selection: string | Bindable<string>;
@@ -9,8 +9,8 @@ export interface PickerConfig {
 }
 
 class PickerClass extends Viewable<PickerConfig> {
-  selection: PickerConfig['selection'];
-  label: PickerConfig['label'];
+  selection: PickerConfig["selection"];
+  label: PickerConfig["label"];
   constructor({ selection, label }: PickerConfig) {
     super();
     this.selection = selection;

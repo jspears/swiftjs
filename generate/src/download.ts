@@ -1,5 +1,5 @@
-import { readDoc, urlById } from './util';
-import { References } from './types';
+import { readDoc, urlById } from "./util";
+import { References } from "./types";
 
 const set = new Set<string>();
 
@@ -14,7 +14,7 @@ const download = async (url: string | undefined) => {
       return;
     }
     const rest = doc.relationshipsSections?.filter(
-      (v: { type: string }) => v?.type == 'inheritedBy'
+      (v: { type: string }) => v?.type == "inheritedBy"
     );
     const urls = rest
       ?.flatMap(({ identifiers }) => identifiers)

@@ -1,8 +1,8 @@
-import { KindEnum, ReferenceType } from './types';
-import { Project, ProjectOptions } from 'ts-morph';
-import { ModuleKind, ScriptTarget } from 'typescript';
-import { write } from 'fs';
-import { text } from 'stream/consumers';
+import { KindEnum, ReferenceType } from "./types";
+import { Project, ProjectOptions } from "ts-morph";
+import { ModuleKind, ScriptTarget } from "typescript";
+import { write } from "fs";
+import { text } from "stream/consumers";
 
 export function has<T, K>(v: unknown, k: PropertyKey): k is keyof T {
   return Object.prototype.hasOwnProperty.call(v, k);
@@ -45,7 +45,7 @@ export const createProject = (
   });
 
 export const isClosure = (v: string) => {
-  const [_, parameters = '', returnType = ''] =
+  const [_, parameters = "", returnType = ""] =
     /^\(\s*(.*)\s*\)\s*->\s*(.+?)$/.exec(v) || [];
   if (!returnType) {
     return;

@@ -4,9 +4,9 @@ import {
   fromKey,
   KeyOf,
   KeyOfTypeWithType,
-} from '@tswift/util';
-import { applyMixins } from '@tswift/util';
-import { CSSProperties } from './types';
+} from "@tswift/util";
+import { applyMixins } from "@tswift/util";
+import { CSSProperties } from "./types";
 export abstract class AlignmentBase {
   abstract apply(css: CSSProperties): void;
 }
@@ -18,11 +18,11 @@ export class VerticalAlignment extends AlignmentBase {
   apply(v: CSSProperties) {
     switch (this) {
       case VerticalAlignment.top: {
-        v.alignItems = 'flex-start';
+        v.alignItems = "flex-start";
         break;
       }
       case VerticalAlignment.bottom: {
-        v.alignItems = 'flex-end';
+        v.alignItems = "flex-end";
         break;
       }
       case VerticalAlignment.firstTextBaseline: {
@@ -43,14 +43,14 @@ export class HorizontalAlignment extends AlignmentBase {
   apply(css: CSSProperties) {
     switch (this) {
       case HorizontalAlignment.leading:
-        Object.assign(css, { justifyContent: 'start' });
+        Object.assign(css, { justifyContent: "start" });
         break;
       case HorizontalAlignment.trailing:
-        Object.assign(css, { justifyContent: 'end' });
+        Object.assign(css, { justifyContent: "end" });
         break;
 
       case HorizontalAlignment.center:
-        Object.assign(css, { justifyContent: 'center' });
+        Object.assign(css, { justifyContent: "center" });
         break;
     }
   }
@@ -87,10 +87,10 @@ export type AlignmentKey = Dot<keyof AlignmentType>;
 
 export class Edge {
   constructor(public name: string) {}
-  static top = new Edge('Top');
-  static bottom = new Edge('Bottom');
-  static leading = new Edge('Left');
-  static trailing = new Edge('Right');
+  static top = new Edge("Top");
+  static bottom = new Edge("Bottom");
+  static leading = new Edge("Left");
+  static trailing = new Edge("Right");
 }
 
 export class EdgeSet {
@@ -99,7 +99,7 @@ export class EdgeSet {
   constructor(name: string, ...edges: EdgeKey[]);
   constructor(edgeSet: EdgeSet, ...edges: EdgeKey[]);
   constructor(name: string | EdgeSet, ...edges: EdgeKey[]) {
-    if (typeof name === 'string') {
+    if (typeof name === "string") {
       this.name = name;
     } else {
       this.name = name.name;
@@ -116,12 +116,12 @@ export class EdgeSet {
   [Symbol.iterator]() {
     return this._set[Symbol.iterator]();
   }
-  static top = new EdgeSet('top', Edge.top);
-  static bottom = new EdgeSet('bottom', Edge.bottom);
-  static leading = new EdgeSet('leading', Edge.leading);
-  static trailing = new EdgeSet('trailing', Edge.trailing);
-  static horizontal = new EdgeSet('horizongal', Edge.leading, Edge.trailing);
-  static vertical = new EdgeSet('vertical', Edge.top, Edge.bottom);
+  static top = new EdgeSet("top", Edge.top);
+  static bottom = new EdgeSet("bottom", Edge.bottom);
+  static leading = new EdgeSet("leading", Edge.leading);
+  static trailing = new EdgeSet("trailing", Edge.trailing);
+  static horizontal = new EdgeSet("horizongal", Edge.leading, Edge.trailing);
+  static vertical = new EdgeSet("vertical", Edge.top, Edge.bottom);
 }
 
 export type EdgeKey = KeyOf<typeof Edge>;

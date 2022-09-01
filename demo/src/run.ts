@@ -1,22 +1,21 @@
-
-import { App, CSSProperties, render, View } from '@tswift/ui';
-import 'preact/debug';
+import { App, CSSProperties, render, View } from "@tswift/ui";
+import "preact/debug";
 
 export function run(
   View: View,
   style: CSSProperties = {},
   unstyle: CSSProperties = {},
-  appNode: HTMLDivElement | null = document.querySelector('#app')
+  appNode: HTMLDivElement | null = document.querySelector("#app")
 ) {
   if (appNode == null || appNode.parentElement == null) {
     return;
   }
- 
-  render((  globalThis.__SWIFT_UI =App(View)), appNode);
+
+  render((globalThis.__SWIFT_UI = App(View)), appNode);
   Object.assign(appNode.style, unstyle);
   document
-    .querySelector('#background-input')
-    ?.addEventListener('change', (e) => {
+    .querySelector("#background-input")
+    ?.addEventListener("change", (e) => {
       if (appNode) {
         if ((e.target as HTMLInputElement).checked) {
           Object.keys(unstyle).forEach(

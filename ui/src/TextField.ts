@@ -1,7 +1,7 @@
-import { Viewable } from './View';
-import { isBindable, swifty } from '@tswift/util';
-import { Bindable, Bound, KeyOf } from '@tswift/util';
-import { Component, h } from 'preact';
+import { Viewable } from "./View";
+import { isBindable, swifty } from "@tswift/util";
+import { Bindable, Bound, KeyOf } from "@tswift/util";
+import { Component, h } from "preact";
 
 export class TextInputAutocapitalization {
   static characters = new TextInputAutocapitalization();
@@ -41,8 +41,8 @@ class TextFieldClass extends Viewable<TextFieldConfig> {
     return this;
   }
   render() {
-    if (typeof this.config.text == 'string') {
-      return h('input', {
+    if (typeof this.config.text == "string") {
+      return h("input", {
         placeholder: this.config.label,
         value: () => this.config.text,
       } as any);
@@ -67,7 +67,7 @@ class BoundInput extends Component<{
   }
 
   render() {
-    return h('input', {
+    return h("input", {
       value: this.props.value(),
       placeholder: this.props.placeholder,
       onInput: (e: Event) => {

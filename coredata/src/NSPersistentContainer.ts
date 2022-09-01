@@ -1,4 +1,4 @@
-import { NSManagedObjectContext } from './NSManagedObjectContext';
+import { NSManagedObjectContext } from "./NSManagedObjectContext";
 export interface HasId {
   id: string;
 }

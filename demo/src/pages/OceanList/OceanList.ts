@@ -16,7 +16,7 @@ import {
   Viewable,
   CountSet,
   VStack,
-} from '@tswift/ui';
+} from "@tswift/ui";
 
 class OceanClass implements Identifiable, Hashable {
   constructor(public name: string, public id = UUID()) {}
@@ -26,11 +26,11 @@ const Ocean = swifty(OceanClass);
 
 export class OceanList extends Viewable {
   oceans = [
-    Ocean('Pacific'),
-    Ocean('Atlantic'),
-    Ocean('Indian'),
-    Ocean('Southern'),
-    Ocean('Arctic'),
+    Ocean("Pacific"),
+    Ocean("Atlantic"),
+    Ocean("Indian"),
+    Ocean("Southern"),
+    Ocean("Arctic"),
   ];
 
   @State multiSelection: CountSet<ID> = Set<ID>();
@@ -39,12 +39,10 @@ export class OceanList extends Viewable {
     { $multiSelection }: Bound<this>,
     { oceans, multiSelection }: this
   ) => [
-    NavigationView (
-      List(oceans,  $multiSelection, 
-        $0=>Text($0.name)
-      )
-      .navigationTitle("Oceans")
-      .toolbar (EditButton() )
+    NavigationView(
+      List(oceans, $multiSelection, ($0) => Text($0.name))
+        .navigationTitle("Oceans")
+        .toolbar(EditButton())
     ),
     Text(`${multiSelection.count} selections`),
   ];

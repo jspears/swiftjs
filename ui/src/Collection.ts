@@ -1,5 +1,5 @@
-import { Int } from '@tswift/util';
-import { swifty } from '@tswift/util';
+import { Int } from "@tswift/util";
+import { swifty } from "@tswift/util";
 
 interface RangeType {
   lowerBound?: Int;

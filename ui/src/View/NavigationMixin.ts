@@ -1,12 +1,12 @@
-import type { Bindable } from '@tswift/util';
-import type { Content, View } from './View';
-import { NavigationConfig } from '../NavigationConfig';
+import type { Bindable } from "@tswift/util";
+import type { Content, View } from "./View";
+import { NavigationConfig } from "../NavigationConfig";
 
 export class NavigationMixin {
   sheet(opts: {
     isPresented: Bindable<boolean>;
     onDismiss(): void;
-    content: Content ;
+    content: Content;
   }) {
     return this;
   }
@@ -19,7 +19,7 @@ export class NavigationMixin {
   // toolbar(id?: string | Content, content?: Content) {
   //   return this;
   // }
-  toolbar(...views:View[]){
+  toolbar(...views: View[]) {
     NavigationConfig.toolbar(...views);
     return this;
   }

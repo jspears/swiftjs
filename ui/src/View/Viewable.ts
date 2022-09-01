@@ -1,23 +1,23 @@
-import type { AlignmentKey } from '../Edge';
-import { isString, applyMixins, has, watchable, Void } from '@tswift/util';
-import type { Bindable, Bound, Bounds } from '@tswift/util';
-import { ApperanceMixin } from './ApperanceMixin';
-import { PaddingMixin } from './PaddingMixin';
-import { PickerMixin } from './PickerMixin';
-import { Searchable } from './Searchable';
-import { FontMixin } from './FontMixin';
-import { View } from './View';
-import { EventsMixin } from './EventsMixin';
-import { ShapeMixin } from './ShapeMixin';
-import { AnimationMixin } from './AnimationMixin';
-import { ControlMixin } from './ControlMixin';
-import { NavigationMixin } from './NavigationMixin';
-import { toNode } from '../dom';
-import { h, Component, Fragment } from 'preact';
-import { ListMixin } from './ListMixin';
-import { CSSProperties } from '../types';
-import { EnvironmentMixin } from './EnvironmentMixin';
-import { bindToState } from '../state';
+import type { AlignmentKey } from "../Edge";
+import { isString, applyMixins, has, watchable, Void } from "@tswift/util";
+import type { Bindable, Bound, Bounds } from "@tswift/util";
+import { ApperanceMixin } from "./ApperanceMixin";
+import { PaddingMixin } from "./PaddingMixin";
+import { PickerMixin } from "./PickerMixin";
+import { Searchable } from "./Searchable";
+import { FontMixin } from "./FontMixin";
+import { View } from "./View";
+import { EventsMixin } from "./EventsMixin";
+import { ShapeMixin } from "./ShapeMixin";
+import { AnimationMixin } from "./AnimationMixin";
+import { ControlMixin } from "./ControlMixin";
+import { NavigationMixin } from "./NavigationMixin";
+import { toNode } from "../dom";
+import { h, Component, Fragment } from "preact";
+import { ListMixin } from "./ListMixin";
+import { CSSProperties } from "../types";
+import { EnvironmentMixin } from "./EnvironmentMixin";
+import { bindToState } from "../state";
 export class ViewableClass<T = any> extends View {
   watch = new Map<string, Bindable<any>>();
   protected config: Partial<T> = {};
@@ -27,10 +27,11 @@ export class ViewableClass<T = any> extends View {
   constructor(config?: T | View, ...children: View[]) {
     super();
     this.config = config instanceof View ? {} : config || {};
-    const allChildren = (config instanceof View ? [config, ...children] : children);
+    const allChildren =
+      config instanceof View ? [config, ...children] : children;
     this.children = allChildren;
   }
-  onRecieve<E>(p: Bindable<E>, perform: (e:E) => Void) {
+  onRecieve<E>(p: Bindable<E>, perform: (e: E) => Void) {
     p.sink(perform);
     return this;
   }
@@ -71,13 +72,17 @@ export class ViewableClass<T = any> extends View {
   matchedGeometryEffect(effect: { id: string; in?: string }) {
     return this;
   }
-  asStyle(...css:CSSProperties[]):CSSProperties {
+  asStyle(...css: CSSProperties[]): CSSProperties {
     const backgroundColor = this._backgroundColor?.value;
     const color = this._foregroundColor?.value;
-    return Object.assign({}, this._font?.style, 
-      {backgroundColor,
-      color},
-      this._border, this._padding, ...css);
+    return Object.assign(
+      {},
+      this._font?.style,
+      { backgroundColor, color },
+      this._border,
+      this._padding,
+      ...css
+    );
   }
   body?(
     bound: Bound<this>,
@@ -87,18 +92,17 @@ export class ViewableClass<T = any> extends View {
     if (!this.body) {
       return this.children;
     }
-    const ret =  this.body?.(this.bound(), this);
-    if (Array.isArray(ret)){
-      ret.forEach(v=>v && (v.parent = this));
-    }else if (ret){
+    const ret = this.body?.(this.bound(), this);
+    if (Array.isArray(ret)) {
+      ret.forEach((v) => v && (v.parent = this));
+    } else if (ret) {
       ret.parent = this;
     }
-   return ret;
-
-  }  
+    return ret;
+  };
   render() {
     if (this.body) {
-      return h(ViewComponent as any, { watch: this.watch, body:this.exec });
+      return h(ViewComponent as any, { watch: this.watch, body: this.exec });
     }
     return super.render?.();
   }
@@ -106,7 +110,7 @@ export class ViewableClass<T = any> extends View {
   private bound(): Bound<this> {
     return new Proxy(this, {
       get(target, key) {
-        if (isString(key) && key['0'] === '$') {
+        if (isString(key) && key["0"] === "$") {
           return target.$(key.slice(1) as any);
         }
       },

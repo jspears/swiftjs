@@ -22,14 +22,14 @@ export interface AvailabilityPrefixElement {
 }
 
 export enum KindEnum {
-  ExternalParam = 'externalParam',
-  GenericParameter = 'genericParameter',
-  Identifier = 'identifier',
-  Keyword = 'keyword',
-  Text = 'text',
-  TypeIdentifier = 'typeIdentifier',
-  Symbol = 'symbol',
-  Technologies = 'technologies',
+  ExternalParam = "externalParam",
+  GenericParameter = "genericParameter",
+  Identifier = "identifier",
+  Keyword = "keyword",
+  Text = "text",
+  TypeIdentifier = "typeIdentifier",
+  Symbol = "symbol",
+  Technologies = "technologies",
 }
 
 export interface DiffAvailability {
@@ -45,18 +45,18 @@ export interface Beta {
 }
 
 export enum Change {
-  Modified = 'modified',
+  Modified = "modified",
 }
 
 export enum PlatformEnum {
-  Xcode = 'Xcode',
+  Xcode = "Xcode",
 }
 
 export enum Version {
-  The130 = '13.0',
-  The134 = '13.4',
-  The140Beta4 = '14.0 beta 4',
-  The140Beta5 = '14.0 beta 5',
+  The130 = "13.0",
+  The134 = "13.4",
+  The140Beta4 = "14.0 beta 4",
+  The140Beta5 = "14.0 beta 5",
 }
 
 export interface Hierarchy {
@@ -69,9 +69,9 @@ export interface Identifier {
 }
 
 export enum RoleEnum {
-  Article = 'article',
-  CollectionGroup = 'collectionGroup',
-  Symbol = 'symbol',
+  Article = "article",
+  CollectionGroup = "collectionGroup",
+  Symbol = "symbol",
 }
 
 export interface LegalNotices {
@@ -126,8 +126,8 @@ export interface Content {
 }
 
 export enum Role {
-  Overview = 'overview',
-  Symbol = 'symbol',
+  Overview = "overview",
+  Symbol = "symbol",
 }
 
 export interface InlineContentElement {
@@ -139,9 +139,9 @@ export interface InlineContentElement {
 }
 
 export enum ContentType {
-  CodeListing = 'codeListing',
-  Heading = 'heading',
-  Paragraph = 'paragraph',
+  CodeListing = "codeListing",
+  Heading = "heading",
+  Paragraph = "paragraph",
 }
 
 export interface Declaration {
@@ -173,11 +173,11 @@ export type ReferenceType = {
 
 export interface References extends Record<string, ReferenceType> {}
 export enum TypeEnum {
-  Topic = 'topic',
-  CodeVoice = 'codeVoice',
-  Image = 'image',
-  Reference = 'reference',
-  Text = 'text',
+  Topic = "topic",
+  CodeVoice = "codeVoice",
+  Image = "image",
+  Reference = "reference",
+  Text = "text",
 }
 
 export interface DocCOMApple {

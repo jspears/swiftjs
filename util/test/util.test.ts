@@ -1,17 +1,17 @@
-import { mockFn, fromKey, KeyOf, keyPath, watchable } from '@tswift/util';
-import { expect } from 'chai';
+import { mockFn, fromKey, KeyOf, keyPath, watchable } from "@tswift/util";
+import { expect } from "chai";
 
-describe('keyPath', function () {
-  it('keyPath', function () {
-    expect(keyPath({ a: { stuff: 1 } }, '.a.stuff')).to.eql(1);
-    expect(keyPath({ a: 1 }, '.a')).to.eql(1);
-    expect(keyPath({ a: { stuff: 1 } }, '.a.stuff')).to.eql(1);
+describe("keyPath", function () {
+  it("keyPath", function () {
+    expect(keyPath({ a: { stuff: 1 } }, ".a.stuff")).to.eql(1);
+    expect(keyPath({ a: 1 }, ".a")).to.eql(1);
+    expect(keyPath({ a: { stuff: 1 } }, ".a.stuff")).to.eql(1);
     //@ts-ignore
-    expect(keyPath({ a: { stuff: 1 } }, '.b.stuff')).to.be.undefined;
+    expect(keyPath({ a: { stuff: 1 } }, ".b.stuff")).to.be.undefined;
   });
-})
-describe('watchable', function () {
-  it('watchable', function () {
+});
+describe("watchable", function () {
+  it("watchable", function () {
     const watch = watchable(1);
 
     expect(watch()).to.eql(1);
@@ -33,10 +33,7 @@ describe('watchable', function () {
   });
 });
 
-
-
-describe('fromKey', function () {
-
+describe("fromKey", function () {
   class Test {
     static foo = new Test();
     static bar = new Test();
@@ -44,11 +41,10 @@ describe('fromKey', function () {
 
   type TestKey = KeyOf<typeof Test>;
 
-  it('should return a value for key', function () {
-    expect(fromKey(Test, '.foo' as TestKey)).to.eql(Test.foo);
-  })
-  it('should return a value for as value', function () {
+  it("should return a value for key", function () {
+    expect(fromKey(Test, ".foo" as TestKey)).to.eql(Test.foo);
+  });
+  it("should return a value for as value", function () {
     expect(fromKey(Test, Test.foo)).to.eql(Test.foo);
-  })
-
-})
+  });
+});

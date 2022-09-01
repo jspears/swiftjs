@@ -1,8 +1,8 @@
-import { Edge, EdgeSet } from '@tswift/ui';
-import { expect } from 'chai';
+import { Edge, EdgeSet } from "@tswift/ui";
+import { expect } from "chai";
 
-describe('Edge', function () {
-  it('should iterate', function () {
+describe("Edge", function () {
+  it("should iterate", function () {
     const all: Edge[] = [];
     for (const e of EdgeSet) {
       all.push(e);
@@ -10,7 +10,7 @@ describe('Edge', function () {
     expect(all).to.eql([Edge.top, Edge.trailing, Edge.bottom, Edge.leading]);
   });
 
-  it('should iterate horizontal', function () {
+  it("should iterate horizontal", function () {
     const all: Edge[] = [];
     for (const e of EdgeSet.horizontal) {
       all.push(e);
@@ -18,7 +18,7 @@ describe('Edge', function () {
     expect(all).to.eql([Edge.leading, Edge.trailing]);
   });
 
-  it('should iterate vertical', function () {
+  it("should iterate vertical", function () {
     const all: Edge[] = [];
     for (const e of EdgeSet.vertical) {
       all.push(e);

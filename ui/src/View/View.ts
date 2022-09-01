@@ -1,8 +1,7 @@
-import { Void } from '@tswift/util';
-import { h, VNode, Fragment } from 'preact';
+import { Void } from "@tswift/util";
+import { h, VNode, Fragment } from "preact";
 
 export class View {
-
   _children: View[] = [];
 
   _parent?: View;
@@ -17,20 +16,20 @@ export class View {
   }
 
   set parent(v: View | undefined) {
-    if (this._parent && v !== this._parent){
-        console.warn(`${this?.constructor?.name} was assigned a different parent, this should not happen new '${v?.constructor?.name}' old '${this._parent?.constructor?.name}'`);
+    if (this._parent && v !== this._parent) {
+      console.warn(
+        `${this?.constructor?.name} was assigned a different parent, this should not happen new '${v?.constructor?.name}' old '${this._parent?.constructor?.name}'`
+      );
     }
     this._parent = v;
     this.init();
   }
 
-  get parent(): View | undefined{
+  get parent(): View | undefined {
     return this._parent;
   }
 
-  init() {
-  
-  }
+  init() {}
 
   render(): VNode<any> {
     if (this.children) {

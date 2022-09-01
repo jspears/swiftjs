@@ -1,4 +1,4 @@
-import type { View } from './View';
+import type { View } from "./View";
 
 class NavigationConfigClass {
   _toolbar: View[] = [];

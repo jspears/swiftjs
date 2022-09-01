@@ -4,49 +4,49 @@ import {
   References,
   ReferenceType,
   RelationshipsSection,
-} from './types';
-import { ClassDeclaration, Project, SourceFile } from 'ts-morph';
-import { has, isClosure, split } from './create';
-import { Generator } from './Generator';
-import { ClosureImpl, Params } from './ParamParse';
+} from "./types";
+import { ClassDeclaration, Project, SourceFile } from "ts-morph";
+import { has, isClosure, split } from "./create";
+import { Generator } from "./Generator";
+import { ClosureImpl, Params } from "./ParamParse";
 
-const ignore = new Set(['', ',', ':']);
+const ignore = new Set(["", ",", ":"]);
 
 export class SwiftDocImpl {
-  public title?: string = '';
+  public title?: string = "";
 
   private source: SourceFile;
 
   private project: Project;
 
   constructor(private doc: SwiftDoc, private generator: Generator) {
-    this.title = this.reference(this.doc.identifier?.url || '')?.title || '';
+    this.title = this.reference(this.doc.identifier?.url || "")?.title || "";
     this.project = generator.project;
     this.source = this.generator.createSourceFile(this.title);
   }
   generate() {
     const ref: ReferenceType = this.reference(this.doc.identifier?.url);
-    if (has(ref, 'fragments')) {
+    if (has(ref, "fragments")) {
       if (
         ref?.fragments?.find(
-          (v) => v?.kind === KindEnum.Keyword && v?.text === 'protocol'
+          (v) => v?.kind === KindEnum.Keyword && v?.text === "protocol"
         )
       ) {
         this.addProtocol(ref);
       } else if (
         ref?.fragments?.find(
-          (v) => v?.kind === KindEnum.Keyword && v?.text === 'class'
+          (v) => v?.kind === KindEnum.Keyword && v?.text === "class"
         )
       ) {
         this.addProtocol(ref);
       } else if (
         ref?.fragments?.find(
-          (v) => v?.kind === KindEnum.Keyword && v?.text === 'struct'
+          (v) => v?.kind === KindEnum.Keyword && v?.text === "struct"
         )
       ) {
         this.addProtocol(ref);
       } else if (ref?.fragments?.find((v) => v?.kind === KindEnum.Keyword)) {
-        console.log('dunno', this.title, ref.fragments[0]);
+        console.log("dunno", this.title, ref.fragments[0]);
       }
     }
     return this;
@@ -59,12 +59,12 @@ export class SwiftDocImpl {
     const int: string[] =
       this.doc.relationshipsSections?.find(
         ({ type, kind }: RelationshipsSection) =>
-          type === 'inheritsFrom' && kind == 'relationships'
+          type === "inheritsFrom" && kind == "relationships"
       )?.identifiers || [];
     return int.map(this.reference, this);
   }
   get identifier() {
-    return this.doc.identifier?.url || '';
+    return this.doc.identifier?.url || "";
   }
   get references(): References {
     return this.doc.references || ({} as References);
@@ -75,9 +75,9 @@ export class SwiftDocImpl {
     }
     return Object.values(this.references).filter((v: ReferenceType) => {
       return (
-        v?.identifier.startsWith(this.identifier + '/') &&
-        has(v, 'role') &&
-        v?.role === 'symbol'
+        v?.identifier.startsWith(this.identifier + "/") &&
+        has(v, "role") &&
+        v?.role === "symbol"
       );
     });
   }
@@ -86,17 +86,17 @@ export class SwiftDocImpl {
       this.properties?.filter(
         ({ fragments = [] }) =>
           fragments?.[0]?.kind === KindEnum.Keyword &&
-          fragments?.[0]?.text === 'func'
+          fragments?.[0]?.text === "func"
       ) || []
     );
   }
 
   addClass(ref: ReferenceType) {
-    console.log('add class ', ref);
+    console.log("add class ", ref);
     this.addProtocol(ref);
   }
   addStruct(ref: ReferenceType) {
-    console.log('add struct ', ref);
+    console.log("add struct ", ref);
     this.addProtocol(ref);
   }
   addProtocol(ref: ReferenceType) {
@@ -111,7 +111,7 @@ export class SwiftDocImpl {
     const inherited = this.inherited();
     inherited.forEach(({ url }) =>
       this.generator.registerType(
-        (url as string)?.replace('/documentation/swiftui/', '')
+        (url as string)?.replace("/documentation/swiftui/", "")
       )
     );
 
@@ -122,7 +122,7 @@ export class SwiftDocImpl {
         name: this.title as string,
         isExported: true,
         extends: inherited
-          .filter(({ title, role }) => title && role === 'symbol')
+          .filter(({ title, role }) => title && role === "symbol")
           .map((v) => v?.title) as string[],
       });
 
@@ -135,7 +135,7 @@ export class SwiftDocImpl {
       clz = this.source.addClass({
         isExported: true,
         extends:
-          inherited[0]?.role === 'symbol' ? inherited[0]?.title : undefined,
+          inherited[0]?.role === "symbol" ? inherited[0]?.title : undefined,
         name: this.title,
         docs: [ref.identifier],
       });
@@ -167,8 +167,8 @@ export class SwiftDocImpl {
   }
   addType = (type: string, templates: string[] = []) => {
     //remove all array stuff.
-    type = type.replaceAll(/\[\]/g, '').replace(/(.+?)\..*$/, '$1');
-    console.log('checkType', type);
+    type = type.replaceAll(/\[\]/g, "").replace(/(.+?)\..*$/, "$1");
+    console.log("checkType", type);
     if (isClosure(type)) {
       return;
     }
@@ -176,7 +176,7 @@ export class SwiftDocImpl {
       return;
     }
     if (this.generator.ignoreType(type)) {
-      this.addImport(type, './types');
+      this.addImport(type, "./types");
       return;
     }
     if (!this.source.getClass(type)) {
@@ -185,10 +185,10 @@ export class SwiftDocImpl {
     }
   };
   addPropertyTo(clz: ClassDeclaration, type: ReferenceType): this {
-    const orig = type['fragments']?.map((v) => v.text).join('');
+    const orig = type["fragments"]?.map((v) => v.text).join("");
     const method = ClosureImpl.parseMethod(orig, this.addType);
     const isSelfReturn =
-      method.returnType === 'Self' ||
+      method.returnType === "Self" ||
       method.returnType.startsWith(`${clz.getName()}<`);
 
     try {
@@ -198,15 +198,15 @@ export class SwiftDocImpl {
         returnType: (w) =>
           w.write(
             isSelfReturn
-              ? 'this'
-              : method.returnType.replace(/\?$/, ' | unknown')
+              ? "this"
+              : method.returnType.replace(/\?$/, " | unknown")
           ),
 
         docs: [type?.abstract?.[0]?.text].filter(Boolean) as string[],
       });
       m.setBodyText(isSelfReturn ? `return this` : method.body);
     } catch (e) {
-      console.warn('error adding method', e);
+      console.warn("error adding method", e);
       console.warn(`orig '${orig}'`);
     }
     return this;

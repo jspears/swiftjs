@@ -12,7 +12,7 @@ import {
   Section,
   Bound,
   Text,
-} from '@tswift/ui';
+} from "@tswift/ui";
 const Sea = swifty(
   class implements Hashable, Identifiable {
     constructor(public name: string, public id = UUID()) {}
@@ -31,23 +31,23 @@ const OceanRegion = swifty(
 
 export class OceanSelection extends Viewable<{}> {
   oceanRegions = [
-    OceanRegion('Pacific', [
-      Sea('Australasian Mediterranean'),
-      Sea('Philippine'),
-      Sea('Coral'),
-      Sea('South China'),
+    OceanRegion("Pacific", [
+      Sea("Australasian Mediterranean"),
+      Sea("Philippine"),
+      Sea("Coral"),
+      Sea("South China"),
     ]),
-    OceanRegion('Atlantic', [
-      Sea('American Mediterranean'),
-      Sea('Sargasso'),
-      Sea('Caribbean'),
+    OceanRegion("Atlantic", [
+      Sea("American Mediterranean"),
+      Sea("Sargasso"),
+      Sea("Caribbean"),
     ]),
-    OceanRegion('Indian', [Sea('Bay of Bengal')]),
-    OceanRegion('Southern', [Sea('Weddell')]),
-    OceanRegion('Arctic', [Sea('Greenland')]),
+    OceanRegion("Indian", [Sea("Bay of Bengal")]),
+    OceanRegion("Southern", [Sea("Weddell")]),
+    OceanRegion("Arctic", [Sea("Greenland")]),
   ];
 
-  @State singleSelection: ID = '';
+  @State singleSelection: ID = "";
 
   body = ({ $singleSelection }: Bound<this>, { oceanRegions }: this) =>
     NavigationView(
@@ -60,5 +60,5 @@ export class OceanSelection extends Viewable<{}> {
           )
         )
       )
-    ).navigationTitle('Oceans and Seas');
+    ).navigationTitle("Oceans and Seas");
 }

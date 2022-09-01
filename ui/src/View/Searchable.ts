@@ -1,4 +1,4 @@
-import { Dot } from '@tswift/util';
+import { Dot } from "@tswift/util";
 
 export enum SearchFieldPlacement {
   automatic,

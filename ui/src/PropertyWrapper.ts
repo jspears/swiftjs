@@ -1,7 +1,7 @@
-import { AnimationKey } from './Animation';
-import { View, ViewableClass } from './View/index';
-import { EnvironmentValues, EnvironmentValuesKeys } from './EnvironmentValues';
-import { Dot, fromKey, keyPath } from '@tswift/util';
+import { AnimationKey } from "./Animation";
+import { View, ViewableClass } from "./View/index";
+import { EnvironmentValues, EnvironmentValuesKeys } from "./EnvironmentValues";
+import { Dot, fromKey, keyPath } from "@tswift/util";
 
 export function FocusState(target: Object, propertyKey: PropertyKey) {}
 export function State(target: Object, propertyKey: PropertyKey) {
@@ -19,10 +19,10 @@ export function State(target: Object, propertyKey: PropertyKey) {
 export function Environment(property: EnvironmentValuesKeys) {
   return function (target: Object, propertyKey: PropertyKey) {
     Reflect.defineProperty(target, propertyKey, {
-      get(){
+      get() {
         return keyPath(EnvironmentValues, property);
-      }
-    })
+      },
+    });
   };
 }
 // @FetchRequest(
@@ -38,7 +38,7 @@ export function FetchRequest(req: {
   animation?: AnimationKey;
 }) {
   return function (target: Object, propertyKey: PropertyKey) {
-    console.log('Environment(): called');
+    console.log("Environment(): called");
   };
 }
 

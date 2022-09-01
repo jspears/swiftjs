@@ -5,7 +5,7 @@
 //  Created by Roman Luzgin on 28.06.21.
 //
 
-import { ViewContext } from '@tswift/coredata';
+import { ViewContext } from "@tswift/coredata";
 import {
   Button,
   Viewable,
@@ -34,23 +34,23 @@ import {
   UIApplication,
   TextEditor,
   MenuPickerStyle,
-} from '@tswift/ui';
-import { categories, ItemType, ViewContextMethods } from './Models';
+} from "@tswift/ui";
+import { categories, ItemType, ViewContextMethods } from "./Models";
 
 const { white, black } = Color;
 export interface NewItemConfig {
-  namespace: typeof Namespace['ID'];
+  namespace: typeof Namespace["ID"];
   newItemOpen: Bindable<boolean>;
 }
 class NewItemClass extends Viewable<NewItemConfig> {
-  @Environment('.managedObjectContext') private viewContext =
+  @Environment(".managedObjectContext") private viewContext =
     new ViewContext<ItemType>();
 
-  namespace: typeof Namespace['ID'];
+  namespace: typeof Namespace["ID"];
 
-  @State category = 'Business';
+  @State category = "Business";
   @State dueDate = new Date();
-  @State toDoText = '';
+  @State toDoText = "";
 
   @Binding newItemOpen?: Bindable<boolean>;
 
@@ -74,20 +74,20 @@ class NewItemClass extends Viewable<NewItemConfig> {
           })
             .font(Font.body.bold())
             .padding()
-            .foregroundColor('.black')
-            .frame({ maxWidth: '.infinity', alignment: '.leading' })
+            .foregroundColor(".black")
+            .frame({ maxWidth: ".infinity", alignment: ".leading" })
             //.frame(height: 50)
             .background(
               ZStack()
                 .color(this.getCategoryColor(category)?.opacity(0.7))
-                .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
-                .padding('.horizontal', 10)
-                .padding('.vertical', 2),
+                .frame({ maxWidth: ".infinity", maxHeight: ".infinity" })
+                .padding(".horizontal", 10)
+                .padding(".vertical", 2),
               VStack()
                 // empty VStack for the blur
-                .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
+                .frame({ maxWidth: ".infinity", maxHeight: ".infinity" })
                 .background(
-                  '.thinMaterial',
+                  ".thinMaterial",
                   RoundedRectangle({ cornerRadius: 5 })
                 )
             )
@@ -102,23 +102,23 @@ class NewItemClass extends Viewable<NewItemConfig> {
         .padding(),
 
       DatePicker(
-        { selection: $dueDate, displayedComponents: 'date' },
-        Text('Due date')
+        { selection: $dueDate, displayedComponents: "date" },
+        Text("Due date")
       )
-        .padding('.horizontal')
-        .padding('.vertical', 10)
+        .padding(".horizontal")
+        .padding(".vertical", 10)
         .accentColor(Color.indigo)
         .padding(),
 
       ZStack(
         {
-          alignment: '.leading',
+          alignment: ".leading",
         },
         ...(self.toDoText?.length
           ? [
               VStack(
-                { alignment: '.leading' },
-                Text('Enter your todo item')
+                { alignment: ".leading" },
+                Text("Enter your todo item")
                   .font(Font.body)
                   .foregroundColor(Color.gray),
                 Spacer()
@@ -126,13 +126,13 @@ class NewItemClass extends Viewable<NewItemConfig> {
             ]
           : [])
       )
-        .padding('.vertical', 12)
-        .padding('.horizontal', 4)
+        .padding(".vertical", 12)
+        .padding(".horizontal", 4)
         .zIndex(0),
 
       TextEditor({ text: $toDoText })
-        .frame({ height: 200, alignment: '.leading' })
-        .frame({ maxWidth: '.infinity' })
+        .frame({ height: 200, alignment: ".leading" })
+        .frame({ maxWidth: ".infinity" })
         .lineSpacing(5)
         //     .onReceive(Just(toDoText)) {
         //         toDoText in
@@ -141,12 +141,12 @@ class NewItemClass extends Viewable<NewItemConfig> {
         .zIndex(1)
         .opacity(self.toDoText.length ? 0.25 : 1)
 
-        .frame({ height: 200, alignment: '.leading' })
-        .frame({ maxWidth: '.infinity' })
-        .padding('.horizontal', 30),
+        .frame({ height: 200, alignment: ".leading" })
+        .frame({ maxWidth: ".infinity" })
+        .padding(".horizontal", 30),
 
       Button({
-        role: '.none',
+        role: ".none",
         action() {
           ViewContextMethods.addItem(
             self.viewContext,
@@ -157,22 +157,22 @@ class NewItemClass extends Viewable<NewItemConfig> {
           withAnimation(() => self.newItemOpen?.(false));
         },
         label: HStack(
-          Text('New task '),
-          Image({ systemName: 'chevron.up' })
-        ).frame({ maxWidth: '.infinity' }),
+          Text("New task "),
+          Image({ systemName: "chevron.up" })
+        ).frame({ maxWidth: ".infinity" }),
       })
-        .buttonStyle(BorderedButtonStyle({ shape: '.roundedRectangle' }))
-        .tint('.indigo')
-        .controlProminence('.increased')
-        .controlSize('.large')
+        .buttonStyle(BorderedButtonStyle({ shape: ".roundedRectangle" }))
+        .tint(".indigo")
+        .controlProminence(".increased")
+        .controlSize(".large")
         .shadow({ color: black.opacity(0.1), radius: 20, x: 5, y: 10 })
         .shadow({ color: black.opacity(0.1), radius: 1, x: 1, y: 1 })
         .shadow({ color: white.opacity(1), radius: 5, x: -1, y: -1 })
         .padding()
 
-        .padding('.top', 100)
+        .padding(".top", 100)
         .background(Color.white)
-        .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
+        .frame({ maxWidth: ".infinity", maxHeight: ".infinity" })
         .onTapGesture(UIApplication.shared.endEditing),
       VStack(
         HStack(
@@ -183,10 +183,10 @@ class NewItemClass extends Viewable<NewItemConfig> {
                 withAnimation(() => newItemOpen?.(false));
               },
             },
-            Image({ systemName: 'xmark.circle.fill' })
+            Image({ systemName: "xmark.circle.fill" })
               .resizable()
               .frame({ width: 60, height: 60 })
-              .foregroundColor('.indigo')
+              .foregroundColor(".indigo")
               .shadow({
                 color: Color.indigo.opacity(0.3),
                 radius: 10,
@@ -195,7 +195,7 @@ class NewItemClass extends Viewable<NewItemConfig> {
               })
               .padding()
           )
-        ).matchedGeometryEffect({ id: 'button', in: this.namespace }),
+        ).matchedGeometryEffect({ id: "button", in: this.namespace }),
 
         Spacer()
       )

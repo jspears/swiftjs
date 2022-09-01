@@ -1,5 +1,5 @@
-import { View, Viewable } from './View';
-import { swifty } from '@tswift/util';
+import { View, Viewable } from "./View";
+import { swifty } from "@tswift/util";
 
 type SectionConfig = {
   header?: View | string;

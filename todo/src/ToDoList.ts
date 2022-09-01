@@ -31,29 +31,29 @@ import {
   Bound,
   Int,
   isEmpty,
-} from '@tswift/ui';
+} from "@tswift/ui";
 import {
   FetchedResults,
   NSSortDescriptor,
   ViewContext,
-} from '@tswift/coredata';
-import { Item, ViewContextMethods, categories, ItemType } from './Models';
+} from "@tswift/coredata";
+import { Item, ViewContextMethods, categories, ItemType } from "./Models";
 
 //https://raw.githubusercontent.com/roman-luzgin/TodoAppSwiftUI3/main/TodoAppSwiftUI3/ToDoList.swift
 
 export class ToDoList extends Viewable {
-  @Environment('.managedObjectContext')
+  @Environment(".managedObjectContext")
   viewContext: ViewContext<ItemType> = new ViewContext();
 
   @FetchRequest({
     sortDescriptors: [
-      NSSortDescriptor({ keyPath: '.dueDate', ascending: false }),
+      NSSortDescriptor({ keyPath: ".dueDate", ascending: false }),
     ],
-    animation: '.default',
+    animation: ".default",
   })
   items: FetchedResults<ItemType> = [];
 
-  @State searchQuery = '';
+  @State searchQuery = "";
   @State notDoneOnly = false;
 
   body = ({ $notDoneOnly }: Bound<this>, self = this): View =>
@@ -64,13 +64,13 @@ export class ToDoList extends Viewable {
             Toggle(
               { $isOn: $notDoneOnly },
               Text(
-                self.notDoneOnly ? 'Show all items' : 'Show not done only'
-              ).frame({ maxWidth: '.infinity' })
+                self.notDoneOnly ? "Show all items" : "Show not done only"
+              ).frame({ maxWidth: ".infinity" })
             )
-              .toggleStyle('.button')
-              .tint('.indigo')
+              .toggleStyle(".button")
+              .tint(".indigo")
               .clipShape(Capsule())
-              .animation('.easeInOut', this.notDoneOnly)
+              .animation(".easeInOut", this.notDoneOnly)
           )
         ),
         Section(
@@ -79,7 +79,7 @@ export class ToDoList extends Viewable {
             (item) =>
               HStack(
                 Image({
-                  systemName: item.isDone?.() ? 'circle.fill' : 'circle',
+                  systemName: item.isDone?.() ? "circle.fill" : "circle",
                 })
                   .resizable()
                   .foregroundColor(this.getCategoryColor(item))
@@ -89,40 +89,40 @@ export class ToDoList extends Viewable {
                       ViewContextMethods.isDone(item, this.viewContext);
                     })
                   )
-                  .padding('.trailing', 10),
+                  .padding(".trailing", 10),
 
                 VStack(
                   HStack(
-                    Text(item.toDoText ?? '').fixedSize({
+                    Text(item.toDoText ?? "").fixedSize({
                       horizontal: false,
                       vertical: true,
                     }),
                     Spacer()
-                  ).padding('.bottom', 5),
+                  ).padding(".bottom", 5),
 
                   HStack(
                     Text(`Due: ${this.itemFormatter.format(item.dueDate)}`)
-                      .font('.caption')
-                      .foregroundColor('.secondary'),
+                      .font(".caption")
+                      .foregroundColor(".secondary"),
                     Spacer(),
-                    Text(item.category ?? 'Unknown')
-                      .font('.caption')
-                      .foregroundColor('.secondary')
+                    Text(item.category ?? "Unknown")
+                      .font(".caption")
+                      .foregroundColor(".secondary")
                   )
-                ).padding('.leading', 5)
+                ).padding(".leading", 5)
               )
                 .frame({ maxHeight: 130 })
-                .listRowSeparator('.hidden') // no separators
+                .listRowSeparator(".hidden") // no separators
           ).onDelete(this.deleteItems)
         )
       )
         .listStyle(InsetGroupedListStyle())
         .refreshable(() => {
           //await store.loadStats()
-          console.log('refreshed');
+          console.log("refreshed");
         })
-        .searchable('Search in history', this.searchQuery, '.automatic')
-        .navigationTitle('All todo items')
+        .searchable("Search in history", this.searchQuery, ".automatic")
+        .navigationTitle("All todo items")
     );
 
   get searchResults(): ItemType[] {
@@ -176,7 +176,7 @@ export class ToDoList extends Viewable {
   };
 
   get itemFormatter() {
-    return new Intl.DateTimeFormat('en-GB', { dateStyle: 'short' });
+    return new Intl.DateTimeFormat("en-GB", { dateStyle: "short" });
   }
 }
 // private let itemFormatter: DateFormatter = {

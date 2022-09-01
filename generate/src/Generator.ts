@@ -1,10 +1,10 @@
-import { SwiftDoc, KindEnum, ReferenceType } from './types';
-import { Project, ScriptTarget } from 'ts-morph';
-import { SwiftDocImpl } from './SwiftDocImpl';
-import { createProject, has } from './create';
-import { join } from 'path';
-import { isBuiltin } from './util';
-import { existsSync, mkdirSync, rmdir, rmdirSync, rmSync } from 'fs';
+import { SwiftDoc, KindEnum, ReferenceType } from "./types";
+import { Project, ScriptTarget } from "ts-morph";
+import { SwiftDocImpl } from "./SwiftDocImpl";
+import { createProject, has } from "./create";
+import { join } from "path";
+import { isBuiltin } from "./util";
+import { existsSync, mkdirSync, rmdir, rmdirSync, rmSync } from "fs";
 const refreshDir = (dir: string) => {
   if (dir && dir.length < 5) {
     return;
@@ -31,15 +31,15 @@ export {Bool, Int, Float, Character, Double, Void, Optional} from '@swiftui/util
     refreshDir(srcDir);
     this.project = createProject(projectDir, {
       compilerOptions: {
-        rootDir: 'src',
-        outDir: 'lib',
-        lib: ['DOM', 'ES2021'],
+        rootDir: "src",
+        outDir: "lib",
+        lib: ["DOM", "ES2021"],
         target: ScriptTarget.ES2021,
         noEmit: true,
       },
     });
-    console.log('creating in ', projectDir);
-    this.createSourceFile('types', typesSource);
+    console.log("creating in ", projectDir);
+    this.createSourceFile("types", typesSource);
   }
 
   ignoreType(type: string) {
@@ -54,7 +54,7 @@ export {Bool, Int, Float, Character, Double, Void, Optional} from '@swiftui/util
     if (this.ignoreType(clz)) {
       return this;
     }
-    console.log('registerType ', clz);
+    console.log("registerType ", clz);
     if (!this.getSourceFile(clz)) {
       this.visit(clz);
     }
@@ -76,25 +76,25 @@ export {Bool, Int, Float, Character, Double, Void, Optional} from '@swiftui/util
     this.visited.set(docId, doc);
     return doc;
   }
-  createSourceFile(name: string, content: string = '') {
-    const source = join(this.srcDir, name + '.ts');
+  createSourceFile(name: string, content: string = "") {
+    const source = join(this.srcDir, name + ".ts");
     const sourceFile = this.project.createSourceFile(source, content, {
       overwrite: true,
     });
-    console.log('created source', source);
+    console.log("created source", source);
     return sourceFile;
   }
   getSourceFile(name: string) {
-    return this.project.getSourceFile(join(this.srcDir, name + '.ts'));
+    return this.project.getSourceFile(join(this.srcDir, name + ".ts"));
   }
   create = async (doc: SwiftDoc) => {
     if (!doc) {
       throw new Error(`Doc is required`);
     }
     if (!doc.identifier?.url) {
-      throw new Error('no identifier for doc ' + doc);
+      throw new Error("no identifier for doc " + doc);
     }
-    if (doc.identifier?.interfaceLanguage != 'swift') {
+    if (doc.identifier?.interfaceLanguage != "swift") {
       throw new Error(`not an interface language we understand`);
     }
     return new SwiftDocImpl(doc, this).generate();

@@ -1,11 +1,11 @@
-import { View, Viewable } from './View';
-import type { Content } from './View';
-import { fromKey, swifty } from '@tswift/util';
-import { AlignmentKey, Alignment } from './Edge';
-import type { Num } from '@tswift/util';
-import { Color, ColorKey } from './Color';
-import { h } from 'preact';
-import { CSSProperties } from './types';
+import { View, Viewable } from "./View";
+import type { Content } from "./View";
+import { fromKey, swifty } from "@tswift/util";
+import { AlignmentKey, Alignment } from "./Edge";
+import type { Num } from "@tswift/util";
+import { Color, ColorKey } from "./Color";
+import { h } from "preact";
+import { CSSProperties } from "./types";
 
 interface StackOptions {
   alignment?: AlignmentKey;
@@ -24,11 +24,11 @@ interface FrameOptions {
 
 class StackClass extends Viewable<StackOptions> {
   protected style: CSSProperties = {
-    display: 'grid',
+    display: "grid",
     // width: '100%',
     // height: '100%',
   };
-  constructor(...views:View[]);
+  constructor(...views: View[]);
   constructor(config?: StackOptions | View, ...views: View[]) {
     super(config, ...views);
 
@@ -38,36 +38,31 @@ class StackClass extends Viewable<StackOptions> {
         this.config.alignment as unknown as AlignmentKey
       );
       if (this.config.spacing) {
-        Object.assign(this.style, { gridRowGap: this.config.spacing + 'px' });
+        Object.assign(this.style, { gridRowGap: this.config.spacing + "px" });
       }
       switch (alignment) {
         case Alignment.leading:
-          Object.assign(this.style, { justifyContent: 'start' });
+          Object.assign(this.style, { justifyContent: "start" });
           break;
         case Alignment.trailing:
-          Object.assign(this.style, { justifyContent: 'end' });
+          Object.assign(this.style, { justifyContent: "end" });
 
         case Alignment.center:
-          Object.assign(this.style, { justifyContent: 'center' });
+          Object.assign(this.style, { justifyContent: "center" });
       }
       if (alignment == Alignment.leading) {
       } else alignment?.apply(this.style);
     }
   }
- 
 
   render() {
-    return h(
-      'div',
-      { style:this.asStyle(this.style) },
-      super.render()
-    );
+    return h("div", { style: this.asStyle(this.style) }, super.render());
   }
 }
 
 class VStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
-    gridAutoFlow: 'row',
+    gridAutoFlow: "row",
   });
 }
 
@@ -76,7 +71,7 @@ export const LazyVStack = VStack;
 
 class HStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
-    gridAutoFlow: 'column',
+    gridAutoFlow: "column",
   });
 }
 export const HStack = swifty(HStackClass);

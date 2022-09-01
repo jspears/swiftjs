@@ -4,8 +4,8 @@
 //
 //  Created by Roman Luzgin on 21.06.21.
 //
-import { Item, ItemType } from './Models';
-import { ViewContext, HasId } from '@tswift/coredata';
+import { Item, ItemType } from "./Models";
+import { ViewContext, HasId } from "@tswift/coredata";
 
 export class PersistenceController {
   static get shared() {
@@ -21,9 +21,9 @@ export class PersistenceController {
       const newItem = Item(viewContext);
       newItem.timestamp = new Date();
       newItem.dueDate = new Date();
-      newItem.category = 'Business';
+      newItem.category = "Business";
       newItem.toDoText =
-        'You need to do this task in order to proceed with the next one';
+        "You need to do this task in order to proceed with the next one";
     }
     try {
       viewContext.save();

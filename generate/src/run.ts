@@ -1,10 +1,10 @@
-import { References, SwiftDoc } from './types';
-import { Generator } from './Generator';
-import { readDoc } from './util';
+import { References, SwiftDoc } from "./types";
+import { Generator } from "./Generator";
+import { readDoc } from "./util";
 
-export async function run(name: string = 'ModifiedContent') {
+export async function run(name: string = "ModifiedContent") {
   if (!name) {
-    console.warn('no name?');
+    console.warn("no name?");
     return;
   }
   await new Generator(readDoc).registerType(name).save();

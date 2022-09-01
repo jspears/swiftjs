@@ -6,10 +6,10 @@ import {
   EdgeKey,
   HorizontalAlignment,
   VerticalAlignment,
-} from '../Edge';
-import { fromKey, Num } from '@tswift/util';
-import { CSSProperties } from '../types';
-import { isNum, unitFor } from '../unit';
+} from "../Edge";
+import { fromKey, Num } from "@tswift/util";
+import { CSSProperties } from "../types";
+import { isNum, unitFor } from "../unit";
 
 type Config = {
   alignment?: AlignmentKey;
@@ -59,7 +59,7 @@ export class PaddingMixin {
         paddingBottom: a,
         paddingLeft: a,
       });
-    } else if (typeof a == 'string') {
+    } else if (typeof a == "string") {
       const alignment = fromKey(Alignment, a as AlignmentKey);
       if (alignment === Alignment.vertical) {
         Object.assign(this._padding, {

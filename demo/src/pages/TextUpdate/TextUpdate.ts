@@ -1,4 +1,3 @@
-
 import {
   Viewable,
   Text,
@@ -7,17 +6,17 @@ import {
   FocusState,
   Bound,
   False,
-} from '@tswift/ui';
+} from "@tswift/ui";
 
 function validate(t: unknown) {
-  return () => console.log('figure this out', t);
+  return () => console.log("figure this out", t);
 }
 
 //import '@tswift/UI'
 
 //https://developer.apple.com/documentation/swiftui/textfield
 export class TextUpdate extends Viewable<{}> {
-  @State username: string = '';
+  @State username: string = "";
   @FocusState emailFieldIsFocused = False();
 
   body = (
@@ -25,14 +24,14 @@ export class TextUpdate extends Viewable<{}> {
     { emailFieldIsFocused, username }: this
   ) => [
     TextField({
-      label: 'User name (email address)',
+      label: "User name (email address)",
       text: $username,
     })
       .focused($emailFieldIsFocused)
       .onSubmit(validate({ name: username }))
-      .textInputAutocapitalization('.never')
+      .textInputAutocapitalization(".never")
       .disableAutocorrection(true)
-      .border('.secondary'),
-    Text(username).foregroundColor(emailFieldIsFocused ? '.red' : '.blue'),
+      .border(".secondary"),
+    Text(username).foregroundColor(emailFieldIsFocused ? ".red" : ".blue"),
   ];
 }

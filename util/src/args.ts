@@ -29,7 +29,7 @@ type TuplifyUnion<
 type Never<T> = {
   [K in keyof T as T[K] extends never
     ? never
-    : K extends 'prototype'
+    : K extends "prototype"
     ? never
     : K]: T[K];
 };
@@ -65,7 +65,7 @@ function asKeyValue(all: any[]) {
   const ret = {} as Record<string, unknown>;
   for (let i = 0; i < all.length; i += 2) {
     const arg = typeof all[i];
-    if (arg === 'string' || arg === 'number' || arg === 'symbol') {
+    if (arg === "string" || arg === "number" || arg === "symbol") {
       ret[all[i]] = all[i + 1];
     } else {
       return;
@@ -82,7 +82,7 @@ export const args =
     }
     const obj = asKeyValue(all);
     if (!obj) {
-      throw new Error('not a valid call signature');
+      throw new Error("not a valid call signature");
     }
     return fn(obj);
   };

@@ -1,11 +1,11 @@
-import { Font, FontKey, WeightKey } from '../Font';
-import { Num } from '@tswift/util';
+import { Font, FontKey, WeightKey } from "../Font";
+import { Num } from "@tswift/util";
 
 export class FontMixin {
   _font: Font = Font.body;
 
   font(f: FontKey) {
-    if (typeof f === 'string') {
+    if (typeof f === "string") {
       this._font = Font[f.slice(1) as keyof typeof Font];
     } else {
       this._font = f;

@@ -1,11 +1,11 @@
-import { View } from './View';
-import { Fragment, h, render as _render, VNode } from 'preact';
+import { View } from "./View";
+import { Fragment, h, render as _render, VNode } from "preact";
 
 export function render(view: View, node?: Element | string | null): void {
   if (!node) {
     throw new Error(`no node found '${node}'`);
   }
-  const root = typeof node === 'string' ? document.querySelector(node) : node;
+  const root = typeof node === "string" ? document.querySelector(node) : node;
   if (!root) {
     throw new Error(`no node found '${node}'`);
   }
@@ -30,10 +30,13 @@ export const toNode = (view?: View | View[], ...views: View[]): VNode<any> => {
   );
 };
 
-export const findTarget = (find: (v: HTMLElement) => boolean, e?: HTMLElement | null,): HTMLElement | undefined => {
+export const findTarget = (
+  find: (v: HTMLElement) => boolean,
+  e?: HTMLElement | null
+): HTMLElement | undefined => {
   if (!e) return;
   if (find(e)) {
     return e;
   }
   return findTarget(find, e.parentElement);
-}
+};

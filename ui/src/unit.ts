@@ -1,28 +1,27 @@
-import { Num } from '@tswift/util';
+import { Num } from "@tswift/util";
 
 export function isNum(v: unknown): v is Num {
-
-  if (v === '.infinity') {
+  if (v === ".infinity") {
     return true;
   }
 
-  if (typeof v === 'number') {
+  if (typeof v === "number") {
     return true;
   }
 
-  if (Number.isNaN(v)){
+  if (Number.isNaN(v)) {
     return false;
   }
 
-  return Number(v) + '' === v;
+  return Number(v) + "" === v;
 }
 
 export const unitFor = (t?: Num): string => {
   if (!t) {
-    return '';
+    return "";
   }
-  if (t === '.infinity') {
-    return '100%';
+  if (t === ".infinity") {
+    return "100%";
   }
 
   return `${t}px`;

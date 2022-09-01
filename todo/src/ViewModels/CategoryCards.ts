@@ -17,7 +17,7 @@ import {
   swifty,
   View,
   Bound,
-} from '@tswift/ui';
+} from "@tswift/ui";
 interface CategoryCardsConfig {
   category: string;
   color: Color;
@@ -26,7 +26,7 @@ interface CategoryCardsConfig {
 }
 class CategoryCardsClass
   extends Viewable<CategoryCardsConfig>
-  implements Omit<CategoryCardsConfig, 'color'>
+  implements Omit<CategoryCardsConfig, "color">
 {
   category: string;
   numberOfTasks: number;
@@ -50,20 +50,20 @@ class CategoryCardsClass
 
   body = (bound: Bound<this>, self = this) =>
     VStack(
-      { alignment: '.leading' },
-      Text('(numberOfTasks) tasks')
-        .font('.callout')
-        .foregroundColor('.secondary'),
-      Text(this.category || '').font(Font.title.bold()),
+      { alignment: ".leading" },
+      Text("(numberOfTasks) tasks")
+        .font(".callout")
+        .foregroundColor(".secondary"),
+      Text(this.category || "").font(Font.title.bold()),
 
       ZStack(
-        { alignment: '.leading' },
-        RoundedRectangle({ cornerRadius: 20, style: '.continuous' })
+        { alignment: ".leading" },
+        RoundedRectangle({ cornerRadius: 20, style: ".continuous" })
           .frame({ maxWidth: self.maxProgress })
           .frame({ height: 5 })
           .foregroundColor(Color.gray.opacity(0.5)),
 
-        RoundedRectangle({ cornerRadius: 20, style: '.continuous' })
+        RoundedRectangle({ cornerRadius: 20, style: ".continuous" })
           .frame({ maxWidth: self.maxProgress })
           .frame({
             width: self.numberOfTasks > 0 ? self.progress : 0,
@@ -73,28 +73,28 @@ class CategoryCardsClass
       )
     )
       .padding(10)
-      .frame({ width: 200, height: 120, alignment: '.leading' })
+      .frame({ width: 200, height: 120, alignment: ".leading" })
       .background(
         ZStack(
-          { alignment: '.leading' },
+          { alignment: ".leading" },
           LinearGradient({
             colors: [
               self.config?.color?.opacity(0.95),
               self.config?.color?.opacity(0.3),
             ],
-            startPoint: '.topLeading',
-            endPoint: '.bottomTrailing',
+            startPoint: ".topLeading",
+            endPoint: ".bottomTrailing",
           })
-            .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
+            .frame({ maxWidth: ".infinity", maxHeight: ".infinity" })
             .padding(20),
 
           VStack()
             // empty VStack for the blur
-            .frame({ maxWidth: '.infinity', maxHeight: '.infinity' })
-            .background('.thinMaterial')
+            .frame({ maxWidth: ".infinity", maxHeight: ".infinity" })
+            .background(".thinMaterial")
         )
       )
-      .clipShape(RoundedRectangle({ cornerRadius: 20, style: '.continuous' }))
+      .clipShape(RoundedRectangle({ cornerRadius: 20, style: ".continuous" }))
       .shadow({ color: Color.black.opacity(0.1), radius: 20, x: 5, y: 10 })
       .shadow({ color: Color.black.opacity(0.1), radius: 1, x: 1, y: 1 })
       .shadow({ color: Color.white.opacity(1), radius: 5, x: -1, y: -1 });

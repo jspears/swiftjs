@@ -1,2 +1,2 @@
-export * from './Categories';
-export * from './ViewContextMethods';
+export * from "./Categories";
+export * from "./ViewContextMethods";
