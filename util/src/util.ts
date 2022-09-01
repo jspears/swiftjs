@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 export function swifty<
   A extends Constructor,
   Arg extends any[] = ConstructorParameters<A>
->(clazz: A): (...args: Arg) => InstanceType<A> & Pick<A, keyof A> {
+>(clazz: A): (...args: Arg) => InstanceType<A> & Pick<A, Exclude<keyof A, 'prototype'>> {
   return Object.assign((...args: Arg) => new clazz(...args), clazz.constructor);
 }
 
@@ -57,7 +57,8 @@ export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
 }
 
 export function has<T, K>(v: unknown, k: PropertyKey): k is keyof T {
-  return Object.prototype.hasOwnProperty.call(v, k);
+
+  return v != null && k != null && Object.prototype.hasOwnProperty.call(v, k);
 }
 
 export function toEnum<T>(enm: T, property: T | Dot<keyof T> | keyof T): T {

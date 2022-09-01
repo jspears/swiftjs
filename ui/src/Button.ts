@@ -15,39 +15,67 @@ export enum ButtonRole {
 export interface ButtonConfig {
   role?: ButtonRole | Dot<keyof typeof ButtonRole>;
   action?(): void;
-  label?: Content | string | View;
+  label?:  string | View;
   shape?: ".roundedRectangle";
 }
-export class ButtonStyleConfiguration {
-  constructor(arg?: ButtonConfig) {}
+export class ButtonStyle {
+  
+  constructor(
+    public _label?:(arg:string| View | undefined)=>View,
+    public _trigger?: (fn?:()=>unknown)=>()=>void,
+    public _role?: ButtonRole
+  ) {}
+  makeBody(btn:ButtonClass):View{
+    if (this._label){
+      btn.label = this._label(btn.label);
+    }
+    if (this._trigger){
+      btn.onAction = this._trigger(btn.onAction);
+    }
+    return btn;
+  }
 }
 
-export const PlainButtonStyle = swifty(ButtonStyleConfiguration);
-export const BorderedButtonStyle = swifty(ButtonStyleConfiguration);
-export const PrimativeButtonStyle = swifty(ButtonStyleConfiguration);
+export const PlainButtonStyle =  new class extends ButtonStyle {
+  makeBody(btn:ButtonClass):View{
+    btn.foregroundColor(".accentColor")
+    return btn;
+  }
+};
 
+export const BorderedButtonStyle = new class extends ButtonStyle {
+  makeBody(btn:ButtonClass):View{
+    btn.foregroundColor(".accentColor")
+    return btn;
+  }
+};
+export const PrimativeButtonStyle = new class extends ButtonStyle {
+  makeBody(btn:ButtonClass):View{
+    btn.foregroundColor(".accentColor")
+    return btn;
+  }
+};
+function isContent(v:unknown):v is View | string {
+  return v == null ? false :  typeof v === 'string' || v instanceof View;
+}
 class ButtonClass extends Viewable<ButtonConfig> {
   style: CSSProperties = {
     cursor: "pointer",
   };
-  constructor(config?: ButtonConfig);
-  constructor(label?: ButtonConfig["label"], action?: ButtonConfig["action"]);
+  _buttonStyle:ButtonStyle = PlainButtonStyle;
+  constructor(config: ButtonConfig);
+  constructor(label: ButtonConfig["label"], action?: ButtonConfig["action"]);
+  constructor();
   constructor(
     label?: ButtonConfig["label"] | ButtonConfig,
     action?: ButtonConfig["action"]
   ) {
-    super(
-      (label == null
-        ? null
-        : has(label, "label")
-        ? label
-        : { label, action }) as ButtonConfig
-    );
+    super(...(isContent(label) ? [{label, action}] : (has(label, 'label') || has(label, 'action'))  ? [label] : []) as [ButtonConfig] );
   }
   init() {
-    return this.foregroundColor(".accentColor");
+    return this._buttonStyle.makeBody(this);
   }
-  buttonStyle(style: ButtonStyleConfiguration) {
+  buttonStyle(style: ButtonStyle) {
     return this;
   }
   onAction = this.config?.action;

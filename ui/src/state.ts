@@ -1,6 +1,6 @@
 import { Bindable, isBindable, watchable } from "@tswift/util";
-import { watch } from "fs";
-import { Component } from "preact";
+import { Component, VNode } from "preact";
+import { View } from "./View";
 /**
  * Finds all bound
  * @param comp
@@ -35,3 +35,19 @@ const applyBindable = (
       value();
   }
 };
+
+
+export function flatRender(render:(View | undefined) | (View | undefined)[]):VNode<any>[] {
+  if (render == null){
+      return [];
+  }
+  if (Array.isArray(render)){
+   return render.flatMap(v=>v?.render()).filter(Boolean) as VNode<any>[];
+  }else{
+    const ret = render.render();
+    if (ret){
+      return Array.isArray(ret) ? ret : [ret];
+    }
+  }
+  return [];
+}

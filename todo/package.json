@@ -7,13 +7,17 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@tswift/ui":"^1.0.0"
+    "preview": "vite preview",
+    "docs": "vite build --base=./"
   },
   "devDependencies": {
     "typescript": "^4.6.4",
     "vite": "^3.0.7"
+  },
+  "dependencies": {
+    "@tswift/ui": "^1.0.0",
+    "@tswift/util": "^1.0.0",
+    "@tswift/coredata": "^1.0.0",
+    "preact": "^10.10.2"
   }
 }

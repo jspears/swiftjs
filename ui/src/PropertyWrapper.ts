@@ -1,7 +1,7 @@
 import { AnimationKey } from "./Animation";
 import { View, ViewableClass } from "./View/index";
 import { EnvironmentValues, EnvironmentValuesKeys } from "./EnvironmentValues";
-import { Dot, fromKey, keyPath } from "@tswift/util";
+import { Dot, fromKey, keyPath, UUID } from "@tswift/util";
 
 export function FocusState(target: Object, propertyKey: PropertyKey) {}
 export function State(target: Object, propertyKey: PropertyKey) {
@@ -14,6 +14,11 @@ export function State(target: Object, propertyKey: PropertyKey) {
       this.$(propertyKey)(v);
     },
   });
+}
+export function Namespace(target: Object, propertyKey:PropertyKey){
+  Reflect.defineProperty(target, propertyKey, {
+    value:UUID()
+  })
 }
 
 export function Environment(property: EnvironmentValuesKeys) {
@@ -45,5 +50,17 @@ export function FetchRequest(req: {
 export function Binding(target: View, property: PropertyKey) {}
 
 export function AppStorage(key: string) {
-  return function AppStorage$(target: Object, property: PropertyKey) {};
+  return function AppStorage$(target: Object, property: string) {
+    Reflect.defineProperty(target, property, {
+      set(value){
+        localStorage.set(property, JSON.stringify(value));
+      },
+      get(){
+        const item = localStorage.getItem(property);
+        if (item){
+          return JSON.parse(item);
+        }
+      }
+    })
+  };
 }

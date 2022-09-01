@@ -1,5 +1,5 @@
 import type { AlignmentKey } from "../Edge";
-import { isString, applyMixins, has, watchable, Void } from "@tswift/util";
+import { isString, applyMixins, has, watchable, Void, isBindable } from "@tswift/util";
 import type { Bindable, Bound, Bounds } from "@tswift/util";
 import { ApperanceMixin } from "./ApperanceMixin";
 import { PaddingMixin } from "./PaddingMixin";
@@ -40,11 +40,12 @@ export class ViewableClass<T = any> extends View {
     K extends keyof V & string = keyof V & string,
     R = V[K]
   >(
-    key: K
+    ...keys: K[]
   ): Bindable<R> => {
+    keys.forEach(key=>{
     if (!this.watch.has(key)) {
       const value = has(this, key) ? this[key] : null;
-      const watch = watchable<R>(value as unknown as R);
+      const watch = isBindable(value) ? value : watchable<R>(value as unknown as R);
       const pd = Object.getOwnPropertyDescriptor(this, key);
       if (pd) {
         pd.get = watch;
@@ -60,7 +61,8 @@ export class ViewableClass<T = any> extends View {
       }
       this.watch.set(key, watch);
     }
-    return this.watch.get(key) as Bindable<R>;
+  });
+    return  this.watch.get(keys[0]) as Bindable<R> ;
   };
   frame(conf: Partial<Bounds & { alignment: AlignmentKey }>) {
     return this;

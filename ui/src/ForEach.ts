@@ -1,5 +1,6 @@
 import { Int } from "@tswift/util";
 import { h, Component, render, Fragment } from "preact";
+import { flatRender } from "./state";
 import { View, Viewable } from "./View";
 
 export type IndexSet = Set<Int>;
@@ -11,7 +12,7 @@ class ForEachClass<I> extends Viewable<{}> {
   constructor(private data: I[], private content: ForEachFn<I>) {
     super();
   }
-
+  
   body = () => this.data.map(this.content);
 
   onDelete(fn: OnDelete): this {
@@ -22,7 +23,7 @@ class ForEachClass<I> extends Viewable<{}> {
     return h(
       Fragment,
       {},
-      this.body()?.map((v) => v?.render())
+      flatRender(this.exec())
     );
   }
 }

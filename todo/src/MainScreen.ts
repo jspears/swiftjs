@@ -33,8 +33,9 @@ import {
   Bound,
   Calendar,
   RoundedRectangle,
-  Toggle,
-  toggle,
+  Bool,
+  False,
+  BoolType,
 } from "@tswift/ui";
 import {
   FetchedResults,
@@ -74,10 +75,10 @@ export class MainScreen extends Viewable {
     );
   }
 
-  @State newItemOpen = false;
-  @State settingsOpen = false;
+  @State newItemOpen = False();
+  @State settingsOpen = False();
 
-  @Binding menuOpen?: boolean;
+  @Binding menuOpen?: BoolType;
 
   @AppStorage("userName") userName = "";
 
@@ -218,7 +219,7 @@ export class MainScreen extends Viewable {
                 Button(
                   {
                     action() {
-                      withAnimation(toggle($newItemOpen));
+                      withAnimation($newItemOpen);
                     },
                   },
                   Image({ systemName: "plus.circle.fill" })

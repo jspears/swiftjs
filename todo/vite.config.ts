@@ -11,6 +11,11 @@ export default defineConfig({
     }
 
   },
+  esbuild: {
+    jsxInject: `import * as React from 'preact';\n`
+  },
+  ...(process.argv.find(v=>/^--base($|=)/.test(v)) ? {root: './public'} :{}),
+  base: './',
   build: {
     rollupOptions: {
       input: {

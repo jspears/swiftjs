@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import { readdirSync, writeFileSync, existsSync } from 'fs'
-import plainText from 'vite-plugin-virtual-plain-text';
 
 //@ts-ignore
 const dirname = __dirname;
@@ -49,7 +48,6 @@ input['index'] = writeHtml('index', `<h2>TSwift Demos</h2><ul>${
 ,'');
 
 export default defineConfig({
-  plugins:[plainText()],
   resolve:{
     alias:{
       '@tswift/coredata':`${dirname}/../coredata/src/index.ts`,

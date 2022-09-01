@@ -58,6 +58,8 @@ export class ListItem<T> extends Viewable {
     );
   }
 }
+type HasDataContent<T> = HasData<T> & RowContent<T>;
+
 export class ListClass<T> extends Viewable<ListConfig<T>> {
   style = DefaultListStyle;
   @Environment(".editMode")
@@ -70,13 +72,20 @@ export class ListClass<T> extends Viewable<ListConfig<T>> {
     content: RowContent<T>["content"]
   );
   constructor(selection: HasSelection<T>["selection"], ...views: View[]);
+  constructor(selection: HasSelection<T>, data:HasDataContent<T>);
   constructor(config: ListConfig<T>, ...views: View[]);
   constructor(config: HasSelection<T>, ...views: View[]);
   constructor(...views: View[]);
-  constructor(...all: unknown[]) {
+  constructor(...args: unknown[]) {
     super();
+    let all = args.concat();
     const first = all[0];
-
+    const second = all[1];
+    if (hasContent<T>(second) && hasData<T>(second)){
+      this.config.content =second.content;
+      this.config.data = second.data;
+      all  = [first];    
+    }
     if (
       (first != null && hasContent<T>(first)) ||
       hasData<T>(first) ||
