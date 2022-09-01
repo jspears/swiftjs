@@ -1,16 +1,13 @@
-// import {MainScreen} from './MainScreen';
 
-// console.log('hello', MainScreen);
 import {
   Viewable,
   Text,
-  Bool,
   TextField,
   State,
   FocusState,
   Bound,
+  False,
 } from '@tswift/ui';
-import {run} from '../run';
 
 function validate(t: unknown) {
   return () => console.log('figure this out', t);
@@ -19,9 +16,9 @@ function validate(t: unknown) {
 //import '@tswift/UI'
 
 //https://developer.apple.com/documentation/swiftui/textfield
-export class TextFieldDemo extends Viewable<{}> {
+export class TextUpdate extends Viewable<{}> {
   @State username: string = '';
-  @FocusState emailFieldIsFocused: boolean = false;
+  @FocusState emailFieldIsFocused = False();
 
   body = (
     { $username, $emailFieldIsFocused }: Bound<this>,
@@ -39,4 +36,3 @@ export class TextFieldDemo extends Viewable<{}> {
     Text(username).foregroundColor(emailFieldIsFocused ? '.red' : '.blue'),
   ];
 }
-run(new TextFieldDemo());

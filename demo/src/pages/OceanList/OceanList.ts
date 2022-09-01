@@ -17,8 +17,6 @@ import {
   CountSet,
   VStack,
 } from '@tswift/ui';
-import { run } from '../run';
-import Png from './SimpleList.png';
 
 class OceanClass implements Identifiable, Hashable {
   constructor(public name: string, public id = UUID()) {}
@@ -51,5 +49,3 @@ export class OceanList extends Viewable {
     Text(`${multiSelection.count} selections`),
   ];
 }
-
-run(new OceanList());

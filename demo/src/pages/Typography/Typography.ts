@@ -1,8 +1,6 @@
 import { Text, VStack,  Color, Viewable } from '@tswift/ui';
-import { run } from '../run';
-import Png from './Text.png';
 
-export class TextExample extends Viewable {
+export class Typeography extends Viewable {
   body = () =>
     VStack(
       { alignment: '.leading', spacing: 10 },
@@ -22,26 +20,3 @@ export class TextExample extends Viewable {
       .border(Color.purple, 4)
       .navigationTitle('Fonts Sizes');
 }
-
-run(
-  new TextExample(),
-  {
-    backgroundRepeat: 'no-repeat',
-    backgroundPositionX: '0',
-    backgroundPositionY: '0',
-    backgroundImage: `url(${Png})`,
-    width: '321px',
-    height: '571px',
-    display: 'flex',
-    flex: '1',
-    alignItems: 'center',
-  },
-  {
-    backgroundImage: 'none',
-    width: '321px',
-    height: '571px',
-    display: 'flex',
-    flex: '1',
-    alignItems: 'center',
-  }
-);

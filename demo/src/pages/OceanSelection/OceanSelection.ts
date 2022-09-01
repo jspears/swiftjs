@@ -13,7 +13,6 @@ import {
   Bound,
   Text,
 } from '@tswift/ui';
-import {run} from '../run';
 const Sea = swifty(
   class implements Hashable, Identifiable {
     constructor(public name: string, public id = UUID()) {}
@@ -29,7 +28,6 @@ const OceanRegion = swifty(
     ) {}
   }
 );
-type OceanR = ReturnType<typeof OceanRegion>;
 
 export class OceanSelection extends Viewable<{}> {
   oceanRegions = [
@@ -64,5 +62,3 @@ export class OceanSelection extends Viewable<{}> {
       )
     ).navigationTitle('Oceans and Seas');
 }
-
-run(new OceanSelection())

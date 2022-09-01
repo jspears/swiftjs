@@ -18,9 +18,9 @@ class NavigationViewClass extends Viewable {
       .background('.clear'),
     ...this.children,
   ];
+  
   init() {
     this.background(Color.gray);
-    return this;
   }
  
   get _toolbar(): View[] {

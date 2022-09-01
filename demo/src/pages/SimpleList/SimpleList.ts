@@ -16,7 +16,7 @@ import {
   Viewable,
   CountSet,
 } from '@tswift/ui';
-import { run } from '../run';
+import { run } from '../../run';
 import Png from './SimpleList.png';
 
 const Ocean = swifty(
@@ -41,7 +41,3 @@ export class SimpleList extends Viewable {
   body = (_, { oceans }: this) => List(oceans, ($0) => Text($0.name));
 }
 
-/**
- * Just for demo purposes.
- */
-run(new SimpleList());

@@ -1,7 +1,6 @@
 import {Viewable, Text, Button, VStack, State} from '@tswift/ui'
-import {run} from '../run';
 
-class StateExample extends Viewable {
+export class StateExample extends Viewable {
     @State intValue = 0
   
      body = (_, self = this)=>
@@ -14,6 +13,4 @@ class StateExample extends Viewable {
       )
     
 }
-
-run(new StateExample);
   
