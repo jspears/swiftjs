@@ -19,7 +19,7 @@ import { CSSProperties } from '../types';
 import { EnvironmentMixin } from './EnvironmentMixin';
 import { bindToState } from '../state';
 export class ViewableClass<T = any> extends View {
-  private watch = new Map<string, Bindable<any>>();
+  watch = new Map<string, Bindable<any>>();
   protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
   protected _tag?: string;

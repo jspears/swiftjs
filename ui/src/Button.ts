@@ -3,7 +3,7 @@ import type { Content } from './View';
 import { Bindable, has, swifty } from '@tswift/util';
 import type { Dot } from '@tswift/util';
 import { Environment, State } from './PropertyWrapper';
-import { EditMode } from './NavigationView';
+import { EditMode } from "./EditMode";
 import { Component, h } from 'preact';
 import { CSSProperties } from './types';
 import { bindToState } from './state';
@@ -45,7 +45,7 @@ class ButtonClass extends Viewable<ButtonConfig> {
 
   render() {
     const style = this.asStyle();
-    const r = h(ButtonComponent, { action: this.onAction, label: this.$('label'), role: this.role, style } as ButtonProps);
+    const r = h(ButtonComponent, { action: this.onAction, watch:this.watch, label: this.$('label'), role: this.role, style } as ButtonProps);
 
     return r;
   }
@@ -65,23 +65,21 @@ class ButtonComponent extends Component<ButtonProps>{
 class EditButtonClass extends ButtonClass {
   @Environment('.editMode')
   editMode?: Bindable<EditMode>
-
+ 
   @State
-  label: string = 'Edit';
-  constructor() {
+  label: string ;
+
+  constructor(){
     super();
+    this.editMode?.().isEditing.sink(v=>{
+      this.label = v ? 'Done' : 'Edit';
+    })
+    this.label = this.editMode?.().isEditing() ? 'Done' : 'Edit';
   }
+
   onAction = () => {
-    const editMode = this.editMode?.();
-    console.log('editMode', editMode);
-    if (!editMode) {
-      return;
-    }
-    if (editMode.isEditing.toggle()) {
-      this.label = 'Done';
-    } else {
-      this.label = 'Edit';
-    }
+    const editMode = this.editMode?.()?.isEditing.toggle();
+    this.label = editMode ? 'Done' : 'Edit';
   }
 
 }

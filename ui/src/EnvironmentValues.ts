@@ -1,5 +1,5 @@
 import {  KeyPath, True, watchable } from "@tswift/util";
-import { EditMode } from "./NavigationView";
+import { EditMode } from "./EditMode";
 import { ColorScheme } from "./View/ApperanceMixin";
 
 export const EnvironmentValues = {

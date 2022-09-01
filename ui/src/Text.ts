@@ -4,11 +4,10 @@ import { h, Fragment } from 'preact';
 class TextClass extends Viewable<string> {
   public constructor(private text: string) {
       super();
-    this.background('.white');
   }
 
   render() {
-    return h('span', { style: this.asStyle({display:'block'}) }, this.text);
+    return h('span', { style: this.asStyle({display:'block', background:'inherit'}) }, this.text);
   }
 }
 
