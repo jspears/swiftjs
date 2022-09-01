@@ -1,6 +1,6 @@
 import {  KeyPath, True, watchable } from "@tswift/util";
 import { EditMode } from "./EditMode";
-import { ColorScheme } from "./View/ApperanceMixin";
+import { ColorScheme } from "./View/ColorScheme";
 
 export const EnvironmentValues = {
     editMode: watchable(EditMode.active),

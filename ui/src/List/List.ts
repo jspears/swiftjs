@@ -1,12 +1,5 @@
 import { View, Viewable } from '../View';
-import {
-  CountSet,
-  has,
-  isBindable,
-  isFunction,
-  BoolType,
-  KeyValue,
-} from '@tswift/util';
+import { isBindable, isFunction } from '@tswift/util';
 import type { Bindable, Identifiable, Int } from '@tswift/util';
 import type { On } from '../View/EventsMixin';
 import { h, VNode } from 'preact';
@@ -14,7 +7,6 @@ import { DefaultListStyle, ListStyle } from './ListStyle';
 import { Environment, State } from '../PropertyWrapper';
 import { EditMode } from '../EditMode';
 import { ListComponent } from './ListComponent';
-import { findTarget } from '../dom';
 import type { ListConfig, RowContent, HasData, HasSelection } from './types';
 import { hasContent, hasData, hasId, hasSelection } from './types';
 import { StyleListConfig } from './ListComponent';
@@ -44,12 +36,12 @@ export class ListItem<T> extends Viewable {
         }
         this._backgroundColor = this.selected
           ? this.style.selectedColor
-          : Color.clear;
+          : Color.white;
       };
-      if (selection) {
-        doSelection(selection());
-        selection.sink(doSelection);
-      }
+      doSelection(selection());
+      selection.sink(doSelection);
+    }else{
+      this._backgroundColor = Color.white;
     }
   }
 
@@ -120,7 +112,7 @@ export class ListClass<T> extends Viewable<ListConfig<T>> {
           editMode,
           content,
           this._listStyle,
-          selection
+          editMode ? selection : undefined
         );
         itm.parent = this;
         return itm;
@@ -144,6 +136,9 @@ export class ListClass<T> extends Viewable<ListConfig<T>> {
   refreshable(fn: () => void) {
     return this;
   }
+  init(){
+    this.background(Color.gray).padding(10);
+  }
   onDelete(fn: On<Set<Int>>) {
     return this;
   }
@@ -154,7 +149,8 @@ export class ListClass<T> extends Viewable<ListConfig<T>> {
         body: this.exec,
         isEdit: this.editMode?.()?.isEditing,
         selection: this.config.selection,
-        style: this.style,
+        style:this.asStyle({flex:'1', width:'100%'}),
+        listStyle: this.style,
       } as StyleListConfig,
       []
     );

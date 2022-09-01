@@ -14,7 +14,7 @@ class NavigationViewClass extends Viewable {
     ),
     Text(NavigationConfig.navigationTitle || '')
       .font(Font.title.bold())
-      .padding('.vertical', 10)
+      .padding(10)
       .background('.clear'),
     ...this.children,
   ];
@@ -22,6 +22,7 @@ class NavigationViewClass extends Viewable {
     this.background(Color.gray);
     return this;
   }
+ 
   get _toolbar(): View[] {
     return NavigationConfig._toolbar || [];
   }
@@ -30,7 +31,7 @@ class NavigationViewClass extends Viewable {
     return h(
       'div',
       {
-        style: this.asStyle({ padding: '1rem', flex: '1', width: '100%' }),
+        style: this.asStyle({ flex: '1', width: '100%' }),
         id: 'navigation',
       },
       super.render()

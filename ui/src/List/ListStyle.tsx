@@ -1,5 +1,3 @@
-import { swifty } from '@tswift/util';
-import { VNode } from 'preact';
 import { Color } from '../Color';
 import { CSSProperties } from '../types';
 import { View } from '../View';
@@ -16,10 +14,10 @@ export class ListStyle {
     textAlign: 'left',
     color: 'rgb(16,16,16)',
     fontSize: '18px',
+    width: '100%'
   }
   private _itemStyle: CSSProperties = {
     borderBottom: `1px solid ${this.selectedColor}`,
-    padding: '12px 0 10px 0',
   }
   constructor() {
 
@@ -36,6 +34,7 @@ export class ListStyle {
       display: 'flex',
       flexDirection: 'row',
       cursor: 'pointer',
+      alignItems: 'center',
       background: selected ? this.selectedColor + '' : '',
     });
   }

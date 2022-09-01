@@ -28,6 +28,9 @@ export const BorderedButtonStyle = swifty(ButtonStyleConfiguration);
 export const PrimativeButtonStyle = swifty(ButtonStyleConfiguration);
 
 class ButtonClass extends Viewable<ButtonConfig> {
+  style:CSSProperties = {
+    cursor:'pointer'
+  }
   constructor(config?: ButtonConfig);
   constructor(label?: ButtonConfig['label'], action?: ButtonConfig['action'])
   constructor(label?: ButtonConfig['label'] | ButtonConfig, action?: ButtonConfig['action']) {
@@ -44,7 +47,7 @@ class ButtonClass extends Viewable<ButtonConfig> {
   label = this.config?.label;
 
   render() {
-    const style = this.asStyle();
+    const style = this.asStyle(this.style);
     const r = h(ButtonComponent, { action: this.onAction, watch:this.watch, label: this.$('label'), role: this.role, style } as ButtonProps);
 
     return r;

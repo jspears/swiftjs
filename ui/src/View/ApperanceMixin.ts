@@ -16,12 +16,8 @@ import type { Content } from './View';
 import type { ShapeStyle } from '../ShapeStyle';
 import { CSSProperties } from '../types';
 import { Inherit } from '../Inherit';
-
-export class ColorScheme {
-  static readonly light = new ColorScheme('light');
-  static readonly color = new ColorScheme('color');
-  constructor(public name: string) { }
-}
+import { State } from '../PropertyWrapper';
+import { ColorScheme } from './ColorScheme';
 
 export class Visibility {
   static readonly automatic = new Visibility('automatic');
@@ -58,6 +54,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   _tint?: Color;
   @Inherit
   _colorScheme?: ColorScheme;
+  @State
   @Inherit
   _backgroundColor?: Color;
   @Inherit

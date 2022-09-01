@@ -13,7 +13,7 @@ export class AppClass extends Viewable {
         this.accentColor(Color.accentColor);
         this.foregroundColor(Color.primary);
     }
-
+    
     render(){
         const style = this.asStyle({
             display:'flex',

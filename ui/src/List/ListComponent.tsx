@@ -1,15 +1,17 @@
 import { BoolType, Set, OrigSet } from '@tswift/util';
 import { Component } from 'preact';
 import { bindToState } from '../state';
-import { Color } from '../Color';
 import { ListStyle } from './ListStyle';
 import { View } from '../View';
 import { HasSelection } from './types';
 import { findTarget } from '../dom';
+import { Color } from '../Color';
+import { CSSProperties } from '../types';
 
 export type StyleListConfig = { body(): View[] } & HasSelection<unknown> & {
-    style: ListStyle;
+    listStyle: ListStyle;
     isEdit: BoolType;
+    style:CSSProperties;
   };
 
 export class ListComponent extends Component<StyleListConfig> {
@@ -18,8 +20,10 @@ export class ListComponent extends Component<StyleListConfig> {
     bindToState(this, props);
   }
   onClick = (e: Event) => {
-    const { selection } = this.props;
-
+    const { selection, isEdit } = this.props;
+    if (!isEdit?.()) {
+      return;
+    }
     if (!selection) {
       return;
     }
@@ -52,12 +56,14 @@ export class ListComponent extends Component<StyleListConfig> {
     }
     return select === idx;
   }
-    
+
   render() {
     return (
-      <ul onClick={this.onClick} style={this.props.style.style()}>
-        {this.props.body().map(v=>v.render(), this)}
-      </ul>
+      <div style={this.props.style}>
+        <ul onClick={this.onClick} style={this.props.listStyle.style()}>
+          {this.props.body().map((v) => v.render(), this)}
+        </ul>
+      </div>
     );
   }
 }

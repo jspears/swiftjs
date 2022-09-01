@@ -3,7 +3,7 @@ import type { Content } from './View';
 import { fromKey, swifty } from '@tswift/util';
 import { AlignmentKey, Alignment } from './Edge';
 import type { Num } from '@tswift/util';
-import { ColorKey } from './Color';
+import { Color, ColorKey } from './Color';
 import { h } from 'preact';
 import { CSSProperties } from './types';
 
@@ -54,6 +54,7 @@ class StackClass extends Viewable<StackOptions> {
       } else alignment?.apply(this.style);
     }
   }
+ 
 
   render() {
     return h(

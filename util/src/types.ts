@@ -123,7 +123,7 @@ export type Float = number;
 export type Character = string;
 export type Double = number;
 //unknown is more accurate than typescript void which should be avoided almost all the time.
-export type Void = unknown;
+export type Void = unknown | void;
 
 export interface Subscriber<T> {
 

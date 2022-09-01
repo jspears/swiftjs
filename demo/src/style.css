@@ -1,5 +1,34 @@
 @import url("./reset.css");
 
+#phone {
+  padding: 40px 0 60px 0;
+    display: inline-block;
+    box-sizing: border-box;
+    outline: 10px solid black;
+    background: black;
+    border-radius: 15px;
+    position: relative;
+
+}
+#button {
+  height: 35px;
+  width: 35px;
+  border-radius: 200%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  vertical-align: middle;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  bottom: 10px;
+  background: black;
+  border: 1px solid gray;
+}
+#button:active {
+  margin:-1px 0 -1px 0;
+}
+
 #app {
   background-image: none;
   width: 321px;
@@ -9,6 +38,8 @@
   outline: 10px solid black !important;
   overflow: hidden;
 }
+
+
 
 h2 {
   font-size: 1.5rem;

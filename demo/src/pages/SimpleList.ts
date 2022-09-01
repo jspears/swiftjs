@@ -44,10 +44,4 @@ export class SimpleList extends Viewable {
 /**
  * Just for demo purposes.
  */
-run(new SimpleList(), {
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: '-17px 26px',
-  backgroundImage: `url(${Png})`,
-  minWidth: '300px',
-  minHeight: '300px',
-});
+run(new SimpleList());
