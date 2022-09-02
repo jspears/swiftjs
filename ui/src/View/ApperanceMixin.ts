@@ -50,7 +50,6 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   _tint?: Color;
   @Inherit
   _colorScheme?: ColorScheme;
-  @State
   @Inherit
   _backgroundColor?: Color;
   @Inherit

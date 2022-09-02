@@ -3,6 +3,7 @@ import { h } from "preact";
 import { Color } from "./Color";
 import { Viewable } from "./View";
 import type { View } from "./View";
+import { DefaultListStyle } from "./List";
 
 export class AppClass extends Viewable {
   constructor(...views: View[]) {
@@ -11,6 +12,7 @@ export class AppClass extends Viewable {
     this.color(Color.primary);
     this.accentColor(Color.accentColor);
     this.foregroundColor(Color.primary);
+    this.listStyle(DefaultListStyle);
   }
 
   render() {

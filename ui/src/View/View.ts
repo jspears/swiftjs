@@ -1,7 +1,10 @@
-import { Void } from "@tswift/util";
+import { UUID, Void } from "@tswift/util";
 import { h, VNode, Fragment } from "preact";
+import { HasId } from "../List/types";
 
-export class View {
+export class View implements HasId {
+  id:string ='';
+
   _children: View[] = [];
 
   _parent?: View;

@@ -37,6 +37,7 @@
   box-sizing: content-box;
   outline: 10px solid black !important;
   overflow: hidden;
+  transition: backround .4s ease;
 }
 
 

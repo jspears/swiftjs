@@ -3,16 +3,19 @@ import { Component } from 'preact';
 import { bindToState } from '../state';
 import { ListStyle } from './ListStyle';
 import { View } from '../View';
-import { HasSelection } from './types';
 import { findTarget } from '../dom';
-import { Color } from '../Color';
 import { CSSProperties } from '../types';
+import { Selection } from './Selection';
+import { HasId } from './types';
 
-export type StyleListConfig = { body(): View[] } & HasSelection<unknown> & {
+export type StyleListConfig = { body(): View[] }  & {
     listStyle: ListStyle;
     isEdit: BoolType;
-    style:CSSProperties;
+    style: CSSProperties;
+    selection:Selection<HasId>
   };
+
+const byId = (n: HTMLElement) => n.dataset?.id != null;
 
 export class ListComponent extends Component<StyleListConfig> {
   constructor(props: StyleListConfig) {
@@ -20,42 +23,20 @@ export class ListComponent extends Component<StyleListConfig> {
     bindToState(this, props);
   }
   onClick = (e: Event) => {
-    const { selection, isEdit } = this.props;
-    if (!isEdit?.()) {
+    const isEdit = this.props.isEdit();
+    console.log('onClick',isEdit);
+    if (!isEdit) {
       return;
     }
-    if (!selection) {
+
+    const id = findTarget(byId, e.target as HTMLElement)?.dataset.id;
+    if (!id) {
       return;
     }
-    const idx = findTarget(
-      (n) => n.dataset?.id != null,
-      e.target as HTMLElement
-    )?.dataset.id;
-    if (!idx) {
-      return;
-    }
-    const select = selection();
-    if (select instanceof OrigSet) {
-      const set = Set(select as Set<any>);
-      if (set.size === set.add(idx).size) {
-        set.delete(idx);
-      }
-      selection(set);
-    } else {
-      selection(idx);
-    }
+    console.log('toggle', id);
+    this.props.selection.toggle(id);
   };
 
-  isSelected(idx: number) {
-    if (!this.props.selection) {
-      return false;
-    }
-    const select = this.props.selection();
-    if (select instanceof globalThis.Set) {
-      return select.has(idx + '');
-    }
-    return select === idx;
-  }
 
   render() {
     return (

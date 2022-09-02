@@ -4,26 +4,25 @@ import { View } from '../View';
 import { Check } from './Check';
 
 export class ListStyle {
+  
   selectedColor = new Color('#D1D1D6');
+  
+  unselectedColor = Color.white;
+
   private _style: CSSProperties = {
-    background: '#fff',
-    borderRadius: '10px',
     fontFamily: 'system-ui',
     listStyle: 'none',
-    margin: '0',
+    flex:'1',
     textAlign: 'left',
-    color: 'rgb(16,16,16)',
     fontSize: '18px',
     width: '100%'
   }
+  
   private _itemStyle: CSSProperties = {
     borderBottom: `1px solid ${this.selectedColor}`,
   }
-  constructor() {
 
-  }
-
-  style() {
+  style(){
     return this._style;
   }
   
@@ -35,11 +34,11 @@ export class ListStyle {
       flexDirection: 'row',
       cursor: 'pointer',
       alignItems: 'center',
-      background: selected ? this.selectedColor + '' : '',
     });
   }
   renderListItem(
     v: View,
+    id:string,
     idx: number,
     total: number,
     selected = false,
@@ -47,11 +46,11 @@ export class ListStyle {
   ) {
     return (
       <li
-        data-id={idx}
-        key={`data-id-idx-${idx}`}
+        data-id={id}
+        key={`data-id-idx-${id}`}
         data-selected={selected}
         style={{
-          background: selected ? this.selectedColor + '' : '',
+          background: (selected  && edit ? this.selectedColor : this.unselectedColor)+'',
           borderTopLeftRadius: idx === 0 ? '10px' : '0',
           borderTopRightRadius: idx === 0 ? '10px' : '0',
           borderBottomLeftRadius: idx === total - 1  ? '10px' : '0',

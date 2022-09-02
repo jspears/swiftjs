@@ -1,10 +1,8 @@
 import { Bindable, Identifiable, CountSet, KeyValue, has } from "@tswift/util";
 import { View } from "../View";
 
-export type HasSelection<T> = {
-  selection: T extends Identifiable
-    ? Bindable<CountSet<T["id"]> | T["id"] | undefined>
-    : Bindable<CountSet<T> | T | undefined>;
+export type HasSelection = {
+  selection: Bindable<CountSet<string> | string> | undefined;
 };
 
 export type RowContent<T> = {
@@ -15,13 +13,12 @@ export type HasData<T> = {
   data: T[];
 };
 
-export type HasId<T = { id: string }> = {
-  id?: KeyValue<T, "id">;
-};
-
+export type HasId = {
+  id: string
+}
 export type ListConfig<T> = HasData<T> &
-  HasId<T> &
-  HasSelection<T> &
+  HasId &
+  HasSelection &
   RowContent<T>;
 
 export function hasContent<T>(v: unknown): v is RowContent<T> {
@@ -30,9 +27,9 @@ export function hasContent<T>(v: unknown): v is RowContent<T> {
 export function hasData<T>(v: unknown): v is HasData<T> {
   return has(v, "data");
 }
-export function hasId<T>(v: unknown): v is HasId<T> {
+export function hasId(v: unknown): v is HasId {
   return has(v, "id");
 }
-export function hasSelection<T>(v: unknown): v is HasSelection<T> {
+export function hasSelection(v: unknown): v is HasSelection {
   return has(v, "selection");
 }

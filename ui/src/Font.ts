@@ -66,7 +66,7 @@ export class Font {
   }
   uppercaseSmallCaps() {
     return this.apply({
-      fontVariant: "all-small-caps",
+      fontVariantCaps: "all-small-caps",
       textTransform: "uppercase",
     });
   }
