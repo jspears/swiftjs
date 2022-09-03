@@ -1,9 +1,10 @@
-import { View, Viewable } from "./View";
+import { View, Viewable, ViewableClass } from "./View";
 import { asArray, has, swifty, toArray } from "@tswift/util";
 import {Text} from './Text';
 import { Font } from "./Font";
 import { isViewable } from "./guards";
 import { HasId } from "./List/types";
+import { TransformFn } from "./types";
 
 type Content = View | string;
 type SectionConfig = {
@@ -29,13 +30,8 @@ class Footer extends Header {
 
 class Body extends Viewable {
 
-  transform = (view:View, idx:number, total:number)=>{
-    if (isViewable(view)){
-      return view._listStyle.renderListItem(view, {id:`${idx}`} as any, idx, total);
-    }else{
-      console.log('what is this',view);
-      return view;
-    }
+  transform:TransformFn = (view:View, idx:number, total:number)=>{
+    return (view as ViewableClass)._listStyle.renderListItem(view, {id:`${idx}`} as any, idx, total);
   }
   constructor(content?: View | string | View[]) {
     super(...(typeof content === 'string' ?  [Text(content)] : Array.isArray(content) ? content : [content] ))
@@ -44,8 +40,6 @@ class Body extends Viewable {
 function isConfig(v: unknown): v is SectionConfig {
   return has(v, 'header') || has (v, 'content') || has(v, 'footer');
 }
-
-const convertToView = (k: string | View) => typeof k === 'string' ? Text(k) : k;
 
 class SectionClass extends Viewable<SectionConfig> {
   constructor(content: Content, header?: Content, footer?: Content);

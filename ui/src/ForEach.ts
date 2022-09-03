@@ -2,6 +2,7 @@ import { asArray, Int, map } from "@tswift/util";
 import { h, Fragment } from "preact";
 import { Inherit } from "./Inherit";
 import { flatRender } from "./state";
+import { TransformFn } from "./types";
 import { View, Viewable } from "./View";
 
 export type IndexSet = Set<Int>;
