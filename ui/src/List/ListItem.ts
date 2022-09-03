@@ -3,6 +3,7 @@ import { RowContent, HasId } from "./types";
 import { Color } from "../Color";
 import { Selection } from './Selection';
 import { Inherit } from "../Inherit";
+import { isViewable } from "../guards";
 
 
 export class ListItem<T extends HasId> extends Viewable {
@@ -24,7 +25,7 @@ export class ListItem<T extends HasId> extends Viewable {
 
 
   }
-  toggleBackground(){
+  toggleBackground = ()=>{
     this.selected = this.selection?.isSelected(this.data);
     this._backgroundColor =this.edit && this.selected
       ? this._listStyle.selectedColor
@@ -33,19 +34,21 @@ export class ListItem<T extends HasId> extends Viewable {
   init() {
     this.toggleBackground()
     if (this.selection)
-      this.onRecieve(this.selection, this.toggleBackground);
+      this.onRecieve(this.selection as any, this.toggleBackground);
   }
 
   render() {
     const content: View = this.content instanceof View ? this.content : this.content(this.data);
-    content.parent = this;
-    return this._listStyle.renderListItem(
-      content,
-      this.data.id,
-      this.index,
-      this.total,
-      this.selected,
-      this.edit
-    );
+    if (isViewable(content)) {
+      content.parent = this;
+      return content._listStyle.renderListItem(
+        content,
+        this.data.id,
+        this.index,
+        this.total,
+        this.selected,
+        this.edit
+      );
+    }
   }
 }

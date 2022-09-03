@@ -7,7 +7,7 @@ import { Color, ColorKey } from "./Color";
 import { h } from "preact";
 import { CSSProperties } from "./types";
 
-interface StackOptions {
+export interface StackOptions {
   alignment?: AlignmentKey;
   spacing?: Num;
   content?: Content;
@@ -29,13 +29,14 @@ class StackClass extends Viewable<StackOptions> {
     // height: '100%',
   };
   constructor(...views: View[]);
+  constructor(config: StackOptions, ...views: View[]);
   constructor(config?: StackOptions | View, ...views: View[]) {
     super(config, ...views);
 
     if (this.config?.alignment) {
       const alignment = fromKey(
         Alignment,
-        this.config.alignment as unknown as AlignmentKey
+        this.config.alignment as AlignmentKey
       );
       if (this.config.spacing) {
         Object.assign(this.style, { gridRowGap: this.config.spacing + "px" });
@@ -73,6 +74,7 @@ class HStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
     gridAutoFlow: "column",
   });
+  
 }
 export const HStack = swifty(HStackClass);
 export const LazyHStack = HStack;

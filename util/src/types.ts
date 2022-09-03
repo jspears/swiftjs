@@ -134,3 +134,12 @@ export interface Publisher<T> {
     cancel(): void;
   };
 }
+export function map<T,R>(value:(T | undefined) | (T|undefined)[], transform:(t:T)=>R): R[] {
+  if (Array.isArray(value)){
+    return value.map(v=>v== null ? null : transform(v)).filter(Boolean) as R[];
+  }
+  if (value != null){
+    return [transform(value)];
+  }
+  return [];
+}

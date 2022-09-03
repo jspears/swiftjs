@@ -1,5 +1,5 @@
 import type { AlignmentKey } from "../Edge";
-import { isString, applyMixins, has, watchable, Void, isBindable } from "@tswift/util";
+import { isString, applyMixins, has, watchable, Void, isBindable, asArray } from "@tswift/util";
 import type { Bindable, Bound, Bounds } from "@tswift/util";
 import { ApperanceMixin } from "./ApperanceMixin";
 import { PaddingMixin } from "./PaddingMixin";
@@ -23,14 +23,22 @@ export class ViewableClass<T = any> extends View {
   protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
   protected _tag?: string;
-
+  protected _bound: Bound<this>;
   constructor(config?: T | View, ...children: View[]) {
     super();
     this.config = config instanceof View ? {} : config || {};
     const allChildren =
       config instanceof View ? [config, ...children] : children;
     this.children = allChildren;
+    this._bound = new Proxy(this, {
+        get(target, key) {
+          if (isString(key) && key["0"] === "$") {
+            return target.$(key.slice(1) as any);
+          }
+        },
+      }) as any;
   }
+
   onRecieve<E>(p: Bindable<E>, perform: (e: E) => Void) {
     p.sink(perform);
     return this;
@@ -89,18 +97,15 @@ export class ViewableClass<T = any> extends View {
   body?(
     bound: Bound<this>,
     self: this
-  ): View | (View | undefined)[] | undefined;
-  exec = () => {
+  ): View | undefined | (View | undefined)[]
+  exec = ():View[] => {
     if (!this.body) {
-      return this.children;
+      return asArray(this.children);
     }
-    const ret = this.body?.(this.bound(), this);
-    if (Array.isArray(ret)) {
-      ret.forEach((v) => v && (v.parent = this));
-    } else if (ret) {
-      ret.parent = this;
-    }
-    return ret;
+    return asArray(this.body(this._bound, this)).flatMap((v) => {
+      (v.parent = this);
+      return v;
+    });
   };
   render() {
     if (this.body) {
@@ -108,18 +113,8 @@ export class ViewableClass<T = any> extends View {
     }
     return super.render?.();
   }
-
-  private bound(): Bound<this> {
-    return new Proxy(this, {
-      get(target, key) {
-        if (isString(key) && key["0"] === "$") {
-          return target.$(key.slice(1) as any);
-        }
-      },
-    }) as any;
-  }
 }
-type Props = { watch: Map<string, Bindable<any>>; body: () => View | View[] };
+type Props = { watch: Map<string, Bindable<any>>; body: () => View[] };
 class ViewComponent extends Component<Props> {
   constructor(props: Props) {
     super(props);
@@ -127,7 +122,7 @@ class ViewComponent extends Component<Props> {
   }
 
   render() {
-    return toNode(this.props.body());
+    return toNode(...this.props.body());
   }
 }
 

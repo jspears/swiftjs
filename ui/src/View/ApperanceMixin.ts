@@ -1,10 +1,12 @@
 import { Color } from "../Color";
 import type { ColorKey } from "../Color";
-import type {
+import {
+  Alignment,
   AlignmentKey,
+  AlignmentType,
   EdgeSet,
   VerticalEdge,
-  VirticalEdgeSetKey,
+  VerticalEdgeKey,
 } from "../Edge";
 import { fromKey, KeyOf, Num } from "@tswift/util";
 import { View } from "./View";
@@ -14,6 +16,7 @@ import { CSSProperties } from "../types";
 import { Inherit } from "../Inherit";
 import { State } from "../PropertyWrapper";
 import { ColorScheme } from "./ColorScheme";
+import { isAlignmentKey, isColorKey, isView } from "../guards";
 
 export class Visibility {
   static readonly automatic = new Visibility("automatic");
@@ -43,10 +46,6 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   @Inherit
   _foregroundColor?: Color;
   @Inherit
-  _listRowTint?: [Color, EdgeSet?];
-  @Inherit
-  _listSectionSeperatorTint?: { color: Color; edges?: VirticalEdgeSetKey };
-  @Inherit
   _tint?: Color;
   @Inherit
   _colorScheme?: ColorScheme;
@@ -58,12 +57,9 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   _labelsHidden?: boolean;
   _shadow?: { color: ColorKey; radius: Num; x: Num; y: Num };
   _zIndex?: Num;
-  @Inherit
-  _listRowSeparator?: {
-    visibility: Visibility;
-    edges: VerticalEdge[] | undefined;
-  };
   _fixedSize?: { horizontal?: boolean; vertical?: boolean };
+  _backgroundView?: string | Color | View;
+  _backgroundAlignnment?: AlignmentType;
 
   toCSS(): CSSProperties {
     const ret: CSSProperties = {};
@@ -108,17 +104,6 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  listRowSeperatorTint(color: ColorKey, edges?: VirticalEdgeSetKey): this {
-    return this;
-  }
-
-  listSectionSeperatorTint(color?: ColorKey, edges?: VirticalEdgeSetKey): this {
-    return this;
-  }
-
-  listItemTint(color?: ColorKey): this {
-    return this;
-  }
 
   preferredColorScheme(scheme?: ColorSchemeKey) {
     this._colorScheme = scheme ? fromKey(ColorScheme, scheme) : undefined;
@@ -147,8 +132,11 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     alignment: AlignmentKey | ColorKey | View,
     content?: ShapeStyle
   ): this {
-    if (typeof alignment === "function" && alignment instanceof View) {
-    } else {
+    if (isView(alignment)) {
+      this._backgroundView = alignment;
+    } else if (isAlignmentKey(alignment)){
+      this._backgroundAlignnment = fromKey(Alignment, alignment);
+    } else if (isColorKey(alignment)) {
       this._backgroundColor = fromKey(Color, alignment);
     }
     return this;
@@ -174,29 +162,29 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  listRowSeparator(visibility: VisibilityKey, edges?: VerticalEdge[]) {
-    this._listRowSeparator = {
-      visibility: fromKey(Visibility, visibility),
-      edges,
-    };
-    return this;
-  }
 
   toggleStyle(style: KeyOf<typeof ToggleStyleClass>) {
     return this;
   }
 
-  fixedSize(fixed?: boolean | ".horizontal" | ".vertical") {
-    if (fixed != null) {
+
+  fixedSize(horizontal?: boolean | ".horizontal" | ".vertical", vertical?:boolean) {
+    if (typeof vertical === 'boolean' && typeof horizontal === 'boolean') {
+      this._fixedSize = {
+        vertical,
+        horizontal
+      }
+    }
+    if (horizontal != null) {
       if (!this._fixedSize) {
         this._fixedSize = {};
       }
-      if (typeof fixed === "string") {
-        Object.assign(this._fixedSize, dotToProp(true, fixed));
+      if (typeof horizontal === "string") {
+        Object.assign(this._fixedSize, dotToProp(true, horizontal));
       } else {
         Object.assign(
           this._fixedSize,
-          dotToProp(fixed, ".vertical", ".horizontal")
+          dotToProp(horizontal, ".vertical", ".horizontal")
         );
       }
     }

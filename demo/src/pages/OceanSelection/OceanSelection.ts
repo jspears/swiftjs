@@ -47,7 +47,7 @@ export class OceanSelection extends Viewable<{}> {
     OceanRegion("Arctic", [Sea("Greenland")]),
   ];
 
-  @State singleSelection: ID = "";
+  @State singleSelection: string = "";
 
   body = ({ $singleSelection }: Bound<this>, { oceanRegions }: this) =>
     NavigationView(

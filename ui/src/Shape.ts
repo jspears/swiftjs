@@ -18,7 +18,7 @@ export class Shape<T = unknown> extends Viewable<T> {
     super(t);
   }
 }
-export type ShapeType = InstanceType<typeof Shape>;
+
 export const Circle = swifty(Shape);
 export const Ellipse = swifty(Shape);
 export const Capsule = swifty(Shape<RoundedRectangleConfig>);

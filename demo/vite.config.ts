@@ -5,7 +5,7 @@ import { readdirSync, writeFileSync, existsSync } from 'fs'
 const dirname = __dirname;
 
 const writeHtml = (name:string, 
-  content:string = `<h2>TSwift: ${name}</h2><a href="./index.html">&lt; back</a>
+  content:string = `<h2>TSwift: ${name}</h2><a target="_parent" href="./${name}.html">fullpage</a>
   <div id="phone"><div id="app"></div><button id='button'/></div>
 
   <script type="module" src="./${name}.ts"></script>
@@ -23,7 +23,7 @@ const writeHtml = (name:string,
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>TSwift: ${name}</title>
     </head>
-    <body>
+    <body class=${name}>
       ${content}
     </body>
   </html>`, {encoding:'utf-8'});
@@ -42,11 +42,21 @@ const input  =
     return ret;
   }, {});
 
-input['index'] = writeHtml('index', `<h2>TSwift Demos</h2><ul>${
-  Object.keys(input).map(v=>`<li><a href="./${v}.html">${v}</a></li>`).join('')}
-  </ul>`
-,'');
+input['default'] = writeHtml('default', `
+<h2> Select a demo from the left</h2>
+ 
+`); 
+input['index'] = writeHtml('index', `<ul>
+<li><h2>TSwift Demos</h2></li>
+${
+  Object.keys(input).map(v=>`<li><a target="center" href="./${v}.html">${v}</a></li>`).join('')}
+  </ul>
+  <iframe src="default.html" name="center" width='100%'>
 
+  </iframe>
+  
+  `
+,'');
 export default defineConfig({
   resolve:{
     alias:{

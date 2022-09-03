@@ -1,5 +1,6 @@
 import { View } from "./View";
 import { Fragment, h, render as _render, VNode } from "preact";
+import { asArray } from "@tswift/util";
 
 export function render(view: View, node?: Element | string | null): void {
   if (!node) {
@@ -24,7 +25,7 @@ export const toNode = (view?: View | View[], ...views: View[]): VNode<any> => {
   return h(
     Fragment,
     {},
-    [...(Array.isArray(view) ? view : [view]), ...views].map((v) =>
+    asArray([...asArray(view), ...views]).map((v) =>
       v?.render?.()
     )
   );

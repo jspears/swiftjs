@@ -31,7 +31,7 @@ export function Inherit(target: object, key: PropertyKey) {
       }
       const self = this as View;
       if (self._parent == null) {
-        if (this.constructor.name != "App") {
+        if (this.constructor.name != "AppClass") {
           console.warn(
             `component[${this.constructor.name}] asked for property ${String(
               key

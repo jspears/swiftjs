@@ -25,6 +25,7 @@ export class AppClass extends Viewable {
       justifyContent: "center",
       alignItems: "center",
     });
+    console.log(style);
     return h("div", { style }, [super.render()]);
   }
 }

@@ -61,7 +61,7 @@ class BoundInput extends Component<{
 }> {
   componentDidMount() {
     if (isBindable(this.props.value))
-      this.componentWillUnmount = this.props.value.on((value) => {
+      this.componentWillUnmount = this.props.value.sink((value:any) => {
         this.setState({ value });
       });
   }

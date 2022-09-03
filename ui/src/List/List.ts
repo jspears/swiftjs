@@ -1,5 +1,5 @@
 import { View, Viewable } from "../View";
-import { isBindable, isFunction } from "@tswift/util";
+import { isBindable, isFunction, swifty } from "@tswift/util";
 import type { Bindable, Identifiable, Int } from "@tswift/util";
 import type { On } from "../View/EventsMixin";
 import { h, VNode } from "preact";
@@ -16,12 +16,12 @@ import { ListItem } from "./ListItem";
 
 type HasDataContent<T> = HasData<T> & RowContent<T>;
 
-export class ListClass<T extends HasId = View> extends Viewable<ListConfig<T>> {
+export class ListClass<T extends HasId> extends Viewable<ListConfig<T>> {
 
   @Environment(".editMode")
   editMode?: Bindable<EditMode>;
 
-  selection: Selection<T>;
+  selection?: Selection<T>;
 
   constructor(data: HasData<T>["data"], content: RowContent<T>["content"]);
   constructor(
@@ -30,13 +30,13 @@ export class ListClass<T extends HasId = View> extends Viewable<ListConfig<T>> {
     content: RowContent<T>["content"]
   );
   constructor(selection: HasSelection["selection"], ...views: View[]);
-  constructor(selection: HasSelection["selection"], data: HasDataContent<T>);
+  constructor(selection: HasSelection["selection"], data: HasDataContent<T>["data"]);
   constructor(config: ListConfig<T>, ...views: View[]);
   constructor(config: HasSelection, ...views: View[]);
   constructor(...views: View[]);
-  constructor(...args: unknown[]) {
+  constructor(config?:HasData<T>["data"] | HasSelection | HasSelection["selection"] | ListConfig<T> | View, selection?:HasDataContent<T>["data"]|HasSelection["selection"]|RowContent<T>["content"] | View, content?:RowContent<T>["content"] | undefined | View, ...views:[]) {
     super();
-
+    const args:unknown[] = [config, selection, content, ...views];
     let all = args.concat();
     const first = all[0];
     // const second = all[1];
@@ -71,37 +71,38 @@ export class ListClass<T extends HasId = View> extends Viewable<ListConfig<T>> {
   }
   body = () => {
     const editMode = this.editMode?.().isEditing();
-
     if (this.config?.data && this.config?.content) {
       const selection = this.config.selection;
       const content = this.config.content as RowContent<T>["content"];
       return this.config.data.filter(Boolean).map((data, idx, { length }) => {
-        const itm = new ListItem(
+        const itm = new ListItem<T>(
           data,
           idx,
           length,
           editMode,
           content,
-          editMode ? this.selection : undefined
         );
         itm.parent = this;
         return itm;
       });
     }
-    return (
-      this.children?.map((v, idx, { length }) => {
-        const itm = new ListItem<HasId>(
-          {id:idx+''},
-          idx,
-          length,
-          editMode || false,
-          v,
-          editMode ? this.selection : undefined
-        );
-        itm.parent = this;
-        return itm;
-      }) || []
-    );
+    return this.children;
+    // return (
+    //   this.children?.map((v, idx, { length }) => {
+    //     if (v instanceof ForEachClass){
+    //       return v.exec();
+    //     }
+    //     const itm = new ListItem<T>(
+    //       {id:idx+''} as unknown as any,
+    //       idx,
+    //       length,
+    //       editMode || false,
+    //       v,
+    //     );
+    //     itm.parent = this;
+    //     return itm;
+    //   }) || []
+    //);
   };
   refreshable(fn: () => void) {
     return this;
@@ -128,8 +129,4 @@ export class ListClass<T extends HasId = View> extends Viewable<ListConfig<T>> {
   }
 }
 
-export const List = Object.assign(
-  <T extends HasId>(...args: ConstructorParameters<typeof ListClass<T>>) =>
-    new ListClass<T>(...args),
-  ListClass
-);
+export const List = swifty(ListClass)

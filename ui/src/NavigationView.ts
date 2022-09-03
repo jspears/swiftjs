@@ -5,11 +5,11 @@ import { Text } from "./Text";
 import { NavigationConfig } from "./NavigationConfig";
 import { Font } from "./Font";
 import { Color } from "./Color";
-import { HStack } from "./Stack";
+import { HStack, StackOptions } from "./Stack";
 
 class NavigationViewClass extends Viewable {
   body = () => [
-    HStack({ alignment: ".trailing" }, ...NavigationConfig._toolbar).padding(
+    HStack({ alignment: ".trailing" } as StackOptions, ...NavigationConfig._toolbar).padding(
       10
     ),
     Text(NavigationConfig.navigationTitle || "")

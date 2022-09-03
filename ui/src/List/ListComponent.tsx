@@ -1,4 +1,4 @@
-import { BoolType, Set, OrigSet } from '@tswift/util';
+import { BoolType, Set, OrigSet, asArray } from '@tswift/util';
 import { Component } from 'preact';
 import { bindToState } from '../state';
 import { ListStyle } from './ListStyle';
@@ -39,10 +39,19 @@ export class ListComponent extends Component<StyleListConfig> {
 
 
   render() {
+    const children = asArray(this.props.body()).map(v=>{
+      if (v.render) {
+        return v.render();
+      }
+      console.log(v, 'has no render?')
+
+    });
+
+
     return (
       <div style={this.props.style}>
         <ul onClick={this.onClick} style={this.props.listStyle.style()}>
-          {this.props.body().map((v) => v.render(), this)}
+          {children}
         </ul>
       </div>
     );

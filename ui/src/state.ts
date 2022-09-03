@@ -1,4 +1,4 @@
-import { Bindable, isBindable, watchable } from "@tswift/util";
+import { asArray, Bindable, isBindable, watchable } from "@tswift/util";
 import { Component, VNode } from "preact";
 import { View } from "./View";
 /**
@@ -41,13 +41,6 @@ export function flatRender(render:(View | undefined) | (View | undefined)[]):VNo
   if (render == null){
       return [];
   }
-  if (Array.isArray(render)){
-   return render.flatMap(v=>v?.render()).filter(Boolean) as VNode<any>[];
-  }else{
-    const ret = render.render();
-    if (ret){
-      return Array.isArray(ret) ? ret : [ret];
-    }
-  }
-  return [];
+  return asArray(render).flatMap(v=>v?.render()).filter(Boolean) as VNode<any>[];
+
 }

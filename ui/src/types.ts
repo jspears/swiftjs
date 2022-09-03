@@ -1,3 +1,6 @@
+import type { View } from "./View";
+import type { VNode } from "preact";
+
 type CSS = Omit<
   CSSStyleDeclaration,
   | "item"
@@ -12,3 +15,4 @@ type CSS = Omit<
 >;
 
 export type CSSProperties = Partial<CSS>;
+export type TransformFn = (v:View, idx:number, total:number)=>VNode<any>;

@@ -1,5 +1,6 @@
-import { Int } from "@tswift/util";
-import { h, Component, render, Fragment } from "preact";
+import { asArray, Int, map } from "@tswift/util";
+import { h, Fragment } from "preact";
+import { Inherit } from "./Inherit";
 import { flatRender } from "./state";
 import { View, Viewable } from "./View";
 
@@ -8,22 +9,25 @@ export type OnDelete = (v: IndexSet) => void;
 
 type ForEachFn<D> = (item: D, idx: number) => View;
 
-class ForEachClass<I> extends Viewable<{}> {
+export class ForEachClass<I> extends Viewable<{}> {
+
+  @Inherit
+  transform?:TransformFn;
+
   constructor(private data: I[], private content: ForEachFn<I>) {
-    super();
+    super(...data.map(content));
   }
-  
-  body = () => this.data.map(this.content);
 
   onDelete(fn: OnDelete): this {
     return this;
   }
 
   render() {
+    
     return h(
       Fragment,
       {},
-      flatRender(this.exec())
+      this.transform ? asArray(this.exec()).map((v, idx, all)=>v && this.transform?.(v, idx, all.length)) : flatRender(this.exec())
     );
   }
 }

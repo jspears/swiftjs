@@ -4,6 +4,7 @@ import {
   fromKey,
   KeyOf,
   KeyOfTypeWithType,
+  Set,
 } from "@tswift/util";
 import { applyMixins } from "@tswift/util";
 import { CSSProperties } from "./types";
@@ -94,7 +95,7 @@ export class Edge {
 }
 
 export class EdgeSet {
-  private _set: Set<Edge> = new Set();
+  private _set: Set<Edge> = Set();
   public name: string;
   constructor(name: string, ...edges: EdgeKey[]);
   constructor(edgeSet: EdgeSet, ...edges: EdgeKey[]);
@@ -120,7 +121,7 @@ export class EdgeSet {
   static bottom = new EdgeSet("bottom", Edge.bottom);
   static leading = new EdgeSet("leading", Edge.leading);
   static trailing = new EdgeSet("trailing", Edge.trailing);
-  static horizontal = new EdgeSet("horizongal", Edge.leading, Edge.trailing);
+  static horizontal = new EdgeSet("horizontal", Edge.leading, Edge.trailing);
   static vertical = new EdgeSet("vertical", Edge.top, Edge.bottom);
 }
 
@@ -132,6 +133,37 @@ export enum VerticalEdge {
   bottom,
 }
 
-export type VirticalEdgeKey = VerticalEdge | Dot<keyof typeof VerticalEdge>;
+export class VerticalEdgeSet {
+  static all = new VerticalEdgeSet('.top', '.bottom');
+  static top = new VerticalEdgeSet('.top');
+  static bottom = new VerticalEdgeSet('.bottom');
+  private edges = Set<VerticalEdge>();
+  constructor(...edges:VerticalEdgeKey[]) {
+    this.edges = Set(edges.map(v=>fromKey(VerticalEdge, v as any)));
+  }
+  [Symbol.iterator]() {
+    return this.edges[Symbol.iterator]();
+  }
+}
 
-export type VirticalEdgeSetKey = VirticalEdgeKey | VirticalEdgeKey[];
+export type VerticalEdgeKey = VerticalEdge | Dot<keyof typeof VerticalEdge>;
+
+export enum HorizontalEdge {
+  leading,
+  trailing
+}
+
+export class HorizontalEdgeSet {
+  static all = new HorizontalEdgeSet('.leading', '.trailing');
+  static leading = new HorizontalEdgeSet('.leading');
+  static trailing = new HorizontalEdgeSet('.trailing');
+  private edges = Set<HorizontalEdge>();
+  constructor(...edges:HorizontalEdgeKey[]) {
+    this.edges = Set(edges.map(v=>fromKey(HorizontalEdge, v as any)));
+  }
+  [Symbol.iterator]() {
+    return this.edges[Symbol.iterator]();
+  }
+}
+
+export type HorizontalEdgeKey = HorizontalEdge | Dot<keyof typeof HorizontalEdge>;

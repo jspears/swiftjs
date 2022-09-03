@@ -197,3 +197,23 @@ export function fromKey<
   }
   return key as any;
 }
+
+export function isUndefined(v:unknown):v is undefined {
+  return v == null;
+}
+const notNull = (v:unknown) => v != null;
+
+export function asArray<V, R extends Exclude<V, null | undefined> = Exclude<V, null | undefined>>(v?:V | V[] | undefined):R[] {
+  if (isUndefined(v)){
+    return [];
+  }
+  if (Array.isArray(v)){
+    return v.filter(notNull) as R[];
+  }
+
+  return [v as R];
+}
+
+export function toArray<T extends any[]>(...args: T): Exclude<T, undefined | null> {
+  return args.filter(notNull) as any; 
+}

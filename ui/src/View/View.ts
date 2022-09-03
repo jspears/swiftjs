@@ -1,4 +1,4 @@
-import { UUID, Void } from "@tswift/util";
+import { asArray, UUID, Void } from "@tswift/util";
 import { h, VNode, Fragment } from "preact";
 import { HasId } from "../List/types";
 
@@ -10,7 +10,7 @@ export class View implements HasId {
   _parent?: View;
 
   set children(children) {
-    children?.forEach((v) => (v.parent = this));
+    asArray(children).forEach((v) => (v.parent = this));
     this._children = children;
   }
 

@@ -1,8 +1,9 @@
 import { Bindable, Identifiable, CountSet, KeyValue, has } from "@tswift/util";
 import { View } from "../View";
+export type SelectionType = string | undefined | null | CountSet<string>;
 
 export type HasSelection = {
-  selection: Bindable<CountSet<string> | string> | undefined;
+  selection: Bindable<SelectionType>;
 };
 
 export type RowContent<T> = {
