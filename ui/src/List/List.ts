@@ -105,7 +105,7 @@ export class ListClass<T extends HasId = HasId> extends Viewable<ListConfig<T>> 
     return h(
       ListComponent,
       {
-        body: ()=>asArray(this.exec()).map((v, idx,all)=>v.renderListItem(idx, all.length, isEdit?.())),
+        body: ()=>asArray(this.exec()).map((v, idx,all)=>v.renderListItem(idx, all.length, isEdit?.() ?? this._selection?.isSingleSelection() )),
         isEdit,
         watch:this.watch,
         selection: this._selection,

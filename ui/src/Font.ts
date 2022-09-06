@@ -1,5 +1,6 @@
 import { Dot, KeyOf, PickValue } from "@tswift/util";
 import { CSSProperties } from "./types";
+import { unitFor } from "./unit";
 
 export enum Weight {
   black = "900",
@@ -24,7 +25,7 @@ export type TextStyle = keyof PickValue<typeof Font, Font>;
 export class Font {
   public readonly style: CSSProperties = {
     fontFamily: "system-ui",
-    fontSize: "18px",
+    fontSize: unitFor(18),
     lineHeight: "1.2",
   };
 
@@ -32,17 +33,17 @@ export class Font {
     Object.assign(this.style, font instanceof Font ? font.style : font, css);
   }
 
-  static largeTitle = new Font({ fontSize: "30px", lineHeight: "1.2" });
-  static title = new Font({ fontSize: "26px" });
-  static title2 = new Font({ fontSize: "18px", lineHeight: "1.6" });
-  static title3 = new Font({ fontSize: "18px" });
-  static headline = new Font({ fontSize: "16px", lineHeight: "1.6" });
-  static subheadline = new Font({ fontSize: "14px" });
-  static body = new Font({ fontSize: "16px", lineHeight: "1.2" });
-  static callout = new Font({ fontSize: "16px" });
-  static caption = new Font({ fontSize: "12px" });
-  static caption2 = new Font({ fontSize: "20px" });
-  static footnote = new Font({ fontSize: "20px" });
+  static largeTitle = new Font({ fontSize: unitFor(30), lineHeight: "1.2" });
+  static title = new Font({ fontSize: unitFor(26) });
+  static title2 = new Font({ fontSize: unitFor(18), lineHeight: "1.6" });
+  static title3 = new Font({ fontSize: unitFor(18) });
+  static headline = new Font({ fontSize: unitFor(16), lineHeight: "1.6" });
+  static subheadline = new Font({ fontSize: unitFor(14) });
+  static body = new Font({ fontSize: unitFor(16), lineHeight: "1.2" });
+  static callout = new Font({ fontSize: unitFor(16) });
+  static caption = new Font({ fontSize: unitFor(12) });
+  static caption2 = new Font({ fontSize: unitFor(20) });
+  static footnote = new Font({ fontSize: unitFor(20) });
   private apply(css: CSSProperties) {
     return new Font(this, css);
   }

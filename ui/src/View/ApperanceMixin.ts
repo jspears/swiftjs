@@ -17,6 +17,7 @@ import { Inherit } from "../Inherit";
 import { State } from "../PropertyWrapper";
 import { ColorScheme } from "./ColorScheme";
 import { isAlignmentKey, isColorKey, isView } from "../guards";
+import { unitFor } from "../unit";
 
 export class Visibility {
   static readonly automatic = new Visibility("automatic");
@@ -116,7 +117,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     if (!this._border) {
       this._border = {};
     }
-    this._border.boxShadow = `0 0 0 ${width}px ${c} inset`;
+    this._border.boxShadow = `0 0 0 ${unitFor(width)} ${c} inset`;
     return this;
   }
 

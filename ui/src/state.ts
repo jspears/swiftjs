@@ -1,5 +1,6 @@
 import { asArray, Bindable, isBindable, watchable } from "@tswift/util";
 import { Component, VNode } from "preact";
+import { useEffect } from 'preact/hooks';
 import { View } from "./View";
 /**
  * Finds all bound
@@ -42,5 +43,13 @@ export function flatRender(render:(View | undefined) | (View | undefined)[]):VNo
       return [];
   }
   return asArray(render).flatMap(v=>v?.render()).filter(Boolean) as VNode<any>[];
+
+}
+
+export const useBindableMap = (map: Map<string, Bindable<unknown>>)=> {
+
+  useEffect(() => {
+      
+    })
 
 }

@@ -1,4 +1,5 @@
 import { Color } from "../Color";
+import { unitFor } from "../unit";
 
 const Mark = () => (
     <svg
@@ -33,7 +34,7 @@ const Mark = () => (
         display: 'inline-block',
         width: '2.1rem',
         maxWidth: visible ? '2rem' : 0,
-        marginRight: visible ? '10px' : 0,
+        marginRight: visible ? unitFor(10) : 0,
         transition: 'left, margin, max-width .4s ease-in-out',
       }}
     >
@@ -43,10 +44,10 @@ const Mark = () => (
           height: '2rem',
           width: '2rem',
           backgroundColor: checked ? checkedColor + '' : 'unset',
-          border: `2px solid ${checked ? checkedColor : borderColor}`,
+          border: `${unitFor(2)} solid ${checked ? checkedColor : borderColor}`,
           display: 'inline-block',
           position: 'absolute',
-          left: visible ? '0px' : '-5px',
+          left: visible ? '0' : unitFor(-5),
           transition: 'left .4s ease-in-out',
         }}
       >

@@ -1,18 +1,19 @@
-import { Set, CountSet } from "@tswift/util";
+import { Set, CountSet, OrigSet } from "@tswift/util";
 import { Bindable } from "@tswift/util";
-import { HasId, hasId, Identity, SelectionType,Selection } from "./types";
-
+import { isInstanceOf } from "../guards";
+import { HasId, hasId, Identity, SelectionType, Selection } from "./types";
 
 export const id = <V extends Identity>(
   v: V
 ): V extends HasId ? HasId["id"] : string => (hasId(v) ? v.id : v + "");
 
-
-
 export const createSelection = <V extends Identity>(
   selection: Bindable<SelectionType>
 ): Selection<V> => {
+  const isSingleSelection = (): boolean => isInstanceOf(selection(), OrigSet);
+
   return Object.assign(selection, {
+    isSingleSelection,
     isSelected(v: Identity): boolean {
       const answer = selection();
       if (answer instanceof CountSet) {

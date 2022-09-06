@@ -23,6 +23,9 @@ export const unitFor = (t?: Num): string => {
   if (t === ".infinity") {
     return "100%";
   }
-
-  return `${t}px`;
+  //So want to use units like an apple, 
+  // also want to be nice to peoples settings.
+  // so this does the math.   Assumes that 1rem = 10px more or less.
+  // so make sure html { font-size: 62.5% }
+  return `${t/10}rem`;
 };

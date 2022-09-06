@@ -61,16 +61,39 @@ export class PaddingMixin {
       });
     } else if (typeof a == "string") {
       const alignment = fromKey(Alignment, a as AlignmentKey);
-      if (alignment === Alignment.vertical) {
-        Object.assign(this._padding, {
-          paddingTop: size,
-          paddingBottom: size,
-        });
-      } else if (alignment === Alignment.horizontal) {
-        Object.assign(this._padding, {
-          paddingLeft: size,
-          paddingRight: size,
-        });
+      switch (alignment) {
+        case Alignment.vertical:
+          Object.assign(this._padding, {
+            paddingTop: size,
+            paddingBottom: size,
+          });
+          break;
+        case Alignment.horizontal:
+          Object.assign(this._padding, {
+            paddingLeft: size,
+            paddingRight: size,
+          });
+          break;
+        case Alignment.top:
+          Object.assign(this._padding, {
+            paddingTop: size,
+          });
+          break;
+        case Alignment.bottom:
+          Object.assign(this._padding, {
+            paddingBottom: size,
+          });
+          break;
+        case Alignment.leading:
+          Object.assign(this._padding, {
+            paddingLeft: size,
+          });
+          break;
+        case Alignment.trailing:
+          Object.assign(this._padding, {
+            paddingRight: size,
+          });
+          break;
       }
     } else if (a == VerticalAlignment) {
       Object.assign(this._padding, {

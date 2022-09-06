@@ -4,14 +4,9 @@ import { Alignment, AlignmentKey } from "./Edge";
 import { View, ViewableClass } from "./View";
 
 export function isView(v: unknown): v is View {
-    if (v == null) {
-        return false;
-    }    
-    if (typeof v === 'function') {
-        return v instanceof View;
-    }
-    return false
+   return isInstanceOf(v, View);
 }
+
 export function isFunction(v:unknown): v is (...args:any[])=>any {
     return typeof v === 'function';
 }

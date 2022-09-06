@@ -4,6 +4,7 @@ export type SelectionType = string | undefined | null | CountSet<string>;
 export type Identity = HasId | string;
 
 export type Selection<T extends Identity = Identity> = Bindable<SelectionType> & {
+  isSingleSelection():boolean,
   isSelected(v: T | string): boolean;
   toggle(v: T | string): void;
 };

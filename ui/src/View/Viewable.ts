@@ -20,6 +20,15 @@ import { EnvironmentMixin } from "./EnvironmentMixin";
 import { bindToState } from "../state";
 import { SelectionType } from "../List/types";
 import { Inherit } from "../Inherit";
+import { isView } from "../guards";
+import { isArray } from "util";
+
+export type Body<T> = View | View[] | ((
+  bound: Bound<T>,
+  self: T
+)=> View | undefined | (View | undefined)[]);
+
+
 export class ViewableClass<T = any> extends View {
   watch = new Map<string, Bindable<any>>();
 
@@ -97,13 +106,18 @@ export class ViewableClass<T = any> extends View {
       ...css
     );
   }
-  body?(
-    bound: Bound<this>,
-    self: this
-  ): View | undefined | (View | undefined)[]
+  
+  body?:Body<this>;
+
   exec = ():View[] => {
     if (!this.body) {
       return asArray(this.children);
+    }
+    if (isView(this.body)){
+      return asArray(this.body);
+    }
+    if (Array.isArray(this.body)){
+      return this.body;
     }
     return asArray(this.body(this._bound, this)).flatMap((v) => {
       (v.parent = this);

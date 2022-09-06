@@ -6,6 +6,7 @@ import type { Num } from "@tswift/util";
 import { Color, ColorKey } from "./Color";
 import { h } from "preact";
 import { CSSProperties } from "./types";
+import { unitFor } from "./unit";
 
 export interface StackOptions {
   alignment?: AlignmentKey;
@@ -39,7 +40,7 @@ class StackClass extends Viewable<StackOptions> {
         this.config.alignment as AlignmentKey
       );
       if (this.config.spacing) {
-        Object.assign(this.style, { gridRowGap: this.config.spacing + "px" });
+        Object.assign(this.style, { gridRowGap: unitFor(this.config.spacing) });
       }
       switch (alignment) {
         case Alignment.leading:

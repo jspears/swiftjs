@@ -1,6 +1,7 @@
 import { VNode } from 'preact';
 import { Color } from '../Color';
 import { CSSProperties, HasRender, HasRenderListItem } from '../types';
+import { unitFor } from '../unit';
 import { Check } from './Check';
 
 export class ListStyle implements HasRenderListItem{
@@ -14,12 +15,12 @@ export class ListStyle implements HasRenderListItem{
     listStyle: 'none',
     flex:'1',
     textAlign: 'left',
-    fontSize: '18px',
+    fontSize: unitFor(18),
     width: '100%'
   }
   
   private _itemStyle: CSSProperties = {
-    borderBottom: `1px solid ${this.selectedColor}`,
+    borderBottom: `${unitFor(1)} solid ${this.selectedColor}`,
   }
 
   style(){
@@ -51,11 +52,11 @@ export class ListStyle implements HasRenderListItem{
         data-selected={selected}
         style={{
           background: (selected  && edit ? this.selectedColor : this.unselectedColor)+'',
-          borderTopLeftRadius: idx === 0 ? '10px' : '0',
-          borderTopRightRadius: idx === 0 ? '10px' : '0',
-          borderBottomLeftRadius: idx === total - 1  ? '10px' : '0',
-          borderBottomRightRadius: idx === total - 1 ? '10px' : '0',
-          paddingLeft: '15px',
+          borderTopLeftRadius: idx === 0 ? unitFor(10) : '0',
+          borderTopRightRadius: idx === 0 ? unitFor(10) : '0',
+          borderBottomLeftRadius: idx === total - 1  ? unitFor(10) : '0',
+          borderBottomRightRadius: idx === total - 1 ? unitFor(10) : '0',
+          paddingLeft: unitFor(15),
           overflow:'hidden',
         }}
       >
