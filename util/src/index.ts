@@ -4,4 +4,6 @@ export * from "./stride";
 export * from "./Bool";
 export * from "./ObservableObject";
 export * from "./print";
+export * from "./sequence";
 export * from "./testUtils";
+export * from "./zip";

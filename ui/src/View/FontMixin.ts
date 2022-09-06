@@ -1,12 +1,14 @@
 import { Font, FontKey, WeightKey } from "../Font";
-import { Num } from "@tswift/util";
-
+import type { Num } from "@tswift/util";
+import { Inherit } from "../Inherit";
+import { fromKey } from "@tswift/util";
 export class FontMixin {
-  _font: Font = Font.body;
+  @Inherit
+  _font?: Font;
 
   font(f: FontKey) {
     if (typeof f === "string") {
-      this._font = Font[f.slice(1) as keyof typeof Font];
+      this._font = fromKey(Font, f);
     } else {
       this._font = f;
     }
@@ -17,19 +19,19 @@ export class FontMixin {
     return this;
   }
   italic(f?: boolean) {
-    this._font = this._font.italic();
+    this._font = this._font?.italic();
     return this;
   }
   strikethrough(f?: boolean) {
-    this._font = this._font.italic();
+    this._font = this._font?.italic();
     return this;
   }
   underline(f?: boolean) {
-    this._font = this._font.underline();
+    this._font = this._font?.underline();
     return this;
   }
   monospaced(f?: boolean) {
-    this._font = this._font.monospaced();
+    this._font = this._font?.monospaced();
     return this;
   }
   fontWeight(f?: WeightKey) {

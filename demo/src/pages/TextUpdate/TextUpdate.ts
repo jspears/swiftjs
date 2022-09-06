@@ -17,7 +17,7 @@ function validate(t: unknown) {
 //https://developer.apple.com/documentation/swiftui/textfield
 export class TextUpdate extends Viewable<{}> {
   @State username: string = "";
-  @FocusState emailFieldIsFocused = False();
+  @FocusState emailFieldIsFocused = false;
 
   body = (
     { $username, $emailFieldIsFocused }: Bound<this>,

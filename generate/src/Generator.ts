@@ -25,7 +25,7 @@ export class Generator {
     public projectDir: string = `${__dirname}/../out/project`,
     private srcDir: string = `${projectDir}/src`,
     typesSource: string = `
-export {Bool, Int, Float, Character, Double, Void, Optional} from '@swiftui/util';    
+export {Bool, Int, Float, Character, Double, Void, Optional} from '@tswift/util';    
    `
   ) {
     refreshDir(srcDir);

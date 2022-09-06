@@ -12,12 +12,18 @@ export function isView(v: unknown): v is View {
     }
     return false
 }
+export function isFunction(v:unknown): v is (...args:any[])=>any {
+    return typeof v === 'function';
+}
 
 export function isInstanceOf<T>(v: unknown, of: new (...args: any[]) => T): v is T {
     if (v == null) {
         return false;
     }    
-    if (typeof v === 'function'|| typeof v.constructor === 'function') {
+    if (typeof v === 'object' && isFunction(v.constructor)){
+        return v instanceof of;
+    }
+    if (isFunction(v)) {
         return v instanceof of;
     }
     return false;
@@ -40,6 +46,6 @@ export function isKeyOf<T>(key: unknown, of: new (...args: any[]) => T): key is 
     }
     return isInstanceOf(key, of);
 }
-export function isViewable(v: unknown): v is ViewableClass {
-    return isInstanceOf(v, ViewableClass);
+export function isViewable(v: unknown): v is ViewableClass<unknown> {
+    return isInstanceOf(v, ViewableClass<unknown>);
 }

@@ -1,6 +1,8 @@
 @import url("./reset.css");
+html {font-size: 62.5%}
 body {
   padding:2rem;
+  
 }
 body.index {
   display: flex;
@@ -49,9 +51,9 @@ body.index iframe {
   width: 321px;
   height: 571px;
   display: block;
-  box-sizing: content-box;
+  box-sizing: content-box;  
   outline: 10px solid black !important;
-  overflow: hidden;
+  overflow: scroll;
   transition: backround .4s ease;
 }
 

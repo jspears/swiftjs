@@ -5,6 +5,9 @@ import { Font } from "./Font";
 import { isViewable } from "./guards";
 import { HasId } from "./List/types";
 import { TransformFn } from "./types";
+import { h, VNode } from "preact";
+import { ListComponent, ListComponentProps } from "./List/ListComponent";
+import { flatRender } from "./state";
 
 type Content = View | string;
 type SectionConfig = {
@@ -14,12 +17,13 @@ type SectionConfig = {
 };
 
 class Header extends Viewable<Content> {
-  constructor(content: Content) {
+  constructor(content?: Content) {
     super(typeof content === 'string' ? Text(content) : content);
+    this.font(Font.subheadline.uppercaseSmallCaps());
+    this.padding('.horizontal', 25);
   }
-  init() {
-    this.font(Font.title.uppercaseSmallCaps());
-    this.background('.red');
+  render(){
+    return h('section', {style:this.asStyle(), class:'section-header'}, super.render());
   }
 }
 class Footer extends Header {
@@ -30,42 +34,56 @@ class Footer extends Header {
 
 class Body extends Viewable {
 
-  transform:TransformFn = (view:View, idx:number, total:number)=>{
-    return (view as ViewableClass)._listStyle.renderListItem(view, {id:`${idx}`} as any, idx, total);
+  transform:TransformFn = (view, idx, total)=>{
+    return view.renderListItem(idx, total);
   }
   constructor(content?: View | string | View[]) {
     super(...(typeof content === 'string' ?  [Text(content)] : Array.isArray(content) ? content : [content] ))
+    this.padding('.horizontal', 10)
+  }
+  render(){
+    const body = ():VNode<any>[] =>asArray(this.exec()).map((v, idx,all)=>v.renderListItem(idx, all.length));
+
+    return h(ListComponent, {
+      body,
+      id:'id-body',
+      watch:this.watch,
+      style: this.asStyle({ flex: "1", width: "100%" }),
+      listStyle: this._listStyle,
+    } as ListComponentProps)
   }
 }
 function isConfig(v: unknown): v is SectionConfig {
   return has(v, 'header') || has (v, 'content') || has(v, 'footer');
 }
-
+/**
+ * header footer content, if no content, than footer becomes content
+ * 
+ */
 class SectionClass extends Viewable<SectionConfig> {
-  constructor(content: Content, header?: Content, footer?: Content);
+  constructor(header: Content, footer?: Content, content?: Content);
   constructor(config: SectionConfig, ...views:View[]);
-  constructor(config: SectionConfig | Content, header?: Content, footer?: Content) {
+  constructor(config: SectionConfig | Content, footer?: Content , content?: Content) {
     super(...(
     isConfig(config) ?
-        toArray(config.header && new Header(config.header), (config.content || header ) && new Body(config.content || header), config.footer && new Footer(config.footer))
+        toArray(config.header && new Header(config.header), 
+               (config.content || content || footer ) && 
+                  new Body(config.content || content || footer), (config.footer || config && content ) && new Footer(config.footer || footer))
         :
-        toArray(config && new Header(config), header && new Body(header), footer && new Footer(footer))
+        toArray(config && new Header(config), (content || footer) && new Body(content || footer), content && footer && new Footer(footer))
     ) as View[]
     );
     
-    // super(...(isConfig(config) ? toArray(
-    //   config.header && new Header(config.header),
-    //   new Body(toArray( ...(config.content ? [config.content] : [header, footer, ...views])).map(convertToView)),
-    //   config.footer && new Footer(config.footer)
-    // ]) :
-    //   toArray(header && new Header(header),
-    //     config && new Body(config),
-    //     footer && new Footer(footer))
-    
-    // ))
+  
   }
   init() {
     
+  }
+  renderListItem(index:number, total:number){
+    return this.children[0]?.render();
+  }
+  render(){
+    return h('div', {class:'section'}, flatRender(this.exec()));
   }
 }
  

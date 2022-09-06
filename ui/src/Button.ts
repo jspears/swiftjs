@@ -7,6 +7,8 @@ import { EditMode } from "./EditMode";
 import { Component, h } from "preact";
 import { CSSProperties } from "./types";
 import { bindToState } from "./state";
+import { isView } from "./guards";
+import { Text } from "./Text";
 export enum ButtonRole {
   cancel = "cancel",
   destructive = "destructive",
@@ -18,10 +20,18 @@ export interface ButtonConfig {
   label?:  string | View;
   shape?: ".roundedRectangle";
 }
+const defLabel = (v:View|string|undefined):View | undefined =>{
+  if (isView(v)){
+    return v;
+  }
+  if (typeof v === 'string'){
+    return Text(v);
+  }
+}
+
 export class ButtonStyle {
-  
   constructor(
-    public _label?:(arg:string| View | undefined)=>View,
+    public _label = defLabel,
     public _trigger?: (fn?:()=>unknown)=>()=>void,
     public _role?: ButtonRole
   ) {}
@@ -71,6 +81,7 @@ class ButtonClass extends Viewable<ButtonConfig> {
     action?: ButtonConfig["action"]
   ) {
     super(...(isContent(label) ? [{label, action}] : (has(label, 'label') || has(label, 'action'))  ? [label] : []) as [ButtonConfig] );
+    this.font('.body')
   }
   init() {
     return this._buttonStyle.makeBody(this);
@@ -104,6 +115,7 @@ type ButtonProps = {
 };
 
 class ButtonComponent extends Component<ButtonProps> {
+  
   constructor(props: ButtonProps) {
     super(props);
     bindToState(this, props);

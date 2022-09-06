@@ -1,4 +1,18 @@
-export function* stride(from: number, to?: number, step?: number) {
+
+export function* stride(fromOrStr: number | string, to?: number, step?: number) {
+  let from:number;
+  if (typeof fromOrStr === 'string'){
+    
+    const [_, start, op, end ] =  /(\d*)(?:\.\.)(<?)(\d*)/.exec(fromOrStr) || [];
+    from = Number(start);
+    to = Number(end);
+    if (!op){
+      to+=1;
+    }
+  }else{
+    from = fromOrStr;
+  }
+
   if (step == null) {
     if (to == null) {
       to = from;

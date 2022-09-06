@@ -31,12 +31,12 @@ export const toNode = (view?: View | View[], ...views: View[]): VNode<any> => {
   );
 };
 
-export const findTarget = (
-  find: (v: HTMLElement) => boolean,
+export const findTarget=(
+  find: (v: HTMLElement) =>boolean,
   e?: HTMLElement | null
-): HTMLElement | undefined => {
-  if (!e) return;
-  if (find(e)) {
+): HTMLElement | undefined=> {
+  if (e == null) return;
+  if (find(e)){
     return e;
   }
   return findTarget(find, e.parentElement);

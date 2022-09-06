@@ -6,7 +6,7 @@
     "composite": true,
     "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "skipLibCheck": true,
-    "lib":["ES2022", "DOM"],
+    "lib":["ES2022", "ES2021.String", "DOM"],
     "baseUrl": "./src/",
     "paths": {
       "@tswift/generate":["./src/index.ts"]

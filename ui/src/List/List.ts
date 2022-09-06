@@ -1,40 +1,37 @@
 import { View, Viewable } from "../View";
-import { isBindable, isFunction, swifty } from "@tswift/util";
+import { asArray, isBindable, isFunction, swifty } from "@tswift/util";
 import type { Bindable, Identifiable, Int } from "@tswift/util";
 import type { On } from "../View/EventsMixin";
 import { h, VNode } from "preact";
-import { DefaultListStyle, ListStyle } from "./ListStyle";
 import { Environment, State } from "../PropertyWrapper";
 import { EditMode } from "../EditMode";
 import { ListComponent } from "./ListComponent";
-import type { ListConfig, RowContent, HasData, HasSelection, HasId } from "./types";
+import type { ListConfig, RowContent, HasData, HasSelection, HasId, ContentFn } from "./types";
 import { hasContent, hasData, hasId, hasSelection } from "./types";
-import { StyleListConfig } from "./ListComponent";
+import { ListComponentProps } from "./ListComponent";
 import { Color } from "../Color";
-import { createSelection, Selection } from './Selection';
-import { ListItem } from "./ListItem";
+import { createSelection } from './Selection';
 
-type HasDataContent<T> = HasData<T> & RowContent<T>;
+type SelectionType = HasSelection['selection'];
 
-export class ListClass<T extends HasId> extends Viewable<ListConfig<T>> {
+export class ListClass<T extends HasId = HasId> extends Viewable<ListConfig<T>> {
 
   @Environment(".editMode")
   editMode?: Bindable<EditMode>;
 
-  selection?: Selection<T>;
 
-  constructor(data: HasData<T>["data"], content: RowContent<T>["content"]);
+  constructor(data: T[], content: RowContent<T>["content"]);
   constructor(
-    data: HasData<T>["data"],
-    selection: HasSelection["selection"],
-    content: RowContent<T>["content"]
+    data: T[],
+    selection: SelectionType,
+    content:ContentFn<T>
   );
-  constructor(selection: HasSelection["selection"], ...views: View[]);
-  constructor(selection: HasSelection["selection"], data: HasDataContent<T>["data"]);
+  constructor(selection: SelectionType, ...views: View[]);
+  constructor(selection: SelectionType, data: T[]);
   constructor(config: ListConfig<T>, ...views: View[]);
   constructor(config: HasSelection, ...views: View[]);
   constructor(...views: View[]);
-  constructor(config?:HasData<T>["data"] | HasSelection | HasSelection["selection"] | ListConfig<T> | View, selection?:HasDataContent<T>["data"]|HasSelection["selection"]|RowContent<T>["content"] | View, content?:RowContent<T>["content"] | undefined | View, ...views:[]) {
+  constructor(config?:T[] | HasSelection | SelectionType| ListConfig<T> | View, selection?:T[]|SelectionType|ContentFn<T> | View, content?:ContentFn<T> | undefined | View, ...views:[]) {
     super();
     const args:unknown[] = [config, selection, content, ...views];
     let all = args.concat();
@@ -66,7 +63,7 @@ export class ListClass<T extends HasId> extends Viewable<ListConfig<T>> {
       this.children = all as View[];
     }
     if (this.config.selection) {
-      this.selection = createSelection(this.config.selection);
+      this._selection = createSelection(this.config.selection);
     }
   }
   body = () => {
@@ -74,17 +71,7 @@ export class ListClass<T extends HasId> extends Viewable<ListConfig<T>> {
     if (this.config?.data && this.config?.content) {
       const selection = this.config.selection;
       const content = this.config.content as RowContent<T>["content"];
-      return this.config.data.filter(Boolean).map((data, idx, { length }) => {
-        const itm = new ListItem<T>(
-          data,
-          idx,
-          length,
-          editMode,
-          content,
-        );
-        itm.parent = this;
-        return itm;
-      });
+      return this.config.data.map(content, this);
     }
     return this.children;
     // return (
@@ -114,16 +101,17 @@ export class ListClass<T extends HasId> extends Viewable<ListConfig<T>> {
     return this;
   }
   render(): VNode<any> {
+    const isEdit = this.editMode?.()?.isEditing
     return h(
       ListComponent,
       {
-        body: this.exec,
-        isEdit: this.editMode?.()?.isEditing,
+        body: ()=>asArray(this.exec()).map((v, idx,all)=>v.renderListItem(idx, all.length, isEdit?.())),
+        isEdit,
         watch:this.watch,
-        selection: this.selection,
-        style: this.asStyle({ flex: "1", width: "100%" }),
+        selection: this._selection,
+        style: { flex: "1", width: "100%" },
         listStyle: this._listStyle,
-      } as StyleListConfig,
+      } as ListComponentProps,
       []
     );
   }

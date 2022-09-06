@@ -109,6 +109,8 @@
   "exclude": [
     "**/vite.config.ts",
     "**/tsconfig.json",
-    "**/lib/**"
+    "**/lib/**",
+    "**/public/**",
+    "**/dist/**"
   ]
 }

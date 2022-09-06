@@ -3,8 +3,8 @@ import { Color } from "../Color";
 const Mark = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="1rem"
-      height="1rem"
+      width="1.5rem"
+      height="1.5rem"
       viewBox="0 0 512 512"
     >
       <polyline
@@ -28,11 +28,11 @@ const Mark = () => (
     <span
       style={{
         position: 'relative',
-        height: '1.15rem',
+        height: '2rem',
         overflow: 'hidden',
         display: 'inline-block',
-        width: '1.2rem',
-        maxWidth: visible ? '1.2rem' : 0,
+        width: '2.1rem',
+        maxWidth: visible ? '2rem' : 0,
         marginRight: visible ? '10px' : 0,
         transition: 'left, margin, max-width .4s ease-in-out',
       }}
@@ -40,8 +40,8 @@ const Mark = () => (
       <span
         style={{
           borderRadius: '200%',
-          height: '1.15rem',
-          width: '1.15rem',
+          height: '2rem',
+          width: '2rem',
           backgroundColor: checked ? checkedColor + '' : 'unset',
           border: `2px solid ${checked ? checkedColor : borderColor}`,
           display: 'inline-block',

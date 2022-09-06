@@ -22,13 +22,15 @@ export class ForEachClass<I> extends Viewable<{}> {
   onDelete(fn: OnDelete): this {
     return this;
   }
-
+  renderListItem(idx:number, all:number){
+    return this.render();
+  }
   render() {
-    
+    const children = this.exec();
     return h(
       Fragment,
       {},
-      this.transform ? asArray(this.exec()).map((v, idx, all)=>v && this.transform?.(v, idx, all.length)) : flatRender(this.exec())
+      this.transform ? asArray(children).map((v, idx, all)=>v && this.transform?.(v, idx, all.length)) : flatRender(children)
     );
   }
 }

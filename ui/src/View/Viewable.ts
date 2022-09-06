@@ -13,13 +13,16 @@ import { AnimationMixin } from "./AnimationMixin";
 import { ControlMixin } from "./ControlMixin";
 import { NavigationMixin } from "./NavigationMixin";
 import { toNode } from "../dom";
-import { h, Component, Fragment } from "preact";
+import { h, Component } from "preact";
 import { ListMixin } from "./ListMixin";
 import { CSSProperties } from "../types";
 import { EnvironmentMixin } from "./EnvironmentMixin";
 import { bindToState } from "../state";
+import { SelectionType } from "../List/types";
+import { Inherit } from "../Inherit";
 export class ViewableClass<T = any> extends View {
   watch = new Map<string, Bindable<any>>();
+
   protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
   protected _tag?: string;

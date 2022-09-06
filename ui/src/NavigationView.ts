@@ -14,13 +14,15 @@ class NavigationViewClass extends Viewable {
     ),
     Text(NavigationConfig.navigationTitle || "")
       .font(Font.title.bold())
-      .padding(10)
+      .padding('.horizontal', 10)
+      .padding('.vertical', 20)
       .background(".clear"),
-    ...this.children,
+      ...this.children
   ];
 
   init() {
     this.background(Color.gray);
+    this.padding(10);
   }
 
   get _toolbar(): View[] {

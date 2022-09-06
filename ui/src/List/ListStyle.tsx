@@ -1,9 +1,9 @@
+import { VNode } from 'preact';
 import { Color } from '../Color';
-import { CSSProperties } from '../types';
-import { View } from '../View';
+import { CSSProperties, HasRender, HasRenderListItem } from '../types';
 import { Check } from './Check';
 
-export class ListStyle {
+export class ListStyle implements HasRenderListItem{
   
   selectedColor = new Color('#D1D1D6');
   
@@ -37,15 +37,15 @@ export class ListStyle {
     });
   }
   renderListItem(
-    v: View,
-    id:string,
+    v: HasRender,
     idx: number,
     total: number,
-    selected = false,
-    edit = false
-  ) {
+    edit:boolean = false,
+    selected:boolean = false,
+  ):VNode<any> {
+    let id = `${idx}`;
     return (
-      <li
+      <div
         data-id={id}
         key={`data-id-idx-${id}`}
         data-selected={selected}
@@ -63,7 +63,7 @@ export class ListStyle {
           <Check visible={edit} checked={selected} />
           {v?.render()}
         </span>
-      </li>
+      </div>
     );
   }
 

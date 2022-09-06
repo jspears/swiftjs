@@ -18,7 +18,8 @@ export class ListMixin {
   _listSectionSeperatorTint?: { color: Color; edges?: VerticalEdgeKey };
  
   @Inherit
-  _listStyle: ListStyle = DefaultListStyle;
+  _listStyle: ListStyle = null as any;
+
   @Inherit
   _tableStyle: ListStyle = DefaultListStyle;
   _listRowSeperatorTint?: Color;

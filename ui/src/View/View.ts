@@ -1,9 +1,15 @@
-import { asArray, UUID, Void } from "@tswift/util";
+import { asArray, Bindable } from "@tswift/util";
 import { h, VNode, Fragment } from "preact";
-import { HasId } from "../List/types";
+import { Inherit } from "../Inherit";
+import { DefaultListStyle, ListStyle } from "../List/ListStyle";
+import { HasId, Selection } from "../List/types";
 
 export class View implements HasId {
   id:string ='';
+  @Inherit
+  _selection?: Selection;
+
+  _listStyle:ListStyle = DefaultListStyle;
 
   _children: View[] = [];
 
@@ -31,9 +37,14 @@ export class View implements HasId {
   get parent(): View | undefined {
     return this._parent;
   }
-
+  
   init() {}
-
+  
+  renderListItem(index:number, total:number, edit = false, selected?:boolean):VNode<any>{
+    const isSelected = selected == null ? edit ? this._selection?.isSelected(index+'') : false  : false;
+    return this._listStyle.renderListItem(this, index, total, edit, isSelected);
+  }
+  
   render(): VNode<any> {
     if (this.children) {
       return h(Fragment, {}, ...this.children.map((v) => v.render?.()));

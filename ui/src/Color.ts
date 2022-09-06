@@ -1,6 +1,5 @@
-import { Dot, fromKey, KeyOf, Num } from "@tswift/util";
-import { swifty } from "@tswift/util";
-import { ShapeStyle } from "./ShapeStyle";
+import { KeyOf, Num } from "@tswift/util";
+import type { ShapeStyle } from "./ShapeStyle";
 
 type RGB = { red: number; blue: number; green: number; opacity?: number };
 type HSL = {

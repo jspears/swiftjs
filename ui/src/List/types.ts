@@ -1,13 +1,20 @@
 import { Bindable, Identifiable, CountSet, KeyValue, has } from "@tswift/util";
-import { View } from "../View";
+import type { View } from "../View";
 export type SelectionType = string | undefined | null | CountSet<string>;
+export type Identity = HasId | string;
+
+export type Selection<T extends Identity = Identity> = Bindable<SelectionType> & {
+  isSelected(v: T | string): boolean;
+  toggle(v: T | string): void;
+};
 
 export type HasSelection = {
   selection: Bindable<SelectionType>;
 };
+export type ContentFn<T> = (v:T)=>View;
 
 export type RowContent<T> = {
-  content($0?: T): View;
+  content:ContentFn<T>;
 };
 
 export type HasData<T> = {

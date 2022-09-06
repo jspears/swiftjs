@@ -20,7 +20,6 @@ export class AppClass extends Viewable {
       display: "flex",
       flex: "1",
       flexDirection: "column",
-      overflow: "hidden",
       height: "100%",
       justifyContent: "center",
       alignItems: "center",

@@ -5,7 +5,9 @@ import { readdirSync, writeFileSync, existsSync } from 'fs'
 const dirname = __dirname;
 
 const writeHtml = (name:string, 
-  content:string = `<h2>TSwift: ${name}</h2><a target="_parent" href="./${name}.html">fullpage</a>
+  content:string = `<h2>TSwift: ${name}</h2>
+  <a class='full' target="_parent" href="./${name}.html">fullpage</a>
+  <a class='back' href="./index.html">&lt; back</a>
   <div id="phone"><div id="app"></div><button id='button'/></div>
 
   <script type="module" src="./${name}.ts"></script>
