@@ -1,8 +1,17 @@
 @import url("./reset.css");
 html {font-size: 62.5%}
+
 body {
-  padding:2rem;
-  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: rgb(239, 238, 245);
+  padding: 1rem 3rem;
+}
+#page-nav {
+  padding:2em;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 body.index {
   display: flex;
@@ -45,7 +54,11 @@ body.index iframe {
 #button:active {
   border-color: darkgray;
 }
-
+#wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: fit-content;
+}
 #app {
   background-image: none;
   width: 321px;
@@ -53,8 +66,12 @@ body.index iframe {
   display: block;
   box-sizing: content-box;  
   outline: 10px solid black !important;
-  overflow: scroll;
-  transition: backround .4s ease;
+  overflow: auto;
+  scrollbar-width: 0;
+  transition: background-color .4s ease;
+}
+#app::-webkit-scrollbar {
+  display:none
 }
 
 
@@ -68,10 +85,4 @@ h2 {
 a {
   padding: 1em 0;
   display: block;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: rgb(239, 238, 245);
-  padding: 1em;
 }
