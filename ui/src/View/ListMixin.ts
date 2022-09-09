@@ -7,16 +7,15 @@ import { Visibility, VisibilityKey } from "./ApperanceMixin";
 
 export class ListMixin {
   @Inherit
-
   _listRowSeparator?: {
     visibility: Visibility;
-    edges: VerticalEdgeSet
+    edges: VerticalEdgeSet;
   };
   @Inherit
   _listRowTint?: [Color, EdgeSet?];
   @Inherit
   _listSectionSeperatorTint?: { color: Color; edges?: VerticalEdgeKey };
- 
+
   @Inherit
   _listStyle: ListStyle = null as any;
 
@@ -50,19 +49,21 @@ export class ListMixin {
   listItemTint(color?: ColorKey): this {
     return this;
   }
-  listRowSeparator(visibility: VisibilityKey, edges: VerticalEdgeKey[] = Array.from(VerticalEdgeSet.all)) {
-    this._listRowSeparator = { 
+  listRowSeparator(
+    visibility: VisibilityKey,
+    edges: VerticalEdgeKey[] = Array.from(VerticalEdgeSet.all)
+  ) {
+    this._listRowSeparator = {
       visibility: fromKey(Visibility, visibility),
-      edges:new VerticalEdgeSet(...edges),
+      edges: new VerticalEdgeSet(...edges),
     };
     return this;
   }
-
 }
 
 type RowInsets = {
-  top?: Num,
-  bottom?:Num,
-  leading?: Num,
-  trailing?: Num,
-}
+  top?: Num;
+  bottom?: Num;
+  leading?: Num;
+  trailing?: Num;
+};

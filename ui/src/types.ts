@@ -15,15 +15,14 @@ type CSS = Omit<
 >;
 
 export interface HasRender {
-  render():VNode<any>;
-
+  render(): VNode<any>;
 }
 export interface HasRenderListItem {
-   renderListItem(index:number, total:number, children?:View):VNode<any>;
+  renderListItem(index: number, total: number, children?: View): VNode<any>;
 }
 
 export interface ListStyleRenderListItem {
-  renderListItem(view:View, index:number, total:number):VNode<any>;
+  renderListItem(view: View, index: number, total: number): VNode<any>;
 }
 export type CSSProperties = Partial<CSS>;
-export type TransformFn = (v:View, idx:number, total:number)=>VNode<any>;
+export type TransformFn = (v: View, idx: number, total: number) => VNode<any>;

@@ -6,7 +6,7 @@ import { bindToState, flatRender, PickBindable } from "./state";
 import { Component, h } from "preact";
 import { ViewComponentProps } from "./preact";
 
-export interface ToggleConfig  {
+export interface ToggleConfig {
   isOn?: boolean;
   $isOn?: BoolType;
 }
@@ -20,21 +20,26 @@ class ToggleClass extends Viewable<ToggleConfig> {
     }
     return this;
   }
-  renderExec = ()=>flatRender(this.exec());
+  renderExec = () => flatRender(this.exec());
   render() {
-    return h(ToggleComponent, {watch:this.watch, ...this.config, exec:this.renderExec});
+    return h(ToggleComponent, {
+      watch: this.watch,
+      ...this.config,
+      exec: this.renderExec,
+    });
   }
 }
-interface ToggleComponentProps extends ViewComponentProps, ToggleConfig {
+interface ToggleComponentProps extends ViewComponentProps, ToggleConfig {}
 
-}
-
-class ToggleComponent extends Component<ToggleComponentProps, PickBindable<ToggleComponentProps>> {
+class ToggleComponent extends Component<
+  ToggleComponentProps,
+  PickBindable<ToggleComponentProps>
+> {
   constructor(props: ToggleComponentProps) {
     super();
     bindToState(this, props);
   }
-  render({isOn}:ToggleComponentProps) {
+  render({ isOn }: ToggleComponentProps) {
     if (this.props.isOn != null ? this.props.isOn : this.props.$isOn?.()) {
       return this.props.children;
     }

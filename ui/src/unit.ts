@@ -23,20 +23,23 @@ export const unitFor = (t?: Num): string => {
   if (t === ".infinity") {
     return "100%";
   }
-  //So want to use units like an apple, 
+  //So want to use units like an apple,
   // also want to be nice to peoples settings.
   // so this does the math.   Assumes that 1rem = 10px more or less.
   // so make sure html { font-size: 62.5% }
-  return `${t/10}rem`;
+  return `${t / 10}rem`;
 };
 
-type AngleType = 'deg' | 'rad' | 'grad' | 'turn';
+type AngleType = "deg" | "rad" | "grad" | "turn";
 
 export type Angle = `${number}${AngleType}`;
 
-const angles = (type:AngleType)=>(num:Num):Angle=>num === '.infinity' ? `0${type}` :`${num}${type}`;
+const angles =
+  (type: AngleType) =>
+  (num: Num): Angle =>
+    num === ".infinity" ? `0${type}` : `${num}${type}`;
 
-export const radians = angles('rad');
-export const degrees = angles('deg');
-export const gradians = angles('grad');
-export const turns = angles('turn');
+export const radians = angles("rad");
+export const degrees = angles("deg");
+export const gradians = angles("grad");
+export const turns = angles("turn");

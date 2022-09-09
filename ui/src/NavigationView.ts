@@ -9,15 +9,16 @@ import { HStack, StackOptions } from "./Stack";
 
 class NavigationViewClass extends Viewable {
   body = () => [
-    HStack({ alignment: ".trailing" } as StackOptions, ...NavigationConfig._toolbar).padding(
-      10
-    ),
+    HStack(
+      { alignment: ".trailing" } as StackOptions,
+      ...NavigationConfig._toolbar
+    ).padding(10),
     Text(NavigationConfig.navigationTitle || "")
       .font(Font.title.bold())
-      .padding('.horizontal', 10)
-      .padding('.vertical', 20)
+      .padding(".horizontal", 10)
+      .padding(".vertical", 20)
       .background(".clear"),
-      ...this.children
+    ...this.children,
   ];
 
   init() {

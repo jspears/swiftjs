@@ -45,13 +45,13 @@ class TextFieldClass extends Viewable<TextFieldConfig> {
   render() {
     if (typeof this.config.text == "string") {
       return h("input", {
-        class:'$TextField',
+        class: "$TextField",
         placeholder: this.config.label,
         value: () => this.config.text,
       } as any);
     } else {
       return h(BoundInput, {
-        watch:this.watch,
+        watch: this.watch,
         placeholder: this.config.label,
         value: this.config.text as any,
       });
@@ -62,8 +62,11 @@ interface BoundInputProps extends ViewComponentProps {
   placeholder?: string | undefined;
   value: Bindable<string>;
 }
-class BoundInput extends Component<BoundInputProps, PickBindable<BoundInputProps>> {
-  constructor(props:BoundInputProps){
+class BoundInput extends Component<
+  BoundInputProps,
+  PickBindable<BoundInputProps>
+> {
+  constructor(props: BoundInputProps) {
     super(props);
     this.state = bindToState(this, props);
   }

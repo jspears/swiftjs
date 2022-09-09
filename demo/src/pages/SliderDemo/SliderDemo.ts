@@ -1,7 +1,7 @@
 import { Bound, Num, Slider, State, Text, Viewable } from "@tswift/ui";
 
 export class SliderDemo extends Viewable {
-  @State speed: Num = 50.00;
+  @State speed: Num = 50.0;
   @State isEditing = false;
 
   body = ({ $speed, isEditing, $isEditing, speed }: Bound<this>) => [

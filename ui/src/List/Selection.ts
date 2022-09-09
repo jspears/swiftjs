@@ -5,7 +5,8 @@ import { hasId, Identity, SelectionType, Selection } from "./types";
 
 export const id = <V extends Identity>(
   v: V
-): V extends Identifiable ? Identifiable["id"] : string => (hasId(v) ? v.id : v + "");
+): V extends Identifiable ? Identifiable["id"] : string =>
+  hasId(v) ? v.id : v + "";
 
 export const createSelection = <V extends Identity>(
   selection: Bindable<SelectionType>

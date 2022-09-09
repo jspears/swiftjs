@@ -7,7 +7,7 @@ import { Selection } from "../List/types";
 import { Environment } from "../PropertyWrapper";
 
 export class View implements Identifiable {
-  id:string ='';
+  id: string = "";
 
   @Environment(".editMode")
   editMode?: Bindable<EditMode>;
@@ -15,7 +15,7 @@ export class View implements Identifiable {
   @Inherit
   _selection?: Selection;
 
-  _listStyle:ListStyle = DefaultListStyle;
+  _listStyle: ListStyle = DefaultListStyle;
 
   _children: View[] = [];
 
@@ -43,16 +43,26 @@ export class View implements Identifiable {
   get parent(): View | undefined {
     return this._parent;
   }
-  
+
   init() {}
-  
-  renderListItem(index: number, total: number): VNode<any>{
+
+  renderListItem(index: number, total: number): VNode<any> {
     const isEdit = this.editMode?.().isEditing() ?? false;
-    const id = this.id || index + '';
-    const selected = (this._selection?.isSingleSelection() || isEdit) ? this._selection?.isSelected(id) ?? false : false;
-    return this._listStyle.renderListItem(this, index, total, id, isEdit, selected);
+    const id = this.id || index + "";
+    const selected =
+      this._selection?.isSingleSelection() || isEdit
+        ? this._selection?.isSelected(id) ?? false
+        : false;
+    return this._listStyle.renderListItem(
+      this,
+      index,
+      total,
+      id,
+      isEdit,
+      selected
+    );
   }
-  
+
   render(): VNode<any> {
     if (this.children) {
       return h(Fragment, {}, ...this.children.map((v) => v.render?.()));

@@ -23,14 +23,14 @@ import {
 } from "@tswift/ui";
 
 class OceanClass implements Identifiable, Hashable {
-  public id = UUID()
+  public id = UUID();
   constructor(public name: string) {}
 }
 
 const Ocean = swifty(OceanClass);
 
 export class OceanList extends Viewable {
-  oceans:OceanClass[] = [
+  oceans: OceanClass[] = [
     Ocean("Pacific"),
     Ocean("Atlantic"),
     Ocean("Indian"),
@@ -40,11 +40,13 @@ export class OceanList extends Viewable {
 
   @State multiSelection = Set<string>();
 
-  body = (
-    { $multiSelection, oceans, multiSelection  }: Bound<this>,
-  ) => [
+  body = ({ $multiSelection, oceans, multiSelection }: Bound<this>) => [
     NavigationView(
-      List({data:oceans, selection:$multiSelection, content:($0) => Text($0.name)} as ListConfig<OceanClass>)
+      List({
+        data: oceans,
+        selection: $multiSelection,
+        content: ($0) => Text($0.name),
+      } as ListConfig<OceanClass>)
         .navigationTitle("Oceans")
         .toolbar(EditButton())
     ),

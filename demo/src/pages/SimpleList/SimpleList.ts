@@ -27,5 +27,8 @@ export class SimpleList extends Viewable {
     Ocean("Arctic"),
   ];
 
-  body = List({ data: this.oceans, content: $0 => Text($0.name) } as ListConfig<ReturnType<typeof Ocean>>);
+  body = List({
+    data: this.oceans,
+    content: ($0) => Text($0.name),
+  } as ListConfig<ReturnType<typeof Ocean>>);
 }

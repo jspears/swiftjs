@@ -1,1 +1,1 @@
-export {IndexPage as App} from './IndexPage';
+export { IndexPage as App } from "./IndexPage";

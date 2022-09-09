@@ -10,12 +10,6 @@ import {
 } from "./types";
 import { v4 as uuidv4 } from "uuid";
 
-export function swifty<
-  A extends Constructor,
->(clazz: A){
-  return Object.assign((...args: ConstructorParameters<A>) => new clazz(...args as any), clazz);
-}
-
 export const OrigSet = globalThis.Set;
 
 export const Set = <T>(...args: ConstructorParameters<typeof OrigSet<T>>) =>
@@ -56,7 +50,6 @@ export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
 }
 
 export function has<T, K>(v: unknown, k: PropertyKey): k is keyof T {
-
   return v != null && k != null && Object.prototype.hasOwnProperty.call(v, k);
 }
 
@@ -197,24 +190,34 @@ export function fromKey<
   return key as any;
 }
 
-export function isUndefined(v:unknown):v is undefined {
+export function isUndefined(v: unknown): v is undefined {
   return v == null;
 }
-const notNull = (v:unknown) => v != null;
+const notNull = (v: unknown) => v != null;
 
-export function asArray<V, R extends Exclude<V, null | undefined> = Exclude<V, null | undefined>>(v?:V | V[] | undefined):R[] {
-  if (isUndefined(v)){
+export function asArray<
+  V,
+  R extends Exclude<V, null | undefined> = Exclude<V, null | undefined>
+>(v?: V | V[] | undefined): R[] {
+  if (isUndefined(v)) {
     return [];
   }
-  if (Array.isArray(v)){
+  if (Array.isArray(v)) {
     return v.filter(notNull) as any;
   }
 
   return [v as any];
 }
 
-type Filter<T extends any[], V = null|undefined> = T extends [infer First, ...infer Rest] ? First extends V ? Filter<Rest,V> : [First, ...Filter<Rest,V>] : [];
+type Filter<T extends any[], V = null | undefined> = T extends [
+  infer First,
+  ...infer Rest
+]
+  ? First extends V
+    ? Filter<Rest, V>
+    : [First, ...Filter<Rest, V>]
+  : [];
 
 export function toArray<T extends any[]>(...args: T): Filter<T> {
-  return args.filter(notNull) as any; 
+  return args.filter(notNull) as any;
 }

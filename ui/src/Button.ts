@@ -18,68 +18,74 @@ export enum ButtonRole {
 export interface ButtonConfig {
   role?: ButtonRole | Dot<keyof typeof ButtonRole>;
   action?(): void;
-  label?:  string | View;
+  label?: string | View;
   shape?: ".roundedRectangle";
 }
-const defLabel = (v:View|string|undefined):View | undefined =>{
-  if (isView(v)){
+const defLabel = (v: View | string | undefined): View | undefined => {
+  if (isView(v)) {
     return v;
   }
-  if (typeof v === 'string'){
+  if (typeof v === "string") {
     return Text(v);
   }
-}
+};
 
 export class ButtonStyle {
   constructor(
     public _label = defLabel,
-    public _trigger?: (fn?:()=>unknown)=>()=>void,
+    public _trigger?: (fn?: () => unknown) => () => void,
     public _role?: ButtonRole
   ) {}
-  makeBody(btn:ButtonClass):View{
-    if (this._label){
+  makeBody(btn: ButtonClass): View {
+    if (this._label) {
       btn.label = this._label(btn.label);
     }
-    if (this._trigger){
+    if (this._trigger) {
       btn.onAction = this._trigger(btn.onAction);
     }
     return btn;
   }
 }
 
-export const PlainButtonStyle =  new class extends ButtonStyle {
-  makeBody(btn:ButtonClass):View{
-    btn.foregroundColor(".accentColor")
+export const PlainButtonStyle = new (class extends ButtonStyle {
+  makeBody(btn: ButtonClass): View {
+    btn.foregroundColor(".accentColor");
     return btn;
   }
-};
+})();
 
-export const BorderedButtonStyle = new class extends ButtonStyle {
-  makeBody(btn:ButtonClass):View{
-    btn.foregroundColor(".accentColor")
+export const BorderedButtonStyle = new (class extends ButtonStyle {
+  makeBody(btn: ButtonClass): View {
+    btn.foregroundColor(".accentColor");
     return btn;
   }
-};
-export const PrimativeButtonStyle = new class extends ButtonStyle {
-  makeBody(btn:ButtonClass):View{
-    btn.foregroundColor(".accentColor")
+})();
+export const PrimativeButtonStyle = new (class extends ButtonStyle {
+  makeBody(btn: ButtonClass): View {
+    btn.foregroundColor(".accentColor");
     return btn;
   }
-};
-function isContent(v:unknown):v is View | string {
-  return v == null ? false :  typeof v === 'string' || v instanceof View;
+})();
+function isContent(v: unknown): v is View | string {
+  return v == null ? false : typeof v === "string" || v instanceof View;
 }
 class ButtonClass extends Viewable<ButtonConfig> {
   style: CSSProperties = {
     cursor: "pointer",
   };
-  _buttonStyle:ButtonStyle = PlainButtonStyle;
+  _buttonStyle: ButtonStyle = PlainButtonStyle;
   constructor(
     label?: ButtonConfig["label"] | ButtonConfig,
     action?: ButtonConfig["action"]
   ) {
-    super(...(isContent(label) ? [{label, action}] : (has(label, 'label') || has(label, 'action'))  ? [label] : []) as [ButtonConfig] );
-    this.font('.body')
+    super(
+      ...((isContent(label)
+        ? [{ label, action }]
+        : has(label, "label") || has(label, "action")
+        ? [label]
+        : []) as [ButtonConfig])
+    );
+    this.font(".body");
   }
   init() {
     return this._buttonStyle.makeBody(this);
@@ -110,10 +116,9 @@ interface ButtonProps extends ViewComponentProps {
   style: CSSProperties;
   action(): void;
   role?: string;
-};
+}
 
 class ButtonComponent extends Component<ButtonProps> {
-  
   constructor(props: ButtonProps) {
     super(props);
     bindToState(this, props);
@@ -151,4 +156,5 @@ class EditButtonClass extends ButtonClass {
   };
 }
 export const EditButton = swifty(EditButtonClass);
-export const Button = (...args:ConstructorParameters<typeof ButtonClass>)=>new ButtonClass(...args);
+export const Button = (...args: ConstructorParameters<typeof ButtonClass>) =>
+  new ButtonClass(...args);

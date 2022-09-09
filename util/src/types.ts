@@ -47,7 +47,7 @@ export type NamedParameters<T> = TuplifyUnion<T[keyof T]> | [T];
 type Defined<T> = T extends undefined ? never : T;
 
 export type Bound<T> = T & {
-  readonly [K in keyof T as K extends string ?  `$${K}` : never]-?: Defined<
+  readonly [K in keyof T as K extends string ? `$${K}` : never]-?: Defined<
     Bindable<T[K]>
   >;
 };
@@ -134,11 +134,16 @@ export interface Publisher<T> {
     cancel(): void;
   };
 }
-export function map<T,R>(value:(T | undefined) | (T|undefined)[], transform:(t:T)=>R): R[] {
-  if (Array.isArray(value)){
-    return value.map(v=>v== null ? null : transform(v)).filter(Boolean) as R[];
+export function map<T, R>(
+  value: (T | undefined) | (T | undefined)[],
+  transform: (t: T) => R
+): R[] {
+  if (Array.isArray(value)) {
+    return value
+      .map((v) => (v == null ? null : transform(v)))
+      .filter(Boolean) as R[];
   }
-  if (value != null){
+  if (value != null) {
     return [transform(value)];
   }
   return [];

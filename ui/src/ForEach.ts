@@ -12,9 +12,8 @@ export type OnDelete = (v: IndexSet) => void;
 type ForEachFn<D> = (item: D) => View;
 
 export class ForEachClass<I extends Identifiable> extends Viewable<{}> {
-
   @Inherit
-  transform?:TransformFn;
+  transform?: TransformFn;
 
   constructor(private data: I[], private content: ForEachFn<I>) {
     super(...dataToView(data, content));
@@ -23,7 +22,7 @@ export class ForEachClass<I extends Identifiable> extends Viewable<{}> {
   onDelete(fn: OnDelete): this {
     return this;
   }
-  renderListItem(idx:number, all:number){
+  renderListItem(idx: number, all: number) {
     return this.render();
   }
   render() {
@@ -31,7 +30,11 @@ export class ForEachClass<I extends Identifiable> extends Viewable<{}> {
     return h(
       Fragment,
       {},
-      this.transform ? asArray(children).map((v, idx, all)=>v && this.transform?.(v, idx, all.length)) : flatRender(children)
+      this.transform
+        ? asArray(children).map(
+            (v, idx, all) => v && this.transform?.(v, idx, all.length)
+          )
+        : flatRender(children)
     );
   }
 }

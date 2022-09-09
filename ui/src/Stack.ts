@@ -27,7 +27,7 @@ interface FrameOptions {
 class StackClass extends Viewable<StackOptions> {
   protected style: CSSProperties = {
     display: "flex",
-    flex:'1',
+    flex: "1",
     // width: '100%',
     // height: '100%',
   };
@@ -60,14 +60,21 @@ class StackClass extends Viewable<StackOptions> {
   }
 
   render() {
-    return h("div", { class:`$${this.constructor.name}`, style: this.asStyle(this.style, this.config.style) }, super.render());
+    return h(
+      "div",
+      {
+        class: `$${this.constructor.name}`,
+        style: this.asStyle(this.style, this.config.style),
+      },
+      super.render()
+    );
   }
 }
 
 class VStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
     flexDirection: "column",
-    justifyContent:'center',
+    justifyContent: "center",
   });
 }
 
@@ -77,9 +84,8 @@ export const LazyVStack = VStack;
 class HStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
     flexDirection: "row",
-    alignItems:'center'
+    alignItems: "center",
   });
-  
 }
 export const HStack = swifty(HStackClass);
 export const LazyHStack = HStack;

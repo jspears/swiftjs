@@ -134,12 +134,12 @@ export enum VerticalEdge {
 }
 
 export class VerticalEdgeSet {
-  static all = new VerticalEdgeSet('.top', '.bottom');
-  static top = new VerticalEdgeSet('.top');
-  static bottom = new VerticalEdgeSet('.bottom');
+  static all = new VerticalEdgeSet(".top", ".bottom");
+  static top = new VerticalEdgeSet(".top");
+  static bottom = new VerticalEdgeSet(".bottom");
   private edges = Set<VerticalEdge>();
-  constructor(...edges:VerticalEdgeKey[]) {
-    this.edges = Set(edges.map(v=>fromKey(VerticalEdge, v as any)));
+  constructor(...edges: VerticalEdgeKey[]) {
+    this.edges = Set(edges.map((v) => fromKey(VerticalEdge, v as any)));
   }
   [Symbol.iterator]() {
     return this.edges[Symbol.iterator]();
@@ -150,20 +150,22 @@ export type VerticalEdgeKey = VerticalEdge | Dot<keyof typeof VerticalEdge>;
 
 export enum HorizontalEdge {
   leading,
-  trailing
+  trailing,
 }
 
 export class HorizontalEdgeSet {
-  static all = new HorizontalEdgeSet('.leading', '.trailing');
-  static leading = new HorizontalEdgeSet('.leading');
-  static trailing = new HorizontalEdgeSet('.trailing');
+  static all = new HorizontalEdgeSet(".leading", ".trailing");
+  static leading = new HorizontalEdgeSet(".leading");
+  static trailing = new HorizontalEdgeSet(".trailing");
   private edges = Set<HorizontalEdge>();
-  constructor(...edges:HorizontalEdgeKey[]) {
-    this.edges = Set(edges.map(v=>fromKey(HorizontalEdge, v as any)));
+  constructor(...edges: HorizontalEdgeKey[]) {
+    this.edges = Set(edges.map((v) => fromKey(HorizontalEdge, v as any)));
   }
   [Symbol.iterator]() {
     return this.edges[Symbol.iterator]();
   }
 }
 
-export type HorizontalEdgeKey = HorizontalEdge | Dot<keyof typeof HorizontalEdge>;
+export type HorizontalEdgeKey =
+  | HorizontalEdge
+  | Dot<keyof typeof HorizontalEdge>;

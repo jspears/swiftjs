@@ -5,5 +5,6 @@ export * from "./Bool";
 export * from "./ObservableObject";
 export * from "./print";
 export * from "./sequence";
+export * from "./swifty";
 export * from "./testUtils";
 export * from "./zip";

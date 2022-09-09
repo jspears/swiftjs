@@ -18,7 +18,7 @@ class TextClass extends Viewable<string> {
     return h(
       TextComponent,
       {
-        class:'$Text',
+        class: "$Text",
         watch: this.watch,
         style: this.asStyle({ display: "block" }),
       },

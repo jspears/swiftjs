@@ -7,7 +7,7 @@ export const EnvironmentValues = {
   editMode: watchable(EditMode.active),
   colorScheme: ColorScheme.light,
   dismiss: True(),
-  managedObjectContext:new NSManagedObjectContext()
+  managedObjectContext: new NSManagedObjectContext(),
 } as const;
 
 export type EnvironmentValuesKeys = KeyPath<typeof EnvironmentValues>;

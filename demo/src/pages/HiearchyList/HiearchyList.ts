@@ -1,4 +1,4 @@
-import { Identifiable, swifty, UUID, Viewable, List,Text } from "@tswift/ui";
+import { Identifiable, swifty, UUID, Viewable, List, Text } from "@tswift/ui";
 interface CustomStringConvertible {}
 interface Hashable {}
 const FileItem = swifty(
@@ -32,9 +32,8 @@ export class HiearchyList extends Viewable {
     FileItem("private", null),
   ];
   body = List<ReturnType<typeof FileItem>>({
-    data:this.fileHierarchyData, 
-     children:'.children',
-     content:(item:any)=>Text(item.description)
-    } as any);
-  
+    data: this.fileHierarchyData,
+    children: ".children",
+    content: (item: any) => Text(item.description),
+  } as any);
 }

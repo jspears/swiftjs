@@ -27,7 +27,7 @@ describe("ObservableObject", function () {
   it("should fire when changed", () => {
     const c = Contact("Bob", 2);
     const result: string[] = [];
-    c.objectWillChange.sink((v:ContactClass) => {
+    c.objectWillChange.sink((v: ContactClass) => {
       result.push(v.toString());
     });
     c.name = "Joe";

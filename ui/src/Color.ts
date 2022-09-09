@@ -1,4 +1,5 @@
 import { KeyOf, Num } from "@tswift/util";
+import { FillStyle } from "./Gradient";
 import type { ShapeStyle } from "./ShapeStyle";
 
 type RGB = { red: number; blue: number; green: number; opacity?: number };
@@ -9,7 +10,7 @@ type HSL = {
   opacity?: number;
 };
 
-export class Color implements ShapeStyle {
+export class Color implements ShapeStyle, FillStyle {
   constructor(
     public readonly value: string | RGB | HSL,
     public _opacity: number = 1
@@ -38,6 +39,9 @@ export class Color implements ShapeStyle {
 
   toString() {
     return this.value + "";
+  }
+  toFill() {
+    return this.toString();
   }
   opacity(opacity: number) {
     return new Color(this.value, opacity);

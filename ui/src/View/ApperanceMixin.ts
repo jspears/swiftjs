@@ -14,10 +14,10 @@ import type { Content } from "./View";
 import type { ShapeStyle } from "../ShapeStyle";
 import { CSSProperties } from "../types";
 import { Inherit } from "../Inherit";
-import { State } from "../PropertyWrapper";
 import { ColorScheme } from "./ColorScheme";
 import { isAlignmentKey, isColorKey, isView } from "../guards";
 import { unitFor } from "../unit";
+import { FillStyle, isGradient } from "../Gradient";
 
 export class Visibility {
   static readonly automatic = new Visibility("automatic");
@@ -39,6 +39,7 @@ class ToggleStyleClass {
 }
 
 export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
+  _style: CSSProperties = {};
   protected _border?: CSSProperties;
   @Inherit
   _color?: Color;
@@ -81,11 +82,25 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  backgroundStyle(s: S): this {
+  backgroundStyle(fill: FillStyle) {
+    if (!this._style) {
+      this._style = {};
+    }
+    this._style.backgroundImage = fill.toFill();
+    this._style.backgroundRepeat = "no-repeat";
+    this._style.backgroundPosition = "center";
+
     return this;
   }
 
-  foregroundStyle(s1: S, s2: S): this {
+  foregroundStyle(fill: FillStyle) {
+    if (!this._style) {
+      this._style = {};
+    }
+    this._style.backgroundImage = fill.toFill();
+    this._style.backgroundClip = "text";
+    this._style["-webkit-background-clip" as keyof CSSProperties] = "text";
+    this._style.color = "transparent";
     return this;
   }
 
@@ -104,7 +119,6 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
         : undefined;
     return this;
   }
-
 
   preferredColorScheme(scheme?: ColorSchemeKey) {
     this._colorScheme = scheme ? fromKey(ColorScheme, scheme) : undefined;
@@ -135,7 +149,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   ): this {
     if (isView(alignment)) {
       this._backgroundView = alignment;
-    } else if (isAlignmentKey(alignment)){
+    } else if (isAlignmentKey(alignment)) {
       this._backgroundAlignnment = fromKey(Alignment, alignment);
     } else if (isColorKey(alignment)) {
       this._backgroundColor = fromKey(Color, alignment);
@@ -163,18 +177,19 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-
   toggleStyle(style: KeyOf<typeof ToggleStyleClass>) {
     return this;
   }
 
-
-  fixedSize(horizontal?: boolean | ".horizontal" | ".vertical", vertical?:boolean) {
-    if (typeof vertical === 'boolean' && typeof horizontal === 'boolean') {
+  fixedSize(
+    horizontal?: boolean | ".horizontal" | ".vertical",
+    vertical?: boolean
+  ) {
+    if (typeof vertical === "boolean" && typeof horizontal === "boolean") {
       this._fixedSize = {
         vertical,
-        horizontal
-      }
+        horizontal,
+      };
     }
     if (horizontal != null) {
       if (!this._fixedSize) {

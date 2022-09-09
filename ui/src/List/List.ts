@@ -39,23 +39,22 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
 
   body = () => {
     if (this.config.data && this.config.content) {
-      const {data, content, children} = this.config;
+      const { data, content, children } = this.config;
       if (children) {
-        return data.map(
-          (v) =>{
-            const child = keyPath(v, children) as T[];
-            let ti: View;
-              if (child) {
-                const li = List({ data: child, children, content } as any);
-                li._level++;
-                ti = TreeItem({ open: this._level == 1 }, content(v), li);
-              } else {
-                ti = TreeItem({ open: this._level == 1 }, content(v));
-              }
-              ti.parent = this;
-              ti.id = v.id;
-              return ti;
-            })          
+        return data.map((v) => {
+          const child = keyPath(v, children) as T[];
+          let ti: View;
+          if (child) {
+            const li = List({ data: child, children, content } as any);
+            li._level++;
+            ti = TreeItem({ open: this._level == 1, id: v.id }, content(v), li);
+          } else {
+            ti = TreeItem({ open: this._level == 1 }, content(v));
+          }
+          ti.parent = this;
+          ti.id = v.id;
+          return ti;
+        });
       }
       return dataToView(this.config.data, this.config.content, this);
     }
@@ -87,14 +86,17 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
     return this;
   }
 
-  renderExec = ()=> asArray(this.exec()).map((v, idx, all) => v.renderListItem(idx, all.length))
-    
+  renderExec = () =>
+    asArray(this.exec()).map((v, idx, all) =>
+      v.renderListItem(idx, all.length)
+    );
+
   render(): VNode<any> {
     const isEdit = this.editMode?.()?.isEditing;
     return h(
       ListComponent,
       {
-        exec:this.renderExec,
+        exec: this.renderExec,
         isEdit,
         watch: this.watch,
         selection: this._selection,

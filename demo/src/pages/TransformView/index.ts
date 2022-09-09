@@ -1,1 +1,1 @@
-export {TransformView as App} from './TransformView';
+export { TransformView as App } from "./TransformView";

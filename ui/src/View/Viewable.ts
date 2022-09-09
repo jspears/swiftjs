@@ -1,5 +1,13 @@
 import type { AlignmentKey } from "../Edge";
-import { isString, applyMixins, has, watchable, Void, isBindable, asArray } from "@tswift/util";
+import {
+  isString,
+  applyMixins,
+  has,
+  watchable,
+  Void,
+  isBindable,
+  asArray,
+} from "@tswift/util";
 import type { Bindable, Bound, Bounds } from "@tswift/util";
 import { ApperanceMixin } from "./ApperanceMixin";
 import { PaddingMixin } from "./PaddingMixin";
@@ -12,27 +20,24 @@ import { ShapeMixin } from "./ShapeMixin";
 import { AnimationMixin } from "./AnimationMixin";
 import { ControlMixin } from "./ControlMixin";
 import { NavigationMixin } from "./NavigationMixin";
-import { toNode } from "../dom";
-import { h, Component } from "preact";
+import { h } from "preact";
 import { ListMixin } from "./ListMixin";
 import { CSSProperties } from "../types";
 import { EnvironmentMixin } from "./EnvironmentMixin";
-import { bindToState, flatRender } from "../state";
-import { SelectionType } from "../List/types";
-import { Inherit } from "../Inherit";
-import { isView } from "../guards";
-import { isArray } from "util";
-import { ViewComponent, ViewComponentProps } from "../preact";
+import { flatRender } from "../state";
+import { isBounds, isView } from "../guards";
+import { ViewComponent } from "../preact";
 import { TransformMixin } from "./TransformMixin";
+import { FillStyle, isGradient } from "../Gradient";
 
-export type Body<T> = View | View[] | ((
-  bound: Bound<T> & T,
-)=> View | undefined | (View | undefined)[]);
-
+export type Body<T> =
+  | View
+  | View[]
+  | ((bound: Bound<T> & T) => View | undefined | (View | undefined)[]);
 
 export class ViewableClass<T = any> extends View {
   watch = new Map<string, Bindable<any>>();
-
+  protected _style: CSSProperties = {};
   protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
   protected _tag?: string;
@@ -43,14 +48,14 @@ export class ViewableClass<T = any> extends View {
     this.config = configIsView ? {} : config || {};
     this.children = configIsView ? [config, ...children] : children;
     this._bound = new Proxy(this, {
-        get(target, key) {
-          if (isString(key) && key["0"] === "$") {
-            return target.$(key.slice(1) as any);
-          }else if (isString(key)){
-            return target[key as keyof typeof target];
-          }
-        },
-      }) as Bound<this>;
+      get(target, key) {
+        if (isString(key) && key["0"] === "$") {
+          return target.$(key.slice(1) as any);
+        } else if (isString(key)) {
+          return target[key as keyof typeof target];
+        }
+      },
+    }) as Bound<this>;
   }
 
   onRecieve<E>(p: Bindable<E>, perform: (e: E) => Void) {
@@ -64,29 +69,35 @@ export class ViewableClass<T = any> extends View {
   >(
     ...keys: K[]
   ): Bindable<R> => {
-    keys.forEach(key=>{
-    if (!this.watch.has(key)) {
-      const value = has(this, key) ? this[key] : null;
-      const watch = isBindable(value) ? value : watchable<R>(value as unknown as R);
-      const pd = Object.getOwnPropertyDescriptor(this, key);
-      if (pd) {
-        pd.get = watch;
-        if (pd.set) {
-          watch.sink(pd.set);
+    keys.forEach((key) => {
+      if (!this.watch.has(key)) {
+        const value = has(this, key) ? this[key] : null;
+        const watch = isBindable(value)
+          ? value
+          : watchable<R>(value as unknown as R);
+        const pd = Object.getOwnPropertyDescriptor(this, key);
+        if (pd) {
+          pd.get = watch;
+          if (pd.set) {
+            watch.sink(pd.set);
+          }
+          pd.set = watch;
+        } else {
+          Object.defineProperty(this, key, {
+            get: watch,
+            set: watch,
+          });
         }
-        pd.set = watch;
-      } else {
-        Object.defineProperty(this, key, {
-          get: watch,
-          set: watch,
-        });
+        this.watch.set(key, watch);
       }
-      this.watch.set(key, watch);
-    }
-  });
-    return  this.watch.get(keys[0]) as Bindable<R> ;
+    });
+    return this.watch.get(keys[0]) as Bindable<R>;
   };
+
   frame(conf: Partial<Bounds & { alignment: AlignmentKey }>) {
+    if (isBounds(conf)) {
+      Object.assign(this._style, conf);
+    }
     return this;
   }
   tag(v: string) {
@@ -106,37 +117,45 @@ export class ViewableClass<T = any> extends View {
       this._border,
       this._padding,
       this._transforms,
+      this._style,
       ...css
     );
   }
-  
-  body?:Body<this>;
 
-  exec = ():View[] => {
+  body?: Body<this>;
+
+  exec = (): View[] => {
     if (!this.body) {
       return asArray(this.children);
     }
-    if (isView(this.body)){
+    if (isView(this.body)) {
       return asArray(this.body);
     }
-    if (Array.isArray(this.body)){
+    if (Array.isArray(this.body)) {
       return this.body;
     }
     return asArray(this.body(this._bound)).flatMap((v) => {
-      (v.parent = this);
+      v.parent = this;
       return v;
     });
   };
-  renderExec = ()=>flatRender(this.exec());
+  renderExec = () => flatRender(this.exec());
 
   render() {
     if (this.body) {
-      return h(ViewComponent, { class:this.constructor.name, watch: this.watch, exec: this.renderExec }, []);
+      return h(
+        ViewComponent,
+        {
+          class: this.constructor.name,
+          watch: this.watch,
+          exec: this.renderExec,
+        },
+        []
+      );
     }
     return super.render?.();
   }
 }
-
 
 export interface ViewableClass
   extends ApperanceMixin,
@@ -150,7 +169,8 @@ export interface ViewableClass
     PaddingMixin,
     PickerMixin,
     Searchable,
-    ShapeMixin, TransformMixin {}
+    ShapeMixin,
+    TransformMixin {}
 export const Viewable = applyMixins(
   ViewableClass,
   ApperanceMixin,

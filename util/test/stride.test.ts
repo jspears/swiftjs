@@ -26,15 +26,15 @@ describe("stride", function () {
   it("should spread", function () {
     expect([...stride(0, 3)]).to.eql([0, 1, 2]);
   });
-  it('shoud parse 0..<3', function(){
-    expect([...stride('0..<3')]).to.eql([0, 1, 2]);
-  })
-  it('shoud parse 0..3', function(){
-    expect([...stride('0..3')]).to.eql([0, 1, 2,3]);
-  })
-  it('shoud parse 2..3', function(){
-    expect([...stride('2..3')]).to.eql([2,3]);
-  })
+  it("shoud parse 0..<3", function () {
+    expect([...stride("0..<3")]).to.eql([0, 1, 2]);
+  });
+  it("shoud parse 0..3", function () {
+    expect([...stride("0..3")]).to.eql([0, 1, 2, 3]);
+  });
+  it("shoud parse 2..3", function () {
+    expect([...stride("2..3")]).to.eql([2, 3]);
+  });
 });
 describe("repeatElement", function () {
   it("should repeat", function () {

@@ -15,10 +15,10 @@ export function State(target: Object, propertyKey: PropertyKey) {
     },
   });
 }
-export function Namespace(target: Object, propertyKey:PropertyKey){
+export function Namespace(target: Object, propertyKey: PropertyKey) {
   Reflect.defineProperty(target, propertyKey, {
-    value:UUID()
-  })
+    value: UUID(),
+  });
 }
 
 export function Environment(property: EnvironmentValuesKeys) {
@@ -52,15 +52,15 @@ export function Binding(target: View, property: PropertyKey) {}
 export function AppStorage(key: string) {
   return function AppStorage$(target: Object, property: string) {
     Reflect.defineProperty(target, property, {
-      set(value){
+      set(value) {
         localStorage.set(property, JSON.stringify(value));
       },
-      get(){
+      get() {
         const item = localStorage.getItem(property);
-        if (item){
+        if (item) {
           return JSON.parse(item);
         }
-      }
-    })
+      },
+    });
   };
 }
