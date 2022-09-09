@@ -3,15 +3,13 @@ import { Component, VNode } from "preact";
 import { bindToState } from "../state";
 import { ListStyle } from "./ListStyle";
 import { findTarget } from "../dom";
-import { CSSProperties } from "../types";
-import { HasId, Selection } from "./types";
+import { Selection } from "./types";
+import { ViewComponentProps } from "../preact";
 
-export type ListComponentProps = { body(): VNode<any>[] } & {
+export interface ListComponentProps extends ViewComponentProps{
   listStyle: ListStyle;
   isEdit?: BoolType;
-  style: CSSProperties;
-  selection?: Selection<HasId>;
-  id?: string;
+  selection?: Selection;
 };
 
 const byId = (n: HTMLElement) => n.dataset?.id != null;
@@ -19,7 +17,7 @@ const byId = (n: HTMLElement) => n.dataset?.id != null;
 export class ListComponent extends Component<ListComponentProps> {
   constructor(props: ListComponentProps) {
     super(props);
-    bindToState(this, props);
+    this.state = bindToState(this, props);
   }
   onClick = (e: Event) => {
     if (this.props.selection) {
@@ -34,9 +32,9 @@ export class ListComponent extends Component<ListComponentProps> {
 
   render() {
     return (
-      <div style={this.props.style} id={this.props.id}>
-        <div onClick={this.onClick} style={this.props.listStyle.style()}>
-          {this.props.body()}
+      <div style={this.props.style} id={this.props.id} class='$List'>
+        <div onClick={this.onClick} style={this.props.listStyle.style()} class={'$List$inner'}>
+          {this.props.exec?.()}
         </div>
       </div>
     );

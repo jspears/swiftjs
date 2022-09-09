@@ -1,23 +1,16 @@
 //https://developer.apple.com/documentation/swiftui/list/
 
 import {
-  Bound,
-  EditButton,
-  ID,
   Hashable,
   Identifiable,
   List,
-  NavigationView,
-  Set,
-  State,
   swifty,
   Text,
   UUID,
   Viewable,
   CountSet,
+  ListConfig,
 } from "@tswift/ui";
-import { run } from "../../run";
-import Png from "./SimpleList.png";
 
 const Ocean = swifty(
   class implements Identifiable, Hashable {
@@ -25,10 +18,8 @@ const Ocean = swifty(
   }
 );
 
-type OceanType = ReturnType<typeof Ocean>;
-
 export class SimpleList extends Viewable {
-  oceans: OceanType[] = [
+  oceans = [
     Ocean("Pacific"),
     Ocean("Atlantic"),
     Ocean("Indian"),
@@ -36,7 +27,5 @@ export class SimpleList extends Viewable {
     Ocean("Arctic"),
   ];
 
-  @State multiSelection: CountSet<string> = Set<string>();
-
-  body = (_, { oceans }: this) => List(oceans, ($0) => Text($0.name));
+  body = List({ data: this.oceans, content: $0 => Text($0.name) } as ListConfig<ReturnType<typeof Ocean>>);
 }

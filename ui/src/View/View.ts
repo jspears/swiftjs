@@ -1,11 +1,17 @@
-import { asArray, Bindable } from "@tswift/util";
+import { asArray, Bindable, Identifiable } from "@tswift/util";
 import { h, VNode, Fragment } from "preact";
+import { EditMode } from "../EditMode";
 import { Inherit } from "../Inherit";
 import { DefaultListStyle, ListStyle } from "../List/ListStyle";
-import { HasId, Selection } from "../List/types";
+import { Selection } from "../List/types";
+import { Environment } from "../PropertyWrapper";
 
-export class View implements HasId {
+export class View implements Identifiable {
   id:string ='';
+
+  @Environment(".editMode")
+  editMode?: Bindable<EditMode>;
+
   @Inherit
   _selection?: Selection;
 
@@ -40,9 +46,11 @@ export class View implements HasId {
   
   init() {}
   
-  renderListItem(index:number, total:number, edit = false, selected?:boolean):VNode<any>{
-    const isSelected = selected == null ? edit ? this._selection?.isSelected(index+'') : false  : false;
-    return this._listStyle.renderListItem(this, index, total, edit, isSelected);
+  renderListItem(index: number, total: number): VNode<any>{
+    const isEdit = this.editMode?.().isEditing() ?? false;
+    const id = this.id || index + '';
+    const selected = (this._selection?.isSingleSelection() || isEdit) ? this._selection?.isSelected(id) ?? false : false;
+    return this._listStyle.renderListItem(this, index, total, id, isEdit, selected);
   }
   
   render(): VNode<any> {

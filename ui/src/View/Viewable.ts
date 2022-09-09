@@ -17,15 +17,16 @@ import { h, Component } from "preact";
 import { ListMixin } from "./ListMixin";
 import { CSSProperties } from "../types";
 import { EnvironmentMixin } from "./EnvironmentMixin";
-import { bindToState } from "../state";
+import { bindToState, flatRender } from "../state";
 import { SelectionType } from "../List/types";
 import { Inherit } from "../Inherit";
 import { isView } from "../guards";
 import { isArray } from "util";
+import { ViewComponent, ViewComponentProps } from "../preact";
+import { TransformMixin } from "./TransformMixin";
 
 export type Body<T> = View | View[] | ((
-  bound: Bound<T>,
-  self: T
+  bound: Bound<T> & T,
 )=> View | undefined | (View | undefined)[]);
 
 
@@ -38,17 +39,18 @@ export class ViewableClass<T = any> extends View {
   protected _bound: Bound<this>;
   constructor(config?: T | View, ...children: View[]) {
     super();
-    this.config = config instanceof View ? {} : config || {};
-    const allChildren =
-      config instanceof View ? [config, ...children] : children;
-    this.children = allChildren;
+    const configIsView = isView(config);
+    this.config = configIsView ? {} : config || {};
+    this.children = configIsView ? [config, ...children] : children;
     this._bound = new Proxy(this, {
         get(target, key) {
           if (isString(key) && key["0"] === "$") {
             return target.$(key.slice(1) as any);
+          }else if (isString(key)){
+            return target[key as keyof typeof target];
           }
         },
-      }) as any;
+      }) as Bound<this>;
   }
 
   onRecieve<E>(p: Bindable<E>, perform: (e: E) => Void) {
@@ -94,7 +96,7 @@ export class ViewableClass<T = any> extends View {
   matchedGeometryEffect(effect: { id: string; in?: string }) {
     return this;
   }
-  asStyle(...css: CSSProperties[]): CSSProperties {
+  asStyle(...css: (CSSProperties | undefined | null)[]): CSSProperties {
     const backgroundColor = this._backgroundColor?.value;
     const color = this._foregroundColor?.value;
     return Object.assign(
@@ -103,6 +105,7 @@ export class ViewableClass<T = any> extends View {
       { backgroundColor, color },
       this._border,
       this._padding,
+      this._transforms,
       ...css
     );
   }
@@ -119,29 +122,21 @@ export class ViewableClass<T = any> extends View {
     if (Array.isArray(this.body)){
       return this.body;
     }
-    return asArray(this.body(this._bound, this)).flatMap((v) => {
+    return asArray(this.body(this._bound)).flatMap((v) => {
       (v.parent = this);
       return v;
     });
   };
+  renderExec = ()=>flatRender(this.exec());
+
   render() {
     if (this.body) {
-      return h(ViewComponent as any, { watch: this.watch, body: this.exec });
+      return h(ViewComponent, { class:this.constructor.name, watch: this.watch, exec: this.renderExec }, []);
     }
     return super.render?.();
   }
 }
-type Props = { watch: Map<string, Bindable<any>>; body: () => View[] };
-class ViewComponent extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    bindToState(this, this.props);
-  }
 
-  render() {
-    return toNode(...this.props.body());
-  }
-}
 
 export interface ViewableClass
   extends ApperanceMixin,
@@ -155,7 +150,7 @@ export interface ViewableClass
     PaddingMixin,
     PickerMixin,
     Searchable,
-    ShapeMixin {}
+    ShapeMixin, TransformMixin {}
 export const Viewable = applyMixins(
   ViewableClass,
   ApperanceMixin,
@@ -169,5 +164,6 @@ export const Viewable = applyMixins(
   PaddingMixin,
   PickerMixin,
   Searchable,
-  ShapeMixin
+  ShapeMixin,
+  TransformMixin
 );

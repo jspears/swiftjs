@@ -2,10 +2,11 @@ import { Viewable } from "./View/Viewable";
 import { BoolType, swifty } from "@tswift/util";
 import { Bindable } from "@tswift/util";
 import { View } from "./View";
-import { bindToState } from "./state";
+import { bindToState, flatRender, PickBindable } from "./state";
 import { Component, h } from "preact";
+import { ViewComponentProps } from "./preact";
 
-export interface ToggleConfig {
+export interface ToggleConfig  {
   isOn?: boolean;
   $isOn?: BoolType;
 }
@@ -19,17 +20,21 @@ class ToggleClass extends Viewable<ToggleConfig> {
     }
     return this;
   }
+  renderExec = ()=>flatRender(this.exec());
   render() {
-    return h(ToggleComponent, this.config, super.render());
+    return h(ToggleComponent, {watch:this.watch, ...this.config, exec:this.renderExec});
   }
 }
+interface ToggleComponentProps extends ViewComponentProps, ToggleConfig {
 
-class ToggleComponent extends Component<ToggleConfig> {
-  constructor(props: ToggleConfig) {
+}
+
+class ToggleComponent extends Component<ToggleComponentProps, PickBindable<ToggleComponentProps>> {
+  constructor(props: ToggleComponentProps) {
     super();
     bindToState(this, props);
   }
-  render() {
+  render({isOn}:ToggleComponentProps) {
     if (this.props.isOn != null ? this.props.isOn : this.props.$isOn?.()) {
       return this.props.children;
     }

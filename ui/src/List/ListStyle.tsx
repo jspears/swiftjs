@@ -1,10 +1,14 @@
+import { Bindable } from '@tswift/util';
 import { VNode } from 'preact';
 import { Color } from '../Color';
-import { CSSProperties, HasRender, HasRenderListItem } from '../types';
+import { EditMode } from '../EditMode';
+import { Inherit } from '../Inherit';
+import { CSSProperties, HasRender, HasRenderListItem, ListStyleRenderListItem } from '../types';
 import { unitFor } from '../unit';
 import { Check } from './Check';
+import { Selection } from './types';
 
-export class ListStyle implements HasRenderListItem{
+export class ListStyle implements ListStyleRenderListItem{
   
   selectedColor = new Color('#D1D1D6');
   
@@ -41,14 +45,16 @@ export class ListStyle implements HasRenderListItem{
     v: HasRender,
     idx: number,
     total: number,
-    edit:boolean = false,
-    selected:boolean = false,
-  ):VNode<any> {
-    let id = `${idx}`;
+    id?: string,
+    edit: boolean = false,
+    selected: boolean = false,
+  ): VNode<any> {
+    id = id || `${idx}`;
     return (
       <div
         data-id={id}
         key={`data-id-idx-${id}`}
+        class='$ListStyle'
         data-selected={selected}
         style={{
           background: (selected  && edit ? this.selectedColor : this.unselectedColor)+'',
@@ -60,7 +66,7 @@ export class ListStyle implements HasRenderListItem{
           overflow:'hidden',
         }}
       >
-        <span style={this.itemStyle(idx, total, selected)}>
+        <span style={this.itemStyle(idx, total, selected)} class='$ListStyle$inner'>
           <Check visible={edit} checked={selected} />
           {v?.render()}
         </span>

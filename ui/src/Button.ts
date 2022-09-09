@@ -9,6 +9,7 @@ import { CSSProperties } from "./types";
 import { bindToState } from "./state";
 import { isView } from "./guards";
 import { Text } from "./Text";
+import { ViewComponentProps } from "./preact";
 export enum ButtonRole {
   cancel = "cancel",
   destructive = "destructive",
@@ -73,9 +74,6 @@ class ButtonClass extends Viewable<ButtonConfig> {
     cursor: "pointer",
   };
   _buttonStyle:ButtonStyle = PlainButtonStyle;
-  constructor(config: ButtonConfig);
-  constructor(label: ButtonConfig["label"], action?: ButtonConfig["action"]);
-  constructor();
   constructor(
     label?: ButtonConfig["label"] | ButtonConfig,
     action?: ButtonConfig["action"]
@@ -107,7 +105,7 @@ class ButtonClass extends Viewable<ButtonConfig> {
   }
 }
 
-type ButtonProps = {
+interface ButtonProps extends ViewComponentProps {
   label: Bindable<ButtonConfig["label"]>;
   style: CSSProperties;
   action(): void;
@@ -153,4 +151,4 @@ class EditButtonClass extends ButtonClass {
   };
 }
 export const EditButton = swifty(EditButtonClass);
-export const Button = swifty(ButtonClass);
+export const Button = (...args:ConstructorParameters<typeof ButtonClass>)=>new ButtonClass(...args);

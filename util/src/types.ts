@@ -47,7 +47,7 @@ export type NamedParameters<T> = TuplifyUnion<T[keyof T]> | [T];
 type Defined<T> = T extends undefined ? never : T;
 
 export type Bound<T> = T & {
-  [K in keyof T as K extends string ? `$${K}` : never]-?: Defined<
+  readonly [K in keyof T as K extends string ?  `$${K}` : never]-?: Defined<
     Bindable<T[K]>
   >;
 };

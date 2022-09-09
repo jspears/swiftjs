@@ -2,6 +2,8 @@ import { Viewable } from "./View";
 import { isBindable, swifty } from "@tswift/util";
 import { Bindable, Bound, KeyOf } from "@tswift/util";
 import { Component, h } from "preact";
+import { ViewComponentProps } from "./preact";
+import { bindToState, PickBindable } from "./state";
 
 export class TextInputAutocapitalization {
   static characters = new TextInputAutocapitalization();
@@ -43,32 +45,32 @@ class TextFieldClass extends Viewable<TextFieldConfig> {
   render() {
     if (typeof this.config.text == "string") {
       return h("input", {
+        class:'$TextField',
         placeholder: this.config.label,
         value: () => this.config.text,
       } as any);
     } else {
       return h(BoundInput, {
+        watch:this.watch,
         placeholder: this.config.label,
         value: this.config.text as any,
       });
     }
   }
 }
-
-class BoundInput extends Component<{
+interface BoundInputProps extends ViewComponentProps {
   placeholder?: string | undefined;
   value: Bindable<string>;
-}> {
-  componentDidMount() {
-    if (isBindable(this.props.value))
-      this.componentWillUnmount = this.props.value.sink((value:any) => {
-        this.setState({ value });
-      });
+}
+class BoundInput extends Component<BoundInputProps, PickBindable<BoundInputProps>> {
+  constructor(props:BoundInputProps){
+    super(props);
+    this.state = bindToState(this, props);
   }
 
   render() {
     return h("input", {
-      value: this.props.value(),
+      value: this.state.value,
       placeholder: this.props.placeholder,
       onInput: (e: Event) => {
         const ele = e.target as HTMLInputElement;

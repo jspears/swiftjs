@@ -1,8 +1,7 @@
 import { Text, VStack, Color, Viewable } from "@tswift/ui";
 
 export class Typeography extends Viewable {
-  body = () =>
-    VStack(
+  body = VStack(
       { alignment: ".leading", spacing: 10 },
       Text("Large Title").font(".largeTitle"),
       Text("Title").font(".title"),

@@ -27,6 +27,7 @@ const Mark = () => (
     borderColor?:Color
   }) => (
     <span
+      class='$Check'
       style={{
         position: 'relative',
         height: '2rem',
@@ -39,6 +40,7 @@ const Mark = () => (
       }}
     >
       <span
+        class='$Check$Inner'
         style={{
           borderRadius: '200%',
           height: '2rem',

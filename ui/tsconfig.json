@@ -2,14 +2,18 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./lib",
-    "rootDir": ".",
-    "composite": true,
-    "tsBuildInfoFile": "./lib/.tsbuildinfo",
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
+    "composite": true,
+    "tsBuildInfoFile": "./lib/.tsbuildinfo-ui",
   },
+  "include": ["src/**/*"],
   "references": [
-    {"path":"../util"},
-    {"path":"../coredata"}
+    {
+      "path":"../util"
+    },
+    {
+      "path":"../coredata"
+    }
   ]
 }

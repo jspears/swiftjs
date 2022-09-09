@@ -2,8 +2,6 @@ import { View, Viewable, ViewableClass } from "./View";
 import { asArray, has, swifty, toArray } from "@tswift/util";
 import {Text} from './Text';
 import { Font } from "./Font";
-import { isViewable } from "./guards";
-import { HasId } from "./List/types";
 import { TransformFn } from "./types";
 import { h, VNode } from "preact";
 import { ListComponent, ListComponentProps } from "./List/ListComponent";
@@ -41,8 +39,11 @@ class Body extends Viewable {
     super(...(typeof content === 'string' ?  [Text(content)] : Array.isArray(content) ? content : [content] ))
     this.padding('.horizontal', 10)
   }
+  renderList = () => {
+    
+  }
   render(){
-    const body = ():VNode<any>[] =>asArray(this.exec()).map((v, idx,all)=>v.renderListItem(idx, all.length));
+    const body = ():VNode<any>[] =>asArray(this.exec()).map((v, idx,all)=>v.renderListItem(idx, all.length, ''+idx));
 
     return h(ListComponent, {
       body,

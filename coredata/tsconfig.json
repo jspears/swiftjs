@@ -2,11 +2,13 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./lib",
-    "rootDir": ".",
     "composite": true,
-    "tsBuildInfoFile": "./lib/.tsbuildinfo"
+    "tsBuildInfoFile": "./lib/.tsbuildinfo-coredata"
   },
+  "include": ["src/**/*"],
   "references": [
-    {"path":"../util"}
+    {
+      "path": "../util"
+    }
   ]
 }

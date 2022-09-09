@@ -1,9 +1,13 @@
 import { Viewable } from "./View";
 import { swifty } from "@tswift/util";
 import { h, Fragment, Component } from "preact";
-import { CSSProperties } from "./types";
 import { bindToState } from "./state";
+import { ViewComponentProps } from "./preact";
+import { Color } from "./Color";
 class TextClass extends Viewable<string> {
+  _backgroundColor = Color.clear;
+  _foregroundColor = undefined;
+
   public constructor(private text: string) {
     super();
   }
@@ -14,26 +18,22 @@ class TextClass extends Viewable<string> {
     return h(
       TextComponent,
       {
-        id:`text-${this.id}`,
+        class:'$Text',
         watch: this.watch,
-        style: this.asStyle({ display: "block", background: "inherit" }),
+        style: this.asStyle({ display: "block" }),
       },
       this.text
     );
   }
 }
-interface TextProps {
-  watch: Map<string, unknown>;
-  style: CSSProperties;
-  id?: string;
-}
-class TextComponent extends Component<TextProps> {
-  constructor(props: TextProps) {
+
+class TextComponent extends Component<ViewComponentProps> {
+  constructor(props: ViewComponentProps) {
     super();
     bindToState(this, props);
   }
   render() {
-    const { watch, ...props } = this.props;
+    const { watch, exec, ...props } = this.props;
     return h("span", props);
   }
 }

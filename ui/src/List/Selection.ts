@@ -1,11 +1,11 @@
-import { Set, CountSet, OrigSet } from "@tswift/util";
+import { Set, CountSet, OrigSet, Identifiable } from "@tswift/util";
 import { Bindable } from "@tswift/util";
 import { isInstanceOf } from "../guards";
-import { HasId, hasId, Identity, SelectionType, Selection } from "./types";
+import { hasId, Identity, SelectionType, Selection } from "./types";
 
 export const id = <V extends Identity>(
   v: V
-): V extends HasId ? HasId["id"] : string => (hasId(v) ? v.id : v + "");
+): V extends Identifiable ? Identifiable["id"] : string => (hasId(v) ? v.id : v + "");
 
 export const createSelection = <V extends Identity>(
   selection: Bindable<SelectionType>
@@ -33,7 +33,7 @@ export const createSelection = <V extends Identity>(
         selection(Set([...answer, vid]));
         return;
       }
-      selection(v === answer ? null : vid);
+      selection(v === answer ? undefined : vid);
     },
   });
 };

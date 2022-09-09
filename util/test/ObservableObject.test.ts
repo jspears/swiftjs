@@ -27,7 +27,7 @@ describe("ObservableObject", function () {
   it("should fire when changed", () => {
     const c = Contact("Bob", 2);
     const result: string[] = [];
-    c.objectWillChange.sink((v) => {
+    c.objectWillChange.sink((v:ContactClass) => {
       result.push(v.toString());
     });
     c.name = "Joe";
@@ -38,7 +38,7 @@ describe("ObservableObject", function () {
   });
   it("should send", function () {
     let john = Contact("John Appleseed", 24);
-    const cancellable = john.objectWillChange.sink((_) =>
+    const cancellable = john.objectWillChange.sink(() =>
       print(`${john.age} will change`)
     );
     print(john.haveBirthday());

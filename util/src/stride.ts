@@ -1,4 +1,46 @@
 
+export type StrideStr = `${number}...${number}`  | `${number}..<${number}`;
+
+export class Stride {
+
+  constructor(public from:number,public to:number, public step:number, public inclusive:boolean = false){
+  if (step == null) {
+    if (to == null) {
+      this.to = from;
+      this.from = 0;
+    }
+    this.step = 1;
+  } else {
+    if (to == null) {
+      this.to = from;
+      this.from = 0;
+    }
+  }
+  
+  }
+
+  *range(){
+    let from = this.from, to = this.to, step = this.step;
+    if (this.inclusive){
+      to += from < to ? step : -1 * step;
+    }
+    if (from > to) {
+      for (; to <= from; from -= step) {
+        yield from;
+      }
+    } else {
+      for (; from < to; from += step) {
+        yield from;
+      }
+    }
+    return;
+  }
+}
+export function toStride(fromOrStr:StrideStr):Stride{  
+  const [_, start, op, end ] =  /(\d*)(?:\.{2,3})(<?)(\d*)/.exec(fromOrStr) || [];
+  return new Stride(Number(start), Number(end), 1, op ? true : false);
+}
+
 export function* stride(fromOrStr: number | string, to?: number, step?: number) {
   let from:number;
   if (typeof fromOrStr === 'string'){

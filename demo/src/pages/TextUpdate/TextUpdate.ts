@@ -20,8 +20,7 @@ export class TextUpdate extends Viewable<{}> {
   @FocusState emailFieldIsFocused = false;
 
   body = (
-    { $username, $emailFieldIsFocused }: Bound<this>,
-    { emailFieldIsFocused, username }: this
+    { $username, $emailFieldIsFocused,emailFieldIsFocused, username }: Bound<this>,
   ) => [
     TextField({
       label: "User name (email address)",

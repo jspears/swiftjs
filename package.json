@@ -10,7 +10,8 @@
     "clean": "git clean -fdx",
     "build": "lage build",
     "format": "prettier ./*/{src,test}/**/*.ts --write",
-    "lage": "lage"
+    "lage": "lage",
+    "reset":"yarn clean && yarn install"
   },
   "repository": {
     "type": "git",

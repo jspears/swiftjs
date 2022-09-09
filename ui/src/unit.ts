@@ -29,3 +29,14 @@ export const unitFor = (t?: Num): string => {
   // so make sure html { font-size: 62.5% }
   return `${t/10}rem`;
 };
+
+type AngleType = 'deg' | 'rad' | 'grad' | 'turn';
+
+export type Angle = `${number}${AngleType}`;
+
+const angles = (type:AngleType)=>(num:Num):Angle=>num === '.infinity' ? `0${type}` :`${num}${type}`;
+
+export const radians = angles('rad');
+export const degrees = angles('deg');
+export const gradians = angles('grad');
+export const turns = angles('turn');

@@ -16,16 +16,21 @@ import {
   Viewable,
   CountSet,
   VStack,
+  SelectionType,
+  Bindable,
+  HasSelection,
+  ListConfig,
 } from "@tswift/ui";
 
 class OceanClass implements Identifiable, Hashable {
-  constructor(public name: string, public id = UUID()) {}
+  public id = UUID()
+  constructor(public name: string) {}
 }
 
 const Ocean = swifty(OceanClass);
 
 export class OceanList extends Viewable {
-  oceans = [
+  oceans:OceanClass[] = [
     Ocean("Pacific"),
     Ocean("Atlantic"),
     Ocean("Indian"),
@@ -33,14 +38,13 @@ export class OceanList extends Viewable {
     Ocean("Arctic"),
   ];
 
-  @State multiSelection: CountSet<ID> = Set<ID>();
+  @State multiSelection = Set<string>();
 
   body = (
-    { $multiSelection }: Bound<this>,
-    { oceans, multiSelection }: this
+    { $multiSelection, oceans, multiSelection  }: Bound<this>,
   ) => [
     NavigationView(
-      List(oceans, $multiSelection, ($0) => Text($0.name))
+      List({data:oceans, selection:$multiSelection, content:($0) => Text($0.name)} as ListConfig<OceanClass>)
         .navigationTitle("Oceans")
         .toolbar(EditButton())
     ),

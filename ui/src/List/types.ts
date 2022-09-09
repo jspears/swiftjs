@@ -1,7 +1,7 @@
-import { Bindable, Identifiable, CountSet, KeyValue, has } from "@tswift/util";
+import { Bindable,  Identifiable, CountSet, KeyValue, has, Dot } from "@tswift/util";
 import type { View } from "../View";
-export type SelectionType = string | undefined | null | CountSet<string>;
-export type Identity = HasId | string;
+export type SelectionType = string | undefined | CountSet<string>;
+export type Identity = Identifiable | string;
 
 export type Selection<T extends Identity = Identity> = Bindable<SelectionType> & {
   isSingleSelection():boolean,
@@ -10,33 +10,34 @@ export type Selection<T extends Identity = Identity> = Bindable<SelectionType> &
 };
 
 export type HasSelection = {
-  selection: Bindable<SelectionType>;
+  selection: Bindable<CountSet<string>> | Bindable<string | null>;
 };
+
 export type ContentFn<T> = (v:T)=>View;
 
 export type RowContent<T> = {
   content:ContentFn<T>;
 };
 
-export type HasData<T> = {
+export type HasData<T extends Identifiable> = {
   data: T[];
 };
-
-export type HasId = {
-  id: string
+ 
+export type HasChildren<T> = {
+  children:Dot<keyof T>
 }
-export type ListConfig<T> = HasData<T> &
-  HasId &
+export type ListConfig<T extends Identifiable> = HasData<T> &
   HasSelection &
+  HasChildren<T> & 
   RowContent<T>;
 
 export function hasContent<T>(v: unknown): v is RowContent<T> {
   return has(v, "content");
 }
-export function hasData<T>(v: unknown): v is HasData<T> {
+export function hasData<T extends Identifiable>(v: unknown): v is HasData<T> {
   return has(v, "data");
 }
-export function hasId(v: unknown): v is HasId {
+export function hasId(v: unknown): v is Identifiable {
   return has(v, "id");
 }
 export function hasSelection(v: unknown): v is HasSelection {

@@ -25,7 +25,7 @@ export class AppClass extends Viewable {
       alignItems: "center",
     });
     console.log(style);
-    return h("div", { style }, [super.render()]);
+    return h("div", { class:'$App', style }, [super.render()]);
   }
 }
 

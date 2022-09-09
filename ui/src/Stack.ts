@@ -13,6 +13,7 @@ export interface StackOptions {
   spacing?: Num;
   content?: Content;
   color?: ColorKey;
+  style?: CSSProperties;
 }
 
 interface FrameOptions {
@@ -25,7 +26,8 @@ interface FrameOptions {
 
 class StackClass extends Viewable<StackOptions> {
   protected style: CSSProperties = {
-    display: "grid",
+    display: "flex",
+    flex:'1',
     // width: '100%',
     // height: '100%',
   };
@@ -40,7 +42,7 @@ class StackClass extends Viewable<StackOptions> {
         this.config.alignment as AlignmentKey
       );
       if (this.config.spacing) {
-        Object.assign(this.style, { gridRowGap: unitFor(this.config.spacing) });
+        Object.assign(this.style, { padding: unitFor(this.config.spacing) });
       }
       switch (alignment) {
         case Alignment.leading:
@@ -58,13 +60,14 @@ class StackClass extends Viewable<StackOptions> {
   }
 
   render() {
-    return h("div", { style: this.asStyle(this.style) }, super.render());
+    return h("div", { class:`$${this.constructor.name}`, style: this.asStyle(this.style, this.config.style) }, super.render());
   }
 }
 
 class VStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
-    gridAutoFlow: "row",
+    flexDirection: "column",
+    justifyContent:'center',
   });
 }
 
@@ -73,7 +76,8 @@ export const LazyVStack = VStack;
 
 class HStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
-    gridAutoFlow: "column",
+    flexDirection: "row",
+    alignItems:'center'
   });
   
 }

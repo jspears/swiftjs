@@ -12,9 +12,8 @@ import { v4 as uuidv4 } from "uuid";
 
 export function swifty<
   A extends Constructor,
-  Arg extends any[] = ConstructorParameters<A>
->(clazz: A): (...args: Arg) => InstanceType<A> & Pick<A, Exclude<keyof A, 'prototype'>> {
-  return Object.assign((...args: Arg) => new clazz(...args), clazz.constructor);
+>(clazz: A){
+  return Object.assign((...args: ConstructorParameters<A>) => new clazz(...args as any), clazz);
 }
 
 export const OrigSet = globalThis.Set;
@@ -208,12 +207,14 @@ export function asArray<V, R extends Exclude<V, null | undefined> = Exclude<V, n
     return [];
   }
   if (Array.isArray(v)){
-    return v.filter(notNull) as R[];
+    return v.filter(notNull) as any;
   }
 
-  return [v as R];
+  return [v as any];
 }
 
-export function toArray<T extends any[]>(...args: T): Exclude<T, undefined | null> {
+type Filter<T extends any[], V = null|undefined> = T extends [infer First, ...infer Rest] ? First extends V ? Filter<Rest,V> : [First, ...Filter<Rest,V>] : [];
+
+export function toArray<T extends any[]>(...args: T): Filter<T> {
   return args.filter(notNull) as any; 
 }
