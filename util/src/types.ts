@@ -148,3 +148,10 @@ export function map<T, R>(
   }
   return [];
 }
+
+
+export type ReverseMap<T extends Record<keyof T, keyof any>> = {
+    [P in T[keyof T]]: {
+        [K in keyof T]: T[K] extends P ? K : never
+    }[keyof T]
+}

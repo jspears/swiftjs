@@ -1,7 +1,20 @@
 import { Dot, KeyOf, PickValue } from "@tswift/util";
 import { CSSProperties } from "./types";
 import { unitFor } from "./unit";
-
+/*
+font-family: -apple-system-body
+font-family: -apple-system-headline
+font-family: -apple-system-subheadline
+font-family: -apple-system-caption1
+font-family: -apple-system-caption2
+font-family: -apple-system-footnote
+font-family: -apple-system-short-body
+font-family: -apple-system-short-headline
+font-family: -apple-system-short-subheadline
+font-family: -apple-system-short-caption1
+font-family: -apple-system-short-footnote
+font-family: -apple-system-tall-body
+*/
 export enum Weight {
   black = "900",
   bold = "700",

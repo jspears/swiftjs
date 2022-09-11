@@ -30,9 +30,9 @@ export const unitFor = (t?: Num): string => {
   return `${t / 10}rem`;
 };
 
-type AngleType = "deg" | "rad" | "grad" | "turn";
+type AngleType = "deg" | "rad" | "grad" | "turn" ;
 
-export type Angle = `${number}${AngleType}`;
+export type Angle = `${number}${AngleType}` | '0' | 0;
 
 const angles =
   (type: AngleType) =>

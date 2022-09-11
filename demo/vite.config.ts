@@ -7,7 +7,7 @@ const dirname = __dirname;
 const writeHtml = (name:string, 
   content: string = `
   <div id='wrapper'>
-  <div id="phone"><div id="app"></div><button id='button'/></div>
+  <div id="phone"><div id="app"></div><button id='button'></div>
   </div>
   <script type="module" src="./${name}.ts"></script>
   

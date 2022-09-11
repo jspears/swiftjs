@@ -1,7 +1,8 @@
-import { fromKey, ID, swifty } from "@tswift/util";
+import { fromKey, has, ID, swifty } from "@tswift/util";
 import { h, VNode } from "preact";
 import { Color, ColorKey } from "../Color";
 import { isInstanceOf } from "../guards";
+import { Angle } from "../unit";
 import { UnitPoint, UnitPointKey, UnitPointType } from "../View/TransformMixin";
 
 export interface FillStyle {
@@ -15,7 +16,7 @@ class StopClass {
   }
 
   get offset() {
-    return this.location + "%";
+    return this.location * 100 + "%";
   }
 
   render() {
@@ -32,7 +33,7 @@ const percent = (v: number, total: number) => {
     return 0;
   }
 
-  return (v / total) * 100;
+  return v / total;
 };
 
 export interface LinearGradientConfig {
@@ -166,7 +167,7 @@ export const RadialGradient = swifty(
     }
     toFill(): string {
       const css = `radial-gradient(${this.gradient.stops
-        ?.map((v) => v.color + " " + v.location + "%")
+        ?.map((v) => v.color + " " + v.offset)
         .join(",")})`;
       return css;
     }
@@ -189,3 +190,68 @@ export const RadialGradient = swifty(
 export function isGradient(v: unknown): v is BaseGradientClass {
   return isInstanceOf(v, BaseGradientClass);
 }
+
+type AngularGradientConfig = { center?: UnitPointKey } & (
+  | { angle?: Angle; gradient: GradientClass }
+  | { angle?: Angle; colors: ColorKey[] }
+  | { angle?: Angle; stops: StopClass[] }
+  | { startAngle: Angle; endAngle?: Angle; gradient: GradientClass }
+  | { startAngle: Angle; endAngle?: Angle; colors: ColorKey[] }
+  | { startAngle: Angle; endAngle?: Angle; stops: StopClass[] }
+);
+
+export const AngularGradient = swifty(
+  class AngularGradient extends BaseGradientClass {
+    readonly gradient?:GradientClass;
+    readonly center: UnitPointType;
+    readonly startAngle?: Angle = 0;
+    readonly endAngle?: Angle;
+
+    constructor(config: AngularGradientConfig) {
+      super();
+      if (config.center) {
+        this.center = fromKey(UnitPoint, config.center);
+      }
+      if ('gradient' in config) {
+        this.gradient = config.gradient;
+      }
+      if ('colors' in config){
+        this.gradient = Gradient(config);
+      }
+      if ('stops' in config){
+        this.gradient = Gradient(config);
+      }
+      if ('angle' in config){
+        this.startAngle = config.angle;
+        this.endAngle = config.angle;
+      }
+      if ('startAngle' in config){
+        this.startAngle = config.startAngle;
+      }
+      if ('endAngle' in config){
+        this.endAngle = config.endAngle;
+      }
+      if (!this.endAngle){
+        this.endAngle = this.startAngle;
+      }
+    }
+    toFill(): string {
+
+      const stops = this.gradient?.stops;
+      if (!stops){
+        return '';
+      }
+      //conic-gradient( from 0 at center center,red 0deg,orange 74deg,yellow 144deg,green 216deg,#007AFF 288deg,rgb(175,82,222) 360deg)
+      let to = '';
+      if (this.center){
+        to+=`from ${this.startAngle} at ${this.center.x} ${this.center.y},`
+      }
+      const css = `conic-gradient(${to} ${stops.map((v) => v.color + " " + (v.location * 360)+'deg')
+        .join(",")})`;
+      return css;
+    }
+    toSVGGradient() {
+      return h('text', {id:this.id}, 'Not implemented in SVG');
+    }
+  }
+);
