@@ -1,4 +1,4 @@
-import { Bounds, has } from "@tswift/util";
+import { Bounds, has, ObservableObject } from "@tswift/util";
 import { Color, ColorKey } from "./Color";
 import { Alignment, AlignmentKey } from "./Edge";
 import { View, ViewableClass } from "./View";
@@ -59,4 +59,7 @@ export function isBounds(v: unknown): v is Bounds {
     has("v", "maxHeight") ||
     has(v, "maxWidth")
   );
+}
+export function isObservableObject(v:unknown):v is ObservableObject {
+  return isInstanceOf(v, ObservableObject);
 }

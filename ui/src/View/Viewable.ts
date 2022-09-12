@@ -7,6 +7,7 @@ import {
   Void,
   isBindable,
   asArray,
+  Dot,
 } from "@tswift/util";
 import type { Bindable, Bound, Bounds } from "@tswift/util";
 import { ApperanceMixin } from "./ApperanceMixin";
@@ -57,9 +58,15 @@ export class ViewableClass<T = any> extends View {
       },
     }) as Bound<this>;
   }
+  onReceive<K extends keyof this  = keyof this>(p: Dot<K>, perform: (e: this[K]) => Void):this;
+  onReceive<E>(p:Bindable<E>, perform:(v:E)=>Void):this;
 
-  onRecieve<E>(p: Bindable<E>, perform: (e: E) => Void) {
-    p.sink(perform);
+  onReceive(p: Bindable<unknown> | string, perform: (e: unknown) => Void) {
+    if (typeof p === 'string'){
+      this.$(p.slice(1) as keyof this & string ).sink(perform);
+    }else{
+      p.sink(perform);
+    }
     return this;
   }
   protected $ = <

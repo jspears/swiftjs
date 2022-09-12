@@ -62,7 +62,8 @@ export class ListStyle implements ListStyleRenderListItem{
           borderTopRightRadius: idx === 0 ? unitFor(10) : '0',
           borderBottomLeftRadius: idx === total - 1  ? unitFor(10) : '0',
           borderBottomRightRadius: idx === total - 1 ? unitFor(10) : '0',
-          paddingLeft: unitFor(15),
+          paddingLeft: unitFor(10),
+          paddingRight: unitFor(10),
           overflow:'hidden',
         }}
       >

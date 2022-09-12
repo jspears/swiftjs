@@ -27,8 +27,7 @@ class TreeItemClass extends Viewable<TreeItemProps> {
   makeChevron() {
     const chevron = Text("›")
       .foregroundColor(".blue")
-      .font(".bold")
-      .padding(".trailing", 10);
+      .font(".bold");
     if (this.open) {
       chevron.rotationEffect(degrees(90));
     }

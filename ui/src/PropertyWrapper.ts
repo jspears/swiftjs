@@ -1,7 +1,7 @@
 import { AnimationKey } from "./Animation";
 import { View, ViewableClass } from "./View/index";
 import { EnvironmentValues, EnvironmentValuesKeys } from "./EnvironmentValues";
-import { Dot, fromKey, keyPath, UUID } from "@tswift/util";
+import { Dot, fromKey, keyPath, ObservableObject, UUID } from "@tswift/util";
 
 export function FocusState(target: Object, propertyKey: PropertyKey) {
   Reflect.defineProperty(target, propertyKey, {
@@ -73,3 +73,48 @@ export function AppStorage(key: string) {
     });
   };
 }
+
+
+export const StateObject = (target: View, property: PropertyKey) => {
+  let value: ObservableObject | undefined = Reflect.getOwnPropertyDescriptor(
+    target,
+    property
+  )?.value;
+  if (value) {
+    (target as any).watch.set(property, value.objectWillChange);
+    return;
+  }
+  Reflect.defineProperty(target, property, {
+    set(v) {
+      value = v;
+      this.watch.set(property, value?.objectWillChange);
+    },
+    get() {
+      return value;
+    },
+  });
+};
+export const EnvironmentObject = (target: View, property: PropertyKey) => {
+  let value = Reflect.getOwnPropertyDescriptor(target, property)?.value;
+  if (value) {
+    (target as any).watch.set(property, value.objectWillChange);
+  }
+  Object.defineProperty(target, property, {
+    get() {
+      if (value != null) {
+        return value;
+      }
+      let v: any = this;
+      while (!("_environmentObject" in v) && v._environmentObject != null) {
+        v = this.parent;
+      }
+      value = v._environmentObject;
+      this.watch.set(property, value?.objectWillChange);
+
+      return v?._environmentObject;
+    },
+    set(v: ObservableObject) {
+      this._environmentObject = v;
+    },
+  });
+};
