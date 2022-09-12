@@ -33,7 +33,7 @@ class NavigationViewClass extends Viewable {
     return h(
       "div",
       {
-        style: this.asStyle({ flex: "1", width: "100%", height:'100%' }),
+        style: this.asStyle({ flex: "1", width: "100%", height: "100%" }),
         class: `${this.constructor.name}`,
       },
       super.render()

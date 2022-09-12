@@ -21,7 +21,7 @@ export interface TextFieldConfig {
 }
 
 class TextFieldClass extends Viewable<TextFieldConfig> {
-  _onFocus?:Bindable<boolean>;
+  _onFocus?: Bindable<boolean>;
 
   submitLabel(key: string) {
     return this;
@@ -29,14 +29,18 @@ class TextFieldClass extends Viewable<TextFieldConfig> {
   onSubmit(fn: () => unknown) {
     return this;
   }
-  focused<T = boolean>(fn:Bindable<T>, t?:T){
-    this._onFocus = (t == null ? fn  : watchable(false).sink(v=>{
-      if (v){
-        fn(t);
-      }else{
-        fn();
-      }
-    }) ) as Bindable<boolean>;
+  focused<T = boolean>(fn: Bindable<T>, t?: T) {
+    this._onFocus = (
+      t == null
+        ? fn
+        : watchable(false).sink((v) => {
+            if (v) {
+              fn(t);
+            } else {
+              fn();
+            }
+          })
+    ) as Bindable<boolean>;
     return this;
   }
   disableAutocorrection(disable: boolean) {
@@ -45,23 +49,22 @@ class TextFieldClass extends Viewable<TextFieldConfig> {
   textInputAutocapitalization(v: KeyOf<typeof TextInputAutocapitalization>) {
     return this;
   }
-  
-  handleFocus =()=>{
+
+  handleFocus = () => {
     this._onFocus?.(true);
-  }
-  
-  handleBlur =()=>{
+  };
+
+  handleBlur = () => {
     this._onFocus?.(false);
-  }
+  };
 
   render() {
     const props = {
       class: "$TextField",
-      onFocus:this.handleFocus,
-      onBlur:this.handleBlur,
+      onFocus: this.handleFocus,
+      onBlur: this.handleBlur,
       placeholder: this.config.label,
-    
-    }
+    };
     if (typeof this.config.text == "string") {
       return h("input", {
         ...props,
@@ -79,8 +82,8 @@ class TextFieldClass extends Viewable<TextFieldConfig> {
 interface BoundInputProps extends ViewComponentProps {
   placeholder?: string | undefined;
   value: Bindable<string>;
-  onFocus():void;
-  onBlur():void;
+  onFocus(): void;
+  onBlur(): void;
 }
 class BoundInput extends Component<
   BoundInputProps,
@@ -90,19 +93,19 @@ class BoundInput extends Component<
     super(props);
     this.state = bindToState(this, props);
   }
-  
-  onInput = (e:Event)=>{
+
+  onInput = (e: Event) => {
     const ele = e.target as HTMLInputElement;
     this.props.value(ele.value);
-  }
+  };
 
   render() {
     return h("input", {
       value: this.state.value,
       placeholder: this.props.placeholder,
-      onFocus:this.props.onFocus,
-      onBlur:this.props.onBlur,
-      onInput:this.onInput,
+      onFocus: this.props.onFocus,
+      onBlur: this.props.onBlur,
+      onInput: this.onInput,
     });
   }
 }

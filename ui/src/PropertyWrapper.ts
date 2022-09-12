@@ -12,7 +12,6 @@ export function FocusState(target: Object, propertyKey: PropertyKey) {
       this.$(propertyKey)(v);
     },
   });
-
 }
 export function State(target: Object, propertyKey: PropertyKey) {
   const desc = Reflect.getOwnPropertyDescriptor(target, propertyKey);

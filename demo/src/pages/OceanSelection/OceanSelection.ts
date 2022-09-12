@@ -49,7 +49,7 @@ export class OceanSelection extends Viewable<{}> {
 
   @State singleSelection: string = "";
 
-  body = ({ $singleSelection,oceanRegions }: Bound<this>) =>
+  body = ({ $singleSelection, oceanRegions }: Bound<this>) =>
     NavigationView(
       List(
         { selection: $singleSelection },

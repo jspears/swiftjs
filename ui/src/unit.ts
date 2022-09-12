@@ -20,8 +20,8 @@ export const unitFor = (t?: Num): string => {
   if (t == null) {
     return "";
   }
-  if (t == 0){
-    return '0';
+  if (t == 0) {
+    return "0";
   }
   if (t === ".infinity") {
     return "100%";
@@ -33,9 +33,9 @@ export const unitFor = (t?: Num): string => {
   return `${t / 10}rem`;
 };
 
-type AngleType = "deg" | "rad" | "grad" | "turn" ;
+type AngleType = "deg" | "rad" | "grad" | "turn";
 
-export type Angle = `${number}${AngleType}` | '0' | 0;
+export type Angle = `${number}${AngleType}` | "0" | 0;
 
 const angles =
   (type: AngleType) =>

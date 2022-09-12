@@ -36,7 +36,6 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
       );
     }
     this.background(Color.gray).padding(10);
-
   }
 
   body = () => {
@@ -48,7 +47,7 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
           let ti: View;
           if (child) {
             const li = List({ data: child, children, content } as any);
-            li.background(Color.white).padding('.horizontal', 0);
+            li.background(Color.white).padding(".horizontal", 0);
             li._level++;
             ti = TreeItem({ open: this._level == 1, id: v.id }, content(v), li);
           } else {

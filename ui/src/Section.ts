@@ -48,14 +48,15 @@ class Body extends Viewable {
     );
     this.padding(".horizontal", 0);
   }
-  renderExec = ()=>{
-   return asArray(this.exec()).map((v, idx, {length}) =>
-    v.renderListItem(idx, length))
-  }
+  renderExec = () => {
+    return asArray(this.exec()).map((v, idx, { length }) =>
+      v.renderListItem(idx, length)
+    );
+  };
 
   render() {
     return h(ListComponent, {
-      exec:this.renderExec,
+      exec: this.renderExec,
       class: `$${this.constructor.name}`,
       watch: this.watch,
       style: this.asStyle({ flex: "1", width: "100%" }),

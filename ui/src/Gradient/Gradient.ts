@@ -202,7 +202,7 @@ type AngularGradientConfig = { center?: UnitPointKey } & (
 
 export const AngularGradient = swifty(
   class AngularGradient extends BaseGradientClass {
-    readonly gradient?:GradientClass;
+    readonly gradient?: GradientClass;
     readonly center: UnitPointType;
     readonly startAngle?: Angle = 0;
     readonly endAngle?: Angle;
@@ -212,46 +212,46 @@ export const AngularGradient = swifty(
       if (config.center) {
         this.center = fromKey(UnitPoint, config.center);
       }
-      if ('gradient' in config) {
+      if ("gradient" in config) {
         this.gradient = config.gradient;
       }
-      if ('colors' in config){
+      if ("colors" in config) {
         this.gradient = Gradient(config);
       }
-      if ('stops' in config){
+      if ("stops" in config) {
         this.gradient = Gradient(config);
       }
-      if ('angle' in config){
+      if ("angle" in config) {
         this.startAngle = config.angle;
         this.endAngle = config.angle;
       }
-      if ('startAngle' in config){
+      if ("startAngle" in config) {
         this.startAngle = config.startAngle;
       }
-      if ('endAngle' in config){
+      if ("endAngle" in config) {
         this.endAngle = config.endAngle;
       }
-      if (!this.endAngle){
+      if (!this.endAngle) {
         this.endAngle = this.startAngle;
       }
     }
     toFill(): string {
-
       const stops = this.gradient?.stops;
-      if (!stops){
-        return '';
+      if (!stops) {
+        return "";
       }
       //conic-gradient( from 0 at center center,red 0deg,orange 74deg,yellow 144deg,green 216deg,#007AFF 288deg,rgb(175,82,222) 360deg)
-      let to = '';
-      if (this.center){
-        to+=`from ${this.startAngle} at ${this.center.x} ${this.center.y},`
+      let to = "";
+      if (this.center) {
+        to += `from ${this.startAngle} at ${this.center.x} ${this.center.y},`;
       }
-      const css = `conic-gradient(${to} ${stops.map((v) => v.color + " " + (v.location * 360)+'deg')
+      const css = `conic-gradient(${to} ${stops
+        .map((v) => v.color + " " + v.location * 360 + "deg")
         .join(",")})`;
       return css;
     }
     toSVGGradient() {
-      return h('text', {id:this.id}, 'Not implemented in SVG');
+      return h("text", { id: this.id }, "Not implemented in SVG");
     }
   }
 );
