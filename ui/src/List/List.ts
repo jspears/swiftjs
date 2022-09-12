@@ -35,6 +35,8 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
         this.config.selection as Bindable<SelectionType>
       );
     }
+    this.background(Color.gray).padding(10);
+
   }
 
   body = () => {
@@ -46,10 +48,11 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
           let ti: View;
           if (child) {
             const li = List({ data: child, children, content } as any);
+            li.background(Color.white).padding('.horizontal', 0);
             li._level++;
             ti = TreeItem({ open: this._level == 1, id: v.id }, content(v), li);
           } else {
-            ti = TreeItem({ open: this._level == 1 }, content(v));
+            ti = TreeItem({ open: this._level == 1, id: v.id }, content(v));
           }
           ti.parent = this;
           ti.id = v.id;
@@ -59,6 +62,7 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
       return dataToView(this.config.data, this.config.content, this);
     }
     return this.children;
+
     // return (
     //   this.children?.map((v, idx, { length }) => {
     //     if (v instanceof ForEachClass){
@@ -79,9 +83,6 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
   refreshable(fn: () => void) {
     return this;
   }
-  init() {
-    this.background(Color.gray).padding(10);
-  }
   onDelete(fn: On<Set<Int>>) {
     return this;
   }
@@ -93,6 +94,7 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
 
   render(): VNode<any> {
     const isEdit = this.editMode?.()?.isEditing;
+    const style = this.asStyle({ flex: "1", width: "100%" });
     return h(
       ListComponent,
       {
@@ -100,7 +102,7 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
         isEdit,
         watch: this.watch,
         selection: this._selection,
-        style: { flex: "1", width: "100%" },
+        style,
         listStyle: this._listStyle,
       } as ListComponentProps,
       []

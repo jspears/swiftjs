@@ -17,8 +17,11 @@ export function isNum(v: unknown): v is Num {
 }
 
 export const unitFor = (t?: Num): string => {
-  if (!t) {
+  if (t == null) {
     return "";
+  }
+  if (t == 0){
+    return '0';
   }
   if (t === ".infinity") {
     return "100%";

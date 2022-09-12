@@ -23,7 +23,6 @@ class NavigationViewClass extends Viewable {
 
   init() {
     this.background(Color.gray);
-    this.padding(10);
   }
 
   get _toolbar(): View[] {
@@ -34,8 +33,8 @@ class NavigationViewClass extends Viewable {
     return h(
       "div",
       {
-        style: this.asStyle({ flex: "1", width: "100%" }),
-        id: "navigation",
+        style: this.asStyle({ flex: "1", width: "100%", height:'100%' }),
+        class: `${this.constructor.name}`,
       },
       super.render()
     );

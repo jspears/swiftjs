@@ -8,6 +8,7 @@ import { Text } from "../Text";
 import { HStack, VStack } from "../Stack";
 import { Spacer } from "../Spacer";
 import { degrees } from "../unit";
+import { Color } from "../Color";
 interface TreeItemProps {
   open?: boolean;
   id: string;
@@ -20,6 +21,7 @@ class TreeItemClass extends Viewable<TreeItemProps> {
     if (config.open) {
       this.open = true;
     }
+    this.backgroundStyle(Color.white);
   }
 
   makeChevron() {
@@ -42,18 +44,18 @@ class TreeItemClass extends Viewable<TreeItemProps> {
           { style: { justifyContent: "space-between" } },
           this.label,
           this.makeChevron()
-        ),
+        ).background(Color.white),
         this.list
       );
     }
     if (!this.list) {
-      return HStack({}, this.label);
+      return HStack({}, this.label).background(Color.white);
     }
     return HStack(
       { style: { justifyContent: "space-between" } },
       this.label,
       this.makeChevron()
-    );
+    ).background(Color.white);
   };
 
   renderExec = () => flatRender(this.exec());

@@ -10,6 +10,7 @@ import {
 import { fromKey, Num } from "@tswift/util";
 import { CSSProperties } from "../types";
 import { isNum, unitFor } from "../unit";
+import { isAlignmentKey } from "../guards";
 
 type Config = {
   alignment?: AlignmentKey;
@@ -59,7 +60,7 @@ export class PaddingMixin {
         paddingBottom: a,
         paddingLeft: a,
       });
-    } else if (typeof a == "string") {
+    } else if (isAlignmentKey(a)) {
       const alignment = fromKey(Alignment, a as AlignmentKey);
       switch (alignment) {
         case Alignment.vertical:

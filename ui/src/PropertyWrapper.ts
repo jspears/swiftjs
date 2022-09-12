@@ -3,7 +3,17 @@ import { View, ViewableClass } from "./View/index";
 import { EnvironmentValues, EnvironmentValuesKeys } from "./EnvironmentValues";
 import { Dot, fromKey, keyPath, UUID } from "@tswift/util";
 
-export function FocusState(target: Object, propertyKey: PropertyKey) {}
+export function FocusState(target: Object, propertyKey: PropertyKey) {
+  Reflect.defineProperty(target, propertyKey, {
+    get() {
+      return this.$(propertyKey)();
+    },
+    set(v) {
+      this.$(propertyKey)(v);
+    },
+  });
+
+}
 export function State(target: Object, propertyKey: PropertyKey) {
   const desc = Reflect.getOwnPropertyDescriptor(target, propertyKey);
   Reflect.defineProperty(target, propertyKey, {

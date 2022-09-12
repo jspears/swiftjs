@@ -39,7 +39,7 @@ export class ForEachClass<I extends Identifiable> extends Viewable<{}> {
   }
 }
 
-export function ForEach<T>(
+export function ForEach<T extends Identifiable>(
   ...args: ConstructorParameters<typeof ForEachClass<T>>
 ) {
   return new ForEachClass<T>(...args);

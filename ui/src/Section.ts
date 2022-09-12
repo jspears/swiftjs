@@ -18,7 +18,7 @@ class Header extends Viewable<Content> {
   constructor(content?: Content) {
     super(typeof content === "string" ? Text(content) : content);
     this.font(Font.subheadline.uppercaseSmallCaps());
-    this.padding(".horizontal", 25);
+    this.padding(".horizontal", 15);
   }
   render() {
     return h(
@@ -46,18 +46,17 @@ class Body extends Viewable {
         ? content
         : [content])
     );
-    this.padding(".horizontal", 10);
+    this.padding(".horizontal", 0);
   }
-  renderList = () => {};
-  render() {
-    const body = (): VNode<any>[] =>
-      asArray(this.exec()).map((v, idx, all) =>
-        v.renderListItem(idx, all.length, "" + idx)
-      );
+  renderExec = ()=>{
+   return asArray(this.exec()).map((v, idx, {length}) =>
+    v.renderListItem(idx, length))
+  }
 
+  render() {
     return h(ListComponent, {
-      body,
-      id: "id-body",
+      exec:this.renderExec,
+      class: `$${this.constructor.name}`,
       watch: this.watch,
       style: this.asStyle({ flex: "1", width: "100%" }),
       listStyle: this._listStyle,
