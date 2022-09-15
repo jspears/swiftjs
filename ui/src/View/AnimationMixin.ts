@@ -1,35 +1,5 @@
-import { AnimationKey } from "../Animation";
-import { Bindable, has, isFunction, watchable } from "@tswift/util";
-import { tween } from 'shifty'
-import { bindableState, BindableState } from "../state";
-
-function isBindableState(v: unknown): v is BindableState<unknown> {
-  return (isFunction(v) && has(v, 'scope') && has(v, 'property'))
-}
-const tweenBindable = <T>(t:Bindable<T> = watchable<T>(0), options:{
-  duration?:number,
-  effect?:string
-} = {})=>{
-  const watched = watchable(t(), (to)=>{
-    tween({
-      easing: 'easeInQuint',
-      duration: 400,
-      ...options,
-      render({ value }) {
-        t(value);
-      },
-      from: { value: t() },
-      to: { value: to },
-    });
-  });
-  Object.defineProperty(watched, 'value', {
-    get(){
-      return t();
-    }
-  })
-  watched.sink = t.sink;  
-  return watched;
-}
+import { AnimationKey, isBindableState, tweenBindable } from "../Animation";
+import type { Bindable } from "@tswift/util";
 
 export class AnimationMixin {
   watch?: Map<string, Bindable<unknown>>;
