@@ -9,8 +9,7 @@ import {
   Bound,
   Color,
   Double,
-
-  withAnimation
+  withAnimation,
 } from "@tswift/ui";
 
 @main
@@ -32,9 +31,11 @@ export class AnimationDemo extends Viewable {
         this.isBold = !this.isBold;
       })
       .animation(".easeInOut", $angle),
-      Button("Press here", ()=> withAnimation(() => {
+    Button("Press here", () =>
+      withAnimation(() => {
         this.opacity = opacity -= 0.2;
-      }))
+      })
+    )
       .padding()
       .opacity(opacity),
   ];

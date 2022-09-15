@@ -71,19 +71,21 @@ export type AlignmentType = HorizontalAlignment &
     vertical: VerticalAlignment;
   };
 
-export const Alignment = swiftyKey(Object.assign(
-  applyMixins(
-    class Alignment extends AlignmentBase {
-      apply(css: CSSProperties) {}
-      static vertical = new VerticalAlignment();
-      static horizontal = new HorizontalAlignment();
-    },
+export const Alignment = swiftyKey(
+  Object.assign(
+    applyMixins(
+      class Alignment extends AlignmentBase {
+        apply(css: CSSProperties) {}
+        static vertical = new VerticalAlignment();
+        static horizontal = new HorizontalAlignment();
+      },
+      HorizontalAlignment,
+      VerticalAlignment
+    ),
     HorizontalAlignment,
     VerticalAlignment
-  ),
-  HorizontalAlignment,
-  VerticalAlignment
-));
+  )
+);
 
 export type AlignmentKey = Dot<keyof AlignmentType>;
 

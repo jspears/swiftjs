@@ -52,7 +52,7 @@ export class PaddingMixin {
           return ret;
         }, {} as CSSProperties)
       );
-    } else if (isNum(a)|| a == null) {
+    } else if (isNum(a) || a == null) {
       a = unitFor(a == null ? 10 : a);
       Object.assign(this._padding, {
         paddingTop: a,

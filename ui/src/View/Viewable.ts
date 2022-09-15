@@ -54,28 +54,33 @@ export class ViewableClass<T = any> extends View {
     this.children = configIsView ? [config, ...children] : children;
     this._bound = new Proxy(this, {
       get(scope, key) {
-        if (isString(key)){
-          if (key[0] === '$'){
+        if (isString(key)) {
+          if (key[0] === "$") {
             const property = key.slice(1);
-            return Object.assign((v:unknown) => {
-             return scope.$(property as any)(v)
-           }, {scope, property})
+            return Object.assign(
+              (v: unknown) => {
+                return scope.$(property as any)(v);
+              },
+              { scope, property }
+            );
           }
           return scope.$(key as unknown as any).value;
         }
       },
     }) as Bound<this>;
   }
-  overlay(overlay: View, alignment: AlignmentKey = '.center') {
+  overlay(overlay: View, alignment: AlignmentKey = ".center") {
     this._overlay = [overlay, Alignment.fromKey(alignment)];
     return this;
   }
-  onReceive<K extends keyof this = keyof this>(p: Dot<K>, perform: (e: this[K]) => Void): this;
+  onReceive<K extends keyof this = keyof this>(
+    p: Dot<K>,
+    perform: (e: this[K]) => Void
+  ): this;
   onReceive<E>(p: Bindable<E>, perform: (v: E) => Void): this;
 
   onReceive(p: Bindable<unknown> | string, perform: (e: unknown) => Void) {
-
-    if (typeof p === 'string') {
+    if (typeof p === "string") {
       this.unsubscribe(this.$(p.slice(1) as keyof this & string).sink(perform));
     } else {
       this.unsubscribe(p.sink(perform));
@@ -92,41 +97,42 @@ export class ViewableClass<T = any> extends View {
     let bound = this.watch.get(key);
     if (!bound) {
       const value = has(this, key) ? this[key] : null;
-       bound = isObservableObject(value) ?
-           Object.assign(value.objectWillChange, { scope: this, property: key })
-          : isBindable(value)
-          ? value : bindableState<R>(value as unknown as R, this, key);
-  
-        Object.defineProperty(this, key, {
-          configurable: true,
-          get() {
-            return this.watch.get(key)?.value;
-          },
-          set(v) {
-            this.watch.get(key)?.(v);
-          },
-        });
+      bound = isObservableObject(value)
+        ? Object.assign(value.objectWillChange, { scope: this, property: key })
+        : isBindable(value)
+        ? value
+        : bindableState<R>(value as unknown as R, this, key);
+
+      Object.defineProperty(this, key, {
+        configurable: true,
+        get() {
+          return this.watch.get(key)?.value;
+        },
+        set(v) {
+          this.watch.get(key)?.(v);
+        },
+      });
       if (!bound) {
         throw new Error(`This should never happen`);
       }
-        this.watch.set(key, bound);
+      this.watch.set(key, bound);
     }
     if (AnimationContext.withAnimation) {
       const tween = AnimationContext.withAnimation.tween<R>(bound as any);
-//      this.watch.set(key, tween as any);
+      //      this.watch.set(key, tween as any);
       return tween as Bindable<R>;
-    } 
+    }
     return bound as Bindable<R>;
   };
   /**
    * Try and unsubscribe.    need to unsubscribe children...
-   * but I don't have the bandwidth to think about it. 
+   * but I don't have the bandwidth to think about it.
    * I _think_ we need to pass this into the state bind thing.
    * until then it'll leak.
-   * 
+   *
    * To make this all work we will prolly need a destroy
    * method, that calls the children.
-   * 
+   *
    */
   unsubscribe(v: () => unknown) {
     if (!this._unsub) {
@@ -155,7 +161,7 @@ export class ViewableClass<T = any> extends View {
       {},
       this._font?.style,
       { backgroundColor, color },
-     (this._opacity ? { opacity: this._opacity } : {}),
+      this._opacity ? { opacity: this._opacity } : {},
       this._border,
       this._padding,
       this._transforms,
@@ -182,8 +188,7 @@ export class ViewableClass<T = any> extends View {
       return v;
     });
   };
-  renderExec = () => flatRender(this.exec())
-
+  renderExec = () => flatRender(this.exec());
 
   render() {
     if (this.body) {
@@ -203,18 +208,18 @@ export class ViewableClass<T = any> extends View {
 
 export interface ViewableClass
   extends ApperanceMixin,
-  AnimationMixin,
-  ControlMixin,
-  EnvironmentMixin,
-  EventsMixin,
-  FontMixin,
-  ListMixin,
-  NavigationMixin,
-  PaddingMixin,
-  PickerMixin,
-  Searchable,
-  ShapeMixin,
-  TransformMixin { }
+    AnimationMixin,
+    ControlMixin,
+    EnvironmentMixin,
+    EventsMixin,
+    FontMixin,
+    ListMixin,
+    NavigationMixin,
+    PaddingMixin,
+    PickerMixin,
+    Searchable,
+    ShapeMixin,
+    TransformMixin {}
 export const Viewable = applyMixins(
   ViewableClass,
   ApperanceMixin,

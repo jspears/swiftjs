@@ -79,8 +79,8 @@ export type Callback = () => void;
 export const AnimationTool = swiftyKey(AnimationClass);
 
 type AnimationContextType = {
-  withAnimation?: AnimationClass
-}
+  withAnimation?: AnimationClass;
+};
 /**
  * This holds an animation context.   When bound
  * values change they will need to check here to see
@@ -88,39 +88,40 @@ type AnimationContextType = {
  */
 export const AnimationContext: AnimationContextType = {
   withAnimation: undefined,
-}
+};
 /**
  * So withAnimation sets the animation for a function.
  * when that function is called any bound variables, will
  * need to check if there is a withAnimation and if there
  * is than they will need to act all animated like.
  *
- * 
+ *
  */
 export function withAnimation(
   animationKey: AnimationKey,
   result: Callback
-):  void;
+): void;
 export function withAnimation(result: Callback): void;
 export function withAnimation(
   animation: AnimationKey | Callback,
   result?: Callback
-):void {
-  let _animation = isInstanceOf(animation, AnimationClass) ? animation :
-    typeof animation === 'string' ?
-      AnimationTool.fromKey(animation) : undefined;
+): void {
+  let _animation = isInstanceOf(animation, AnimationClass)
+    ? animation
+    : typeof animation === "string"
+    ? AnimationTool.fromKey(animation)
+    : undefined;
 
   if (!_animation) {
     result = isFunction(animation) ? animation : result;
     _animation = AnimationClass.default;
   }
-    AnimationContext.withAnimation = _animation;
-    try {
-      result?.()
-    } finally {
-      AnimationContext.withAnimation = undefined;
-    }
-  
+  AnimationContext.withAnimation = _animation;
+  try {
+    result?.();
+  } finally {
+    AnimationContext.withAnimation = undefined;
+  }
 }
 export const Animation = swiftyKey(AnimationClass);
 
@@ -130,7 +131,7 @@ export function isBindableState(v: unknown): v is BindableState<unknown> {
 
 type AnimatedBindable<T> = Bindable<T> & {
   animated: Tweenable;
-}
+};
 
 export const tweenBindable = <T>(
   t: Bindable<T> = watchable<T>(0),
@@ -157,4 +158,4 @@ export const tweenBindable = <T>(
   });
   watched.sink = t.sink;
   return Object.assign(watched, { animated });
-}
+};

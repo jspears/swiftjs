@@ -129,7 +129,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   }
 
   opacity(num: Num) {
-    if (typeof num === 'number') {
+    if (typeof num === "number") {
       this._opacity = num;
     }
     return this;
