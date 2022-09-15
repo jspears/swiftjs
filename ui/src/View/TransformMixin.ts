@@ -59,28 +59,26 @@ export type UnitPointType = ReturnType<typeof UnitPoint>;
 export type UnitPointKey = KeyOf<typeof UnitPointClass>;
 
 export class TransformMixin {
- // _transforms: CSSProperties = {};
-  _rotate?: [angle:Angle, point:UnitPointType];
+  // _transforms: CSSProperties = {};
+  _rotate?: [angle: Angle, point: UnitPointType];
   _scale?: number;
 
-  get _transforms():CSSProperties{
-    if (!this._rotate && !this._scale){
+  get _transforms(): CSSProperties {
+    if (!this._rotate && !this._scale) {
       return {};
     }
-    const ret:CSSProperties = {};
-    if(this._rotate){
-      ret['transformOrigin'] = this._rotate[1].toTranslate();
-      ret['transform'] = `rotate(${this._rotate[0]})`;
+    const ret: CSSProperties = {};
+    if (this._rotate) {
+      ret["transformOrigin"] = this._rotate[1].toTranslate();
+      ret["transform"] = `rotate(${this._rotate[0]})`;
     }
-    if (this._scale != null){
-      ret['transform'] = `${ret['transform']||''} scale(${this._scale})`;
-
+    if (this._scale != null) {
+      ret["transform"] = `${ret["transform"] || ""} scale(${this._scale})`;
     }
     return ret;
-
   }
   rotationEffect(angle: Angle, point: UnitPointKey = UnitPoint.zero) {
-    this._rotate = [angle, UnitPoint.fromKey(point)]
+    this._rotate = [angle, UnitPoint.fromKey(point)];
     return this;
   }
 

@@ -15,8 +15,7 @@ export interface LifecycleProps {
 export interface ViewComponentProps extends LifecycleProps {
   style?: CSSProperties;
   id?: string;
-  onClick?:On;
-
+  onClick?: On;
 }
 
 export class ViewComponent<T, S = {}> extends Component<

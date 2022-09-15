@@ -1,7 +1,14 @@
 import { AnimationKey } from "./Animation";
 import { View, ViewableClass } from "./View/index";
 import { EnvironmentValues, EnvironmentValuesKeys } from "./EnvironmentValues";
-import { Dot, fromKey, keyPath, ObservableObject, UUID } from "@tswift/util";
+import {
+  Bindable,
+  Dot,
+  fromKey,
+  keyPath,
+  ObservableObject,
+  UUID,
+} from "@tswift/util";
 
 export function FocusState(target: Object, propertyKey: PropertyKey) {
   Reflect.defineProperty(target, propertyKey, {
@@ -24,6 +31,31 @@ export function State(target: Object, propertyKey: PropertyKey) {
     },
   });
 }
+function boundToParent(view: View, property: string): Bindable<unknown> {
+  if (!view) {
+    throw new Error(
+      `Could not find state for binding '${property}' in parents check name`
+    );
+  }
+  const current = view.watch.get(property);
+  if (current != null) {
+    return current;
+  }
+  return boundToParent(view, property);
+}
+
+export function Binding(target: View, property: string) {
+  Reflect.defineProperty(target, property, {
+    configurable: true,
+    get() {
+      return boundToParent(this, property)?.value;
+    },
+    set(v) {
+      return boundToParent(this, property)(v);
+    },
+  });
+}
+
 export function Namespace(target: Object, propertyKey: PropertyKey) {
   Reflect.defineProperty(target, propertyKey, {
     value: UUID(),
@@ -56,8 +88,6 @@ export function FetchRequest(req: {
   };
 }
 
-export function Binding(target: View, property: PropertyKey) {}
-
 export function AppStorage(key: string) {
   return function AppStorage$(target: Object, property: string) {
     Reflect.defineProperty(target, property, {
@@ -73,7 +103,6 @@ export function AppStorage(key: string) {
     });
   };
 }
-
 
 export const StateObject = (target: View, property: PropertyKey) => {
   let value: ObservableObject | undefined = Reflect.getOwnPropertyDescriptor(

@@ -1,3 +1,3 @@
 export interface HasFill {
-    toFill():string;
+  toFill(): string;
 }

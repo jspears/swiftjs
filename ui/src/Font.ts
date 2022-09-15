@@ -1,4 +1,4 @@
-import { Dot,isKeyOf, fromKey, KeyOf, PickValue } from "@tswift/util";
+import { Dot, isKeyOf, fromKey, KeyOf, PickValue } from "@tswift/util";
 import { CSSProperties } from "./types";
 import { unitFor } from "./unit";
 
@@ -89,38 +89,50 @@ export class Font {
       textDecoration: "underline",
     });
   }
-  static system(v: number | FontConfig['weight'] | FontConfig['design'] | Partial<FontConfig>) {
-    const val = typeof v === 'number' ? {size:v} : isKeyOf(v,  Design) ? {design:v} : 
-    isKeyOf(v, Weight) ? {weight:v} : {};
-    
-    let ret:Font = Font.body;
-    if (val.design){
+  static system(
+    v:
+      | number
+      | FontConfig["weight"]
+      | FontConfig["design"]
+      | Partial<FontConfig>
+  ) {
+    const val =
+      typeof v === "number"
+        ? { size: v }
+        : isKeyOf(v, Design)
+        ? { design: v }
+        : isKeyOf(v, Weight)
+        ? { weight: v }
+        : {};
+
+    let ret: Font = Font.body;
+    if (val.design) {
       const design = fromKey(Design, val.design);
-      switch(design){
+      switch (design) {
         case Design.monospaced:
           ret = ret.monospaced();
           break;
       }
     }
-    if (val.size != null){
-      ret = ret.apply({fontSize:unitFor(val.size)});
+    if (val.size != null) {
+      ret = ret.apply({ fontSize: unitFor(val.size) });
     }
-    if (val.weight){
+    if (val.weight) {
       ret = ret.weight(val.weight as WeightKey);
     }
     return ret;
   }
 }
 type FontConfig = {
-  size: number,
-  weight: WeightKey,
-  design: DesignKey
-}
+  size: number;
+  weight: WeightKey;
+  design: DesignKey;
+};
 enum Design {
-  default = 'default',
-  monospaced = 'monospaced',
-  rounded = 'rounded',
-  serif = 'serif',
+  default = "default",
+  monospaced = "monospaced",
+  rounded = "rounded",
+  serif = "serif",
 }
 export type DesignKey = typeof Design | Dot<keyof typeof Design>;
 

@@ -9,7 +9,7 @@ import {
   Listen,
 } from "./types";
 import { v4 as uuidv4 } from "uuid";
-import { has } from './guards';
+import { has } from "./guards";
 
 export const OrigSet = globalThis.Set;
 
@@ -45,13 +45,9 @@ export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
       return () => listening.delete(listen);
     },
   };
-  Object.defineProperty(fn, 'value', {get:fn, set:fn, configurable: true});
-  return Object.assign(
-    fn,
-    ext
-  );
+  Object.defineProperty(fn, "value", { get: fn, set: fn, configurable: true });
+  return Object.assign(fn, ext);
 }
-
 
 export function toEnum<T>(enm: T, property: T | Dot<keyof T> | keyof T): T {
   if (typeof property === "string") {
@@ -72,10 +68,10 @@ export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(
 ): (
   property: K
 ) => K extends `.${infer R extends keyof T & string}`
-    ? T[R]
-    : K extends T
-    ? K
-    : never;
+  ? T[R]
+  : K extends T
+  ? K
+  : never;
 
 //export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(clazz:T, property:K)=>K extends `.${infer R extends keyof T & string}` ? K extends T ? K : never;
 
@@ -102,7 +98,7 @@ export function applyMixins<T extends Constructor>(
         derivedCtor.prototype,
         name,
         Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
-        Object.create(null)
+          Object.create(null)
       );
     });
   });
@@ -165,22 +161,24 @@ export function keyPath<T extends object, K extends KeyPath<T> & string>(
  * Tries to find the type and return the value of
  * a static property. It does not do this deeply, although
  * maybe in the future.
- * 
- * @param type 
- * @param key 
- * @returns 
+ *
+ * @param type
+ * @param key
+ * @returns
  */
 export function fromKey<
   T,
-  K extends
-  | Dot<keyof T>
-  | (T extends Constructor ? InstanceType<T> : T) = Dot<keyof T>
+  K extends Dot<keyof T> | (T extends Constructor ? InstanceType<T> : T) = Dot<
+    keyof T
+  >
 >(
   type: T,
   key: K | undefined
-): K extends undefined ? undefined : K extends `.${infer P extends keyof T & string}`
-? T[P]
-: K {
+): K extends undefined
+  ? undefined
+  : K extends `.${infer P extends keyof T & string}`
+  ? T[P]
+  : K {
   if (key == null) {
     return undefined as any;
   }
@@ -220,8 +218,8 @@ type Filter<T extends any[], V = null | undefined> = T extends [
   ...infer Rest
 ]
   ? First extends V
-  ? Filter<Rest, V>
-  : [First, ...Filter<Rest, V>]
+    ? Filter<Rest, V>
+    : [First, ...Filter<Rest, V>]
   : [];
 
 export function toArray<T extends any[]>(...args: T): Filter<T> {

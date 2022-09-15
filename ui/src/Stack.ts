@@ -75,7 +75,7 @@ class VStackClass extends StackClass {
   style: CSSProperties = Object.assign(this.style, {
     flexDirection: "column",
     justifyContent: "center",
-    alignItems:"center"
+    alignItems: "center",
   });
 }
 

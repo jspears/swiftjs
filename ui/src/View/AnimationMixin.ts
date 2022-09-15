@@ -1,4 +1,4 @@
-import { AnimationKey, isBindableState, tweenBindable } from "../Animation";
+import { AnimationKey, isBindableState, Animation } from "../Animation";
 import type { Bindable } from "@tswift/util";
 
 export class AnimationMixin {
@@ -14,7 +14,10 @@ export class AnimationMixin {
       return this;
     }
     if (this.watch) {
-      this.watch.set(t.property, tweenBindable(this.watch.get(t.property)));
+      const bound = this.watch.get(t.property);
+      if (bound && !(bound as any).animated) {
+        this.watch.set(t.property, Animation.fromKey(type).tween(bound));
+      }
     }
     return this;
   }

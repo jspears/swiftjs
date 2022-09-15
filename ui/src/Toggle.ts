@@ -10,24 +10,34 @@ import { isView } from "./guards";
 export interface ToggleConfig {
   isOn?: boolean | BoolType;
   $isOn?: BoolType;
-  isMixed?:boolean;
+  isMixed?: boolean;
   label: string | View;
 }
 
 class ToggleClass extends Viewable<ToggleConfig> {
   @State isOn = false;
-  constructor(config:ToggleConfig, label?:View){
-    super(config, ...asArray(config.label ? isView(config.label) ? config.label : Label(config.label) : label));
-    if (config.isOn !=null){
-      this.isOn = typeof config.isOn === 'function' ? config.isOn() : config.isOn;
+  constructor(config: ToggleConfig, label?: View) {
+    super(
+      config,
+      ...asArray(
+        config.label
+          ? isView(config.label)
+            ? config.label
+            : Label(config.label)
+          : label
+      )
+    );
+    if (config.isOn != null) {
+      this.isOn =
+        typeof config.isOn === "function" ? config.isOn() : config.isOn;
     }
     if (isBindable(config.isOn)) {
       this.onReceive(config.isOn, (v) => {
         this.isOn = !!v;
       });
-    } 
+    }
   }
-  
+
   toggle(v?: boolean): this {
     if (v != null) {
       this.config.$isOn?.(v);
@@ -36,13 +46,9 @@ class ToggleClass extends Viewable<ToggleConfig> {
     }
     return this;
   }
-  body = ({isOn}:Bound<this>)=>{
-
-  }
+  body = ({ isOn }: Bound<this>) => {};
   renderExec = () => flatRender(this.exec());
-
 }
-
 
 interface ToggleComponentProps extends ViewComponentProps, ToggleConfig {}
 

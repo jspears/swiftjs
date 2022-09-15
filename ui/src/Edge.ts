@@ -5,6 +5,7 @@ import {
   KeyOf,
   KeyOfTypeWithType,
   Set,
+  swiftyKey,
 } from "@tswift/util";
 import { applyMixins } from "@tswift/util";
 import { CSSProperties } from "./types";
@@ -70,7 +71,7 @@ export type AlignmentType = HorizontalAlignment &
     vertical: VerticalAlignment;
   };
 
-export const Alignment: AlignmentType = Object.assign(
+export const Alignment = swiftyKey(Object.assign(
   applyMixins(
     class Alignment extends AlignmentBase {
       apply(css: CSSProperties) {}
@@ -82,7 +83,7 @@ export const Alignment: AlignmentType = Object.assign(
   ),
   HorizontalAlignment,
   VerticalAlignment
-);
+));
 
 export type AlignmentKey = Dot<keyof AlignmentType>;
 

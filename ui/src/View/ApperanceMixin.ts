@@ -1,10 +1,6 @@
 import { Color } from "../Color";
 import type { ColorKey } from "../Color";
-import {
-  Alignment,
-  AlignmentKey,
-  AlignmentType,
-} from "../Edge";
+import { Alignment, AlignmentKey, AlignmentType } from "../Edge";
 import { fromKey, KeyOf, Num } from "@tswift/util";
 import { View } from "./View";
 import type { Content } from "./View";
@@ -47,12 +43,12 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   _hidden?: boolean;
   @Inherit
   _labelsHidden?: boolean;
-  _shadow?: { color: ColorKey; radius: string; x:string; y: string };
+  _shadow?: { color: ColorKey; radius: string; x: string; y: string };
   _zIndex?: Num;
   _fixedSize?: { horizontal?: boolean; vertical?: boolean };
   _backgroundView?: string | Color | View;
   _backgroundAlignnment?: AlignmentType;
-
+  _opacity?: number;
   _toggleStyle?: ToggleStyle;
 
   toCSS(): CSSProperties {
@@ -74,8 +70,8 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  backgroundStyle(fill: HasFill | ColorKey ) {
-    if (isColorKey(fill)){
+  backgroundStyle(fill: HasFill | ColorKey) {
+    if (isColorKey(fill)) {
       fill = fromKey(Color, fill);
     }
     if (!this._style) {
@@ -89,7 +85,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   }
 
   foregroundStyle(fill: HasFill | ColorKey) {
-    if (isColorKey(fill)){
+    if (isColorKey(fill)) {
       fill = fromKey(Color, fill);
     }
     if (!this._style) {
@@ -133,6 +129,9 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   }
 
   opacity(num: Num) {
+    if (typeof num === 'number') {
+      this._opacity = num;
+    }
     return this;
   }
 
@@ -160,11 +159,22 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  shadow({color,x,y, radius, ...rest}: { color: ColorKey; radius: Num; x: Num; y: Num }) {
+  shadow({
+    color,
+    x,
+    y,
+    radius,
+    ...rest
+  }: {
+    color: ColorKey;
+    radius: Num;
+    x: Num;
+    y: Num;
+  }) {
     this._shadow = {
       color: fromKey(Color, color),
-      x: x == 0 ? '0rem' : unitFor(x),
-      y: y == 0 ? '0rem' : unitFor(y),
+      x: x == 0 ? "0rem" : unitFor(x),
+      y: y == 0 ? "0rem" : unitFor(y),
       radius: unitFor(radius),
       ...rest,
     };

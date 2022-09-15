@@ -13,14 +13,14 @@ class TextClass extends Viewable<string> {
     super();
     this.padding(10);
   }
-  render(){
-  return h(
+  render() {
+    return h(
       TextComponent,
       {
         class: "$Text",
-        onClick:this._onTapGesture,
+        onClick: this._onTapGesture,
         watch: this.watch,
-        style: this.asStyle({ whiteSpace:'nowrap', display: "block" }),
+        style: this.asStyle({ whiteSpace: "nowrap", display: "block" }),
       },
       this.text
     );

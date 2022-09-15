@@ -48,7 +48,10 @@ class BodyClass extends Viewable<SliderConfig> {
       max: this.range.to + "",
       step: this.range.step + "",
       onEditingChanged: this.config.onEditingChanged,
-      style: this.asStyle({ 'accentColor':'white', width: "-webkit-fill-available" }),
+      style: this.asStyle({
+        accentColor: "white",
+        width: "-webkit-fill-available",
+      }),
     } as any);
   }
 }

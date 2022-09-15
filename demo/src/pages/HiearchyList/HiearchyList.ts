@@ -1,4 +1,12 @@
-import { Identifiable, swifty, UUID, main,Viewable, List, Text } from "@tswift/ui";
+import {
+  Identifiable,
+  swifty,
+  UUID,
+  main,
+  Viewable,
+  List,
+  Text,
+} from "@tswift/ui";
 interface CustomStringConvertible {}
 interface Hashable {}
 const FileItem = swifty(

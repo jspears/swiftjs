@@ -1,4 +1,4 @@
-import { Alignment, AlignmentBase, AlignmentKey } from "../Edge";
+import { Alignment, AlignmentBase, AlignmentKey, AlignmentType } from "../Edge";
 import {
   isObservableObject,
   isString,
@@ -31,6 +31,7 @@ import { bindableState, BindableState, flatRender } from "../state";
 import { isBounds, isView } from "../guards";
 import { ViewComponent } from "../preact";
 import { TransformMixin } from "./TransformMixin";
+import { AnimationContext } from "../Animation";
 
 export type Body<T> =
   | View
@@ -38,14 +39,13 @@ export type Body<T> =
   | ((bound: Bound<T> & T) => View | undefined | (View | undefined)[]);
 
 export class ViewableClass<T = any> extends View {
-  watch = new Map<string, BindableState<any>>();
   protected _style: CSSProperties = {};
   protected config: Partial<T> = {};
   protected dirty = watchable<boolean>(true);
   protected _tag?: string;
   protected _bound: Bound<this>;
   protected _unsub?: Bindable<unknown>;
-  _overlay?: [View, alignment];
+  _overlay?: [View, AlignmentType];
 
   constructor(config?: T | View, ...children: View[]) {
     super();
@@ -53,18 +53,21 @@ export class ViewableClass<T = any> extends View {
     this.config = configIsView ? {} : config || {};
     this.children = configIsView ? [config, ...children] : children;
     this._bound = new Proxy(this, {
-      get(target, key) {
+      get(scope, key) {
         if (isString(key)){
           if (key[0] === '$'){
-           return  target.$(key.slice(1) as any)
+            const property = key.slice(1);
+            return Object.assign((v:unknown) => {
+             return scope.$(property as any)(v)
+           }, {scope, property})
           }
-          return target.$(key).value;
+          return scope.$(key as unknown as any).value;
         }
       },
     }) as Bound<this>;
   }
   overlay(overlay: View, alignment: AlignmentKey = '.center') {
-    this._overlay = [overlay, fromKey(alignment, AlignmentBase)];
+    this._overlay = [overlay, Alignment.fromKey(alignment)];
     return this;
   }
   onReceive<K extends keyof this = keyof this>(p: Dot<K>, perform: (e: this[K]) => Void): this;
@@ -86,21 +89,14 @@ export class ViewableClass<T = any> extends View {
   >(
     key: K
   ): Bindable<R> => {
-    if (!this.watch.has(key)) {
+    let bound = this.watch.get(key);
+    if (!bound) {
       const value = has(this, key) ? this[key] : null;
-      const watch = isBindable(value)
-        ? value
-        : isObservableObject(value) ?
-          Object.assign(value.objectWillChange, { scope: this, property: key })
-          : bindableState<R>(value as unknown as R, this, key);
-      const pd = Object.getOwnPropertyDescriptor(this, key);
-      if (pd) {
-        pd.get = ()=> watch.value;
-        if (pd.set) {
-          watch.sink(pd.set);
-        }
-        pd.set = watch;
-      } else {
+       bound = isObservableObject(value) ?
+           Object.assign(value.objectWillChange, { scope: this, property: key })
+          : isBindable(value)
+          ? value : bindableState<R>(value as unknown as R, this, key);
+  
         Object.defineProperty(this, key, {
           configurable: true,
           get() {
@@ -110,10 +106,17 @@ export class ViewableClass<T = any> extends View {
             this.watch.get(key)?.(v);
           },
         });
+      if (!bound) {
+        throw new Error(`This should never happen`);
       }
-      this.watch.set(key, watch);
+        this.watch.set(key, bound);
     }
-    return this.watch.get(key) as BindableState<R>;
+    if (AnimationContext.withAnimation) {
+      const tween = AnimationContext.withAnimation.tween<R>(bound as any);
+//      this.watch.set(key, tween as any);
+      return tween as Bindable<R>;
+    } 
+    return bound as Bindable<R>;
   };
   /**
    * Try and unsubscribe.    need to unsubscribe children...
@@ -152,6 +155,7 @@ export class ViewableClass<T = any> extends View {
       {},
       this._font?.style,
       { backgroundColor, color },
+     (this._opacity ? { opacity: this._opacity } : {}),
       this._border,
       this._padding,
       this._transforms,

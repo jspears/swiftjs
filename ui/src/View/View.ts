@@ -5,9 +5,12 @@ import { Inherit } from "../Inherit";
 import { DefaultListStyle, ListStyle } from "../List/ListStyle";
 import { Selection } from "../List/types";
 import { Environment } from "../PropertyWrapper";
+import { BindableState } from "../state";
 
 export class View implements Identifiable {
   id: string = "";
+
+  watch = new Map<string, BindableState<unknown>>();
 
   @Environment(".editMode")
   editMode?: Bindable<EditMode>;

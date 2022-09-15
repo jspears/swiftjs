@@ -45,7 +45,7 @@ export class Color implements ShapeStyle, HasFill {
     return this.toString();
   }
   opacity(opacity: number) {
-    return new Color(new Colour(this.value).alpha(opacity)+'');
+    return new Color(new Colour(this.value).alpha(opacity) + "");
   }
   shadow(def: { color: ColorKey; radius: Num; x: Num; y: Num }) {
     return this;

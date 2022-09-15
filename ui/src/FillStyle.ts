@@ -1,8 +1,8 @@
 import { swifty } from "@tswift/util";
 
 export class FillStyleClass {
-  toFill(){
-    return '';
+  toFill() {
+    return "";
   }
   constructor(public isEOFilled: boolean, public isAntialiased: boolean) {}
 }

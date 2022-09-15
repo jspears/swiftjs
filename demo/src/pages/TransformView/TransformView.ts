@@ -11,7 +11,6 @@ import {
   main,
 } from "@tswift/ui";
 
-
 @main
 export class TransformView extends Viewable {
   @State angle: Num = 0;

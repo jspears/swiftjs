@@ -8,5 +8,6 @@ export * from "./print";
 export * from "./sequence";
 export * from "./swifty";
 export * from "./testUtils";
-export * from "./Timer"
+export * from "./Timer";
+export * from "./wrappers";
 export * from "./zip";

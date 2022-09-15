@@ -1,27 +1,36 @@
-import { main, Bound, Button, ObservableObject, print, Published, StateObject, Text, Viewable, VStack } from "@tswift/ui";
+import {
+  main,
+  Bound,
+  Button,
+  ObservableObject,
+  print,
+  Published,
+  StateObject,
+  Text,
+  Viewable,
+  VStack,
+} from "@tswift/ui";
 
 export class StateExample extends Viewable {
   @StateObject state: ContentViewState = new ContentViewState();
 
-  body = ({ state, $state }: Bound<this>) =>VStack(
-    Text(state.count + ''),
-    Button("Count Up", state.countUp),
-    Button("Reset", state.reset)
-  )
-    .onReceive($state,  ()=>
-      print(state.count))
-
+  body = ({ state, $state }: Bound<this>) =>
+    VStack(
+      Text(state.count + ""),
+      Button("Count Up", state.countUp),
+      Button("Reset", state.reset)
+    ).onReceive($state, () => print(state.count));
 }
 
 @main
 class ContentViewState extends ObservableObject {
-  @Published count: number = 0
+  @Published count: number = 0;
 
-  countUp = ()=> {
-    this.count += 1
-  }
+  countUp = () => {
+    this.count += 1;
+  };
 
-  reset = ()=> {
-    this.count = 0
-  }
+  reset = () => {
+    this.count = 0;
+  };
 }
