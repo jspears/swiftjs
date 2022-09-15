@@ -32,11 +32,7 @@ import {
   Int,
   isEmpty,
 } from "@tswift/ui";
-import {
-  FetchedResults,
-  NSSortDescriptor,
-  ViewContext,
-} from "@tswift/coredata";
+import { FetchedResults, NSSortDescriptor, ViewContext } from "@tswift/coredata";
 import { Item, ViewContextMethods, categories, ItemType } from "./Models";
 
 //https://raw.githubusercontent.com/roman-luzgin/TodoAppSwiftUI3/main/TodoAppSwiftUI3/ToDoList.swift
@@ -46,9 +42,7 @@ export class ToDoList extends Viewable {
   viewContext: ViewContext<ItemType> = new ViewContext();
 
   @FetchRequest({
-    sortDescriptors: [
-      NSSortDescriptor({ keyPath: ".dueDate", ascending: false }),
-    ],
+    sortDescriptors: [NSSortDescriptor({ keyPath: ".dueDate", ascending: false })],
     animation: ".default",
   })
   items: FetchedResults<ItemType> = [];
@@ -63,15 +57,13 @@ export class ToDoList extends Viewable {
           HStack(
             Toggle(
               { $isOn: $notDoneOnly },
-              Text(
-                self.notDoneOnly ? "Show all items" : "Show not done only"
-              ).frame({ maxWidth: ".infinity" })
+              Text(self.notDoneOnly ? "Show all items" : "Show not done only").frame({ maxWidth: ".infinity" }),
             )
               .toggleStyle(".button")
               .tint(".indigo")
               .clipShape(Capsule())
-              .animation(".easeInOut", this.notDoneOnly)
-          )
+              .animation(".easeInOut", this.notDoneOnly),
+          ),
         ),
         Section(
           ForEach(
@@ -87,7 +79,7 @@ export class ToDoList extends Viewable {
                   .onTapGesture(() =>
                     withAnimation(() => {
                       ViewContextMethods.isDone(item, this.viewContext);
-                    })
+                    }),
                   )
                   .padding(".trailing", 10),
 
@@ -97,7 +89,7 @@ export class ToDoList extends Viewable {
                       horizontal: false,
                       vertical: true,
                     }),
-                    Spacer()
+                    Spacer(),
                   ).padding(".bottom", 5),
 
                   HStack(
@@ -107,14 +99,14 @@ export class ToDoList extends Viewable {
                     Spacer(),
                     Text(item.category ?? "Unknown")
                       .font(".caption")
-                      .foregroundColor(".secondary")
-                  )
-                ).padding(".leading", 5)
+                      .foregroundColor(".secondary"),
+                  ),
+                ).padding(".leading", 5),
               )
                 .frame({ maxHeight: 130 })
-                .listRowSeparator(".hidden") // no separators
-          ).onDelete(this.deleteItems)
-        )
+                .listRowSeparator(".hidden"), // no separators
+          ).onDelete(this.deleteItems),
+        ),
       )
         .listStyle(InsetGroupedListStyle())
         .refreshable(() => {
@@ -122,16 +114,14 @@ export class ToDoList extends Viewable {
           console.log("refreshed");
         })
         .searchable("Search in history", this.searchQuery, ".automatic")
-        .navigationTitle("All todo items")
+        .navigationTitle("All todo items"),
     );
 
   get searchResults(): ItemType[] {
     if (!isEmpty(this.searchQuery)) {
       switch (this.notDoneOnly) {
         case true:
-          return this.items.filter(
-            ($0) => !isEmpty($0.toDoText) && $0.isDone() == false
-          );
+          return this.items.filter(($0) => !isEmpty($0.toDoText) && $0.isDone() == false);
         default:
           return this.items.filter(($0) => !isEmpty($0.toDoText));
       }
@@ -140,17 +130,12 @@ export class ToDoList extends Viewable {
         case true:
           return this.items.filter(
             ($0) =>
-              $0.toDoText
-                ?.toLocaleLowerCase()
-                .includes(this.searchQuery.toLocaleLowerCase()) &&
-              $0.isDone() == false
+              $0.toDoText?.toLocaleLowerCase().includes(this.searchQuery.toLocaleLowerCase()) && $0.isDone() == false,
           );
 
         default:
           return this.items.filter(($0) =>
-            $0.toDoText
-              ?.toLocaleLowerCase()
-              .includes(this.searchQuery.toLocaleLowerCase())
+            $0.toDoText?.toLocaleLowerCase().includes(this.searchQuery.toLocaleLowerCase()),
           );
       }
     }

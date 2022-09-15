@@ -8,16 +8,10 @@ import { Constructor, Dot, OverloadedConstructorParameters } from "./types";
 
 export function swifty<A extends Constructor>(clazz: A) {
   //@ts-ignore
-  return Object.setPrototypeOf(
-    (...args: OverloadedConstructorParameters<A>[number]) => new clazz(...args),
-    clazz
-  );
+  return Object.setPrototypeOf((...args: OverloadedConstructorParameters<A>[number]) => new clazz(...args), clazz);
 }
 
-type KeyDot<A extends Constructor> =
-  | undefined
-  | Dot<Exclude<keyof A, "prototype">>
-  | InstanceType<A>;
+type KeyDot<A extends Constructor> = undefined | Dot<Exclude<keyof A, "prototype">> | InstanceType<A>;
 type KeyRet<A extends Constructor, K> = K extends undefined
   ? undefined
   : K extends string

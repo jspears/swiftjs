@@ -1,14 +1,7 @@
 import { AnimationKey } from "./Animation";
 import { View, ViewableClass } from "./View/index";
 import { EnvironmentValues, EnvironmentValuesKeys } from "./EnvironmentValues";
-import {
-  Bindable,
-  Dot,
-  fromKey,
-  keyPath,
-  ObservableObject,
-  UUID,
-} from "@tswift/util";
+import { Bindable, Dot, fromKey, keyPath, ObservableObject, UUID } from "@tswift/util";
 
 export function FocusState(target: Object, propertyKey: PropertyKey) {
   Reflect.defineProperty(target, propertyKey, {
@@ -33,9 +26,7 @@ export function State(target: Object, propertyKey: PropertyKey) {
 }
 function boundToParent(view: View, property: string): Bindable<unknown> {
   if (!view) {
-    throw new Error(
-      `Could not find state for binding '${property}' in parents check name`
-    );
+    throw new Error(`Could not find state for binding '${property}' in parents check name`);
   }
   const current = view.watch.get(property);
   if (current != null) {
@@ -79,10 +70,7 @@ interface Sort {
   ascending?: boolean;
 }
 
-export function FetchRequest(req: {
-  sortDescriptors: Sort[];
-  animation?: AnimationKey;
-}) {
+export function FetchRequest(req: { sortDescriptors: Sort[]; animation?: AnimationKey }) {
   return function (target: Object, propertyKey: PropertyKey) {
     console.log("Environment(): called");
   };
@@ -105,10 +93,7 @@ export function AppStorage(key: string) {
 }
 
 export const StateObject = (target: View, property: PropertyKey) => {
-  let value: ObservableObject | undefined = Reflect.getOwnPropertyDescriptor(
-    target,
-    property
-  )?.value;
+  let value: ObservableObject | undefined = Reflect.getOwnPropertyDescriptor(target, property)?.value;
   if (value) {
     (target as any).watch.set(property, value.objectWillChange);
     return;

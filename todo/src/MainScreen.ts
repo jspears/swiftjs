@@ -37,42 +37,26 @@ import {
   False,
   BoolType,
 } from "@tswift/ui";
-import {
-  FetchedResults,
-  NSSortDescriptor,
-  ViewContext,
-} from "@tswift/coredata";
-import {
-  categories,
-  ItemCategoryType,
-  ItemType,
-  ViewContextMethods,
-} from "./Models";
+import { FetchedResults, NSSortDescriptor, ViewContext } from "@tswift/coredata";
+import { categories, ItemCategoryType, ItemType, ViewContextMethods } from "./Models";
 import { NewItem } from "./NewItem";
 import { Settings } from "./Settings";
 import { CategoryCards } from "./ViewModels/CategoryCards";
 const { white, black } = Color;
 
 export class MainScreen extends Viewable {
-  @Environment(".managedObjectContext") viewContext =
-    new ViewContext<ItemType>();
+  @Environment(".managedObjectContext") viewContext = new ViewContext<ItemType>();
 
   @Namespace private namespace?: string;
 
   @FetchRequest({
-    sortDescriptors: [
-      NSSortDescriptor({ keyPath: ".timestamp", ascending: false }),
-    ],
+    sortDescriptors: [NSSortDescriptor({ keyPath: ".timestamp", ascending: false })],
     animation: ".default",
   })
   private items: FetchedResults<ItemType> = [];
 
   private get todaysItems(): ItemType[] {
-    return (
-      this.items?.filter(($0) =>
-        Calendar.current.isDate($0.dueDate ?? new Date(), new Date(), ".day")
-      ) ?? []
-    );
+    return this.items?.filter(($0) => Calendar.current.isDate($0.dueDate ?? new Date(), new Date(), ".day")) ?? [];
   }
 
   @State newItemOpen = False();
@@ -82,10 +66,7 @@ export class MainScreen extends Viewable {
 
   @AppStorage("userName") userName = "";
 
-  body = (
-    { $newItemOpen, newItemOpen, $menuOpen, $settingsOpen }: Bound<this>,
-    { userName, ...self } = this
-  ) =>
+  body = ({ $newItemOpen, newItemOpen, $menuOpen, $settingsOpen }: Bound<this>, { userName, ...self } = this) =>
     ZStack(
       !newItemOpen
         ? NavigationView(
@@ -93,10 +74,8 @@ export class MainScreen extends Viewable {
               ScrollView(
                 VStack(
                   HStack(
-                    Text("Categories")
-                      .font(Font.body.smallCaps())
-                      .foregroundColor(".secondary"),
-                    Spacer()
+                    Text("Categories").font(Font.body.smallCaps()).foregroundColor(".secondary"),
+                    Spacer(),
                   ).padding(".horizontal"),
 
                   ScrollView({
@@ -111,22 +90,20 @@ export class MainScreen extends Viewable {
                             color: category.color,
                             numberOfTasks: this.getTotalTasksNumber(category),
                             tasksDone: this.getDoneTasksNumber(category),
-                          })
-                        )
+                          }),
+                        ),
                       ).padding(".bottom", 30),
                   })
                     .padding(".leading", 20)
-                    .padding(".trailing", 30)
-                ).frame({ height: 190 })
+                    .padding(".trailing", 30),
+                ).frame({ height: 190 }),
               ).padding(".top", 30),
 
               // MARK: Actual list of todo items
               VStack(
                 HStack(
-                  Text("Today's tasks")
-                    .font(Font.body.smallCaps())
-                    .foregroundColor(".secondary"),
-                  Spacer()
+                  Text("Today's tasks").font(Font.body.smallCaps()).foregroundColor(".secondary"),
+                  Spacer(),
                 ).padding(".horizontal"),
 
                 this.todaysItems.length
@@ -138,35 +115,26 @@ export class MainScreen extends Viewable {
                           { alignment: ".leading" },
                           HStack(
                             Image({
-                              systemName: toDoItem.isDone()
-                                ? "circle.fill"
-                                : "circle",
+                              systemName: toDoItem.isDone() ? "circle.fill" : "circle",
                             })
                               .resizable()
                               .foregroundColor(this.getCategoryColor(toDoItem))
                               .frame({ width: 30, height: 30 })
                               .onTapGesture(() =>
-                                withAnimation(() =>
-                                  ViewContextMethods.isDone(
-                                    toDoItem,
-                                    this.viewContext
-                                  )
-                                )
+                                withAnimation(() => ViewContextMethods.isDone(toDoItem, this.viewContext)),
                               )
                               .padding(".leading", 20)
                               .padding(".trailing", 10),
 
                             Text(toDoItem.toDoText ?? ""),
-                            Spacer()
-                          )
+                            Spacer(),
+                          ),
                         )
                           .frame({ maxWidth: ".infinity" })
                           .frame({ height: 100 })
                           .background(
                             ZStack({
-                              color: self
-                                .getCategoryColor(toDoItem)
-                                ?.opacity(0.7),
+                              color: self.getCategoryColor(toDoItem)?.opacity(0.7),
                             })
                               .frame({
                                 maxWidth: ".infinity",
@@ -182,8 +150,8 @@ export class MainScreen extends Viewable {
                               })
                               .background(".thinMaterial", {
                                 in: RoundedRectangle({ cornerRadius: 20 }),
-                              })
-                          )
+                              }),
+                          ),
                       )
                         .shadow({
                           color: black.opacity(0.1),
@@ -203,12 +171,10 @@ export class MainScreen extends Viewable {
                           x: -1,
                           y: -1,
                         })
-                        .padding(".horizontal")
+                        .padding(".horizontal"),
                     ).padding(".bottom", 60)
-                  : VStack(
-                      Text("No tasks for today").foregroundColor(".secondary")
-                    ).frame({ height: 200 })
-              )
+                  : VStack(Text("No tasks for today").foregroundColor(".secondary")).frame({ height: 200 }),
+              ),
             ),
 
             // MARK: Bottom button to add new item
@@ -232,14 +198,12 @@ export class MainScreen extends Viewable {
                       x: 0,
                       y: 10,
                     })
-                    .padding()
-                )
-              ).matchedGeometryEffect({ id: "button", in: this.namespace })
-            )
+                    .padding(),
+                ),
+              ).matchedGeometryEffect({ id: "button", in: this.namespace }),
+            ),
           )
-            .navigationTitle(
-              !userName ? "Hi there!" : `What's up, ${userName}!`
-            )
+            .navigationTitle(!userName ? "Hi there!" : `What's up, ${userName}!`)
 
             // MARK: Navigation bar buttons to open different menus
             .navigationBarItems({
@@ -252,7 +216,7 @@ export class MainScreen extends Viewable {
                 },
                 Image({
                   systemName: "rectangle.portrait.leftthird.inset.filled",
-                }).foregroundColor(Color.indigo)
+                }).foregroundColor(Color.indigo),
               ).buttonStyle(PlainButtonStyle()),
 
               trailing: Button(
@@ -265,7 +229,7 @@ export class MainScreen extends Viewable {
                 Image({ systemName: "gear.circle.fill" })
                   .resizable()
                   .frame({ width: 40, height: 40 })
-                  .foregroundColor(Color.indigo)
+                  .foregroundColor(Color.indigo),
               )
                 .buttonStyle(PlainButtonStyle())
                 .sheet({
@@ -280,7 +244,7 @@ export class MainScreen extends Viewable {
           NewItem({
             namespace: this.namespace || "",
             newItemOpen: $newItemOpen,
-          })
+          }),
     );
 
   // MARK: functions
@@ -317,9 +281,7 @@ export class MainScreen extends Viewable {
     // }
 
     // return categoryTasksDone.count
-    return this.items.filter(
-      ($0) => $0.category === category.category && $0.isDone() == true
-    ).length;
+    return this.items.filter(($0) => $0.category === category.category && $0.isDone() == true).length;
   }
 }
 

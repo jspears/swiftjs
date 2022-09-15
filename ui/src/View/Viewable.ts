@@ -33,10 +33,7 @@ import { ViewComponent } from "../preact";
 import { TransformMixin } from "./TransformMixin";
 import { AnimationContext } from "../Animation";
 
-export type Body<T> =
-  | View
-  | View[]
-  | ((bound: Bound<T> & T) => View | undefined | (View | undefined)[]);
+export type Body<T> = View | View[] | ((bound: Bound<T> & T) => View | undefined | (View | undefined)[]);
 
 export class ViewableClass<T = any> extends View {
   protected _style: CSSProperties = {};
@@ -61,7 +58,7 @@ export class ViewableClass<T = any> extends View {
               (v: unknown) => {
                 return scope.$(property as any)(v);
               },
-              { scope, property }
+              { scope, property },
             );
           }
           return scope.$(key as unknown as any).value;
@@ -73,10 +70,7 @@ export class ViewableClass<T = any> extends View {
     this._overlay = [overlay, Alignment.fromKey(alignment)];
     return this;
   }
-  onReceive<K extends keyof this = keyof this>(
-    p: Dot<K>,
-    perform: (e: this[K]) => Void
-  ): this;
+  onReceive<K extends keyof this = keyof this>(p: Dot<K>, perform: (e: this[K]) => Void): this;
   onReceive<E>(p: Bindable<E>, perform: (v: E) => Void): this;
 
   onReceive(p: Bindable<unknown> | string, perform: (e: unknown) => Void) {
@@ -87,12 +81,8 @@ export class ViewableClass<T = any> extends View {
     }
     return this;
   }
-  protected $ = <
-    V extends typeof this = typeof this,
-    K extends keyof V & string = keyof V & string,
-    R = V[K]
-  >(
-    key: K
+  protected $ = <V extends typeof this = typeof this, K extends keyof V & string = keyof V & string, R = V[K]>(
+    key: K,
   ): Bindable<R> => {
     let bound = this.watch.get(key);
     if (!bound) {
@@ -166,7 +156,7 @@ export class ViewableClass<T = any> extends View {
       this._padding,
       this._transforms,
       this._style,
-      ...css
+      ...css,
     );
   }
 
@@ -199,7 +189,7 @@ export class ViewableClass<T = any> extends View {
           watch: this.watch,
           exec: this.renderExec,
         },
-        []
+        [],
       );
     }
     return super.render?.();
@@ -234,5 +224,5 @@ export const Viewable = applyMixins(
   PickerMixin,
   Searchable,
   ShapeMixin,
-  TransformMixin
+  TransformMixin,
 );

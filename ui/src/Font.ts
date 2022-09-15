@@ -89,13 +89,7 @@ export class Font {
       textDecoration: "underline",
     });
   }
-  static system(
-    v:
-      | number
-      | FontConfig["weight"]
-      | FontConfig["design"]
-      | Partial<FontConfig>
-  ) {
+  static system(v: number | FontConfig["weight"] | FontConfig["design"] | Partial<FontConfig>) {
     const val =
       typeof v === "number"
         ? { size: v }

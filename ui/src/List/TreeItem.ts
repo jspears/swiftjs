@@ -37,22 +37,16 @@ class TreeItemClass extends Viewable<TreeItemProps> {
     if (this.open && this.list) {
       return VStack(
         {},
-        HStack(
-          { style: { justifyContent: "space-between" } },
-          this.label,
-          this.makeChevron()
-        ).background(Color.white),
-        this.list
+        HStack({ style: { justifyContent: "space-between" } }, this.label, this.makeChevron()).background(Color.white),
+        this.list,
       );
     }
     if (!this.list) {
       return HStack({}, this.label).background(Color.white);
     }
-    return HStack(
-      { style: { justifyContent: "space-between" } },
-      this.label,
-      this.makeChevron()
-    ).background(Color.white);
+    return HStack({ style: { justifyContent: "space-between" } }, this.label, this.makeChevron()).background(
+      Color.white,
+    );
   };
 
   renderExec = () => flatRender(this.exec());
@@ -69,10 +63,7 @@ class TreeItemClass extends Viewable<TreeItemProps> {
 interface TreeItemComponentProps extends ViewComponentProps {
   open: Bindable<boolean>;
 }
-class TreeItemComponent extends Component<
-  TreeItemComponentProps,
-  { open: boolean; id: string }
-> {
+class TreeItemComponent extends Component<TreeItemComponentProps, { open: boolean; id: string }> {
   constructor(props: TreeItemComponentProps) {
     super();
     this.state = bindToState(this, props);
@@ -96,7 +87,7 @@ class TreeItemComponent extends Component<
         ["data-open"]: open,
         onClick: this.onClick,
       },
-      exec?.()
+      exec?.(),
     );
   }
 }

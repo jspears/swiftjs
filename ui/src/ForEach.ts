@@ -31,17 +31,13 @@ export class ForEachClass<I extends Identifiable> extends Viewable<{}> {
       Fragment,
       {},
       this.transform
-        ? asArray(children).map(
-            (v, idx, all) => v && this.transform?.(v, idx, all.length)
-          )
-        : flatRender(children)
+        ? asArray(children).map((v, idx, all) => v && this.transform?.(v, idx, all.length))
+        : flatRender(children),
     );
   }
 }
 
-export function ForEach<T extends Identifiable>(
-  ...args: ConstructorParameters<typeof ForEachClass<T>>
-) {
+export function ForEach<T extends Identifiable>(...args: ConstructorParameters<typeof ForEachClass<T>>) {
   return new ForEachClass<T>(...args);
 }
 

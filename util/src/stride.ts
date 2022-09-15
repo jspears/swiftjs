@@ -1,12 +1,7 @@
 export type StrideStr = `${number}...${number}` | `${number}..<${number}`;
 
 export class Stride {
-  constructor(
-    public from: number,
-    public to: number,
-    public step: number,
-    public inclusive: boolean = false
-  ) {
+  constructor(public from: number, public to: number, public step: number, public inclusive: boolean = false) {
     if (step == null) {
       if (to == null) {
         this.to = from;
@@ -45,11 +40,7 @@ export function toStride(fromOrStr: StrideStr): Stride {
   return new Stride(Number(start), Number(end), 1, op ? true : false);
 }
 
-export function* stride(
-  fromOrStr: number | string,
-  to?: number,
-  step?: number
-) {
+export function* stride(fromOrStr: number | string, to?: number, step?: number) {
   let from: number;
   if (typeof fromOrStr === "string") {
     const [_, start, op, end] = /(\d*)(?:\.\.)(<?)(\d*)/.exec(fromOrStr) || [];

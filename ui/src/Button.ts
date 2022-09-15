@@ -34,7 +34,7 @@ export class ButtonStyle {
   constructor(
     public _label = defLabel,
     public _trigger?: (fn?: () => unknown) => () => void,
-    public _role?: ButtonRole
+    public _role?: ButtonRole,
   ) {}
   makeBody(btn: ButtonClass): View {
     if (this._label) {
@@ -74,16 +74,11 @@ class ButtonClass extends Viewable<ButtonConfig> {
     cursor: "pointer",
   };
   _buttonStyle: ButtonStyle = PlainButtonStyle;
-  constructor(
-    label?: ButtonConfig["label"] | ButtonConfig,
-    action?: ButtonConfig["action"]
-  ) {
+  constructor(label?: ButtonConfig["label"] | ButtonConfig, action?: ButtonConfig["action"]) {
     super(
-      ...((isContent(label)
-        ? [{ label, action }]
-        : has(label, "label") || has(label, "action")
-        ? [label]
-        : []) as [ButtonConfig])
+      ...((isContent(label) ? [{ label, action }] : has(label, "label") || has(label, "action") ? [label] : []) as [
+        ButtonConfig,
+      ]),
     );
     this.font(".body");
   }
@@ -131,7 +126,7 @@ class ButtonComponent extends Component<ButtonProps> {
         role: this.props.role,
         style: this.props.style,
       },
-      this.props.label()
+      this.props.label(),
     );
   }
 }
@@ -156,5 +151,4 @@ class EditButtonClass extends ButtonClass {
   };
 }
 export const EditButton = swifty(EditButtonClass);
-export const Button = (...args: ConstructorParameters<typeof ButtonClass>) =>
-  new ButtonClass(...args);
+export const Button = (...args: ConstructorParameters<typeof ButtonClass>) => new ButtonClass(...args);

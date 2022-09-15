@@ -17,19 +17,9 @@ export interface ToggleConfig {
 class ToggleClass extends Viewable<ToggleConfig> {
   @State isOn = false;
   constructor(config: ToggleConfig, label?: View) {
-    super(
-      config,
-      ...asArray(
-        config.label
-          ? isView(config.label)
-            ? config.label
-            : Label(config.label)
-          : label
-      )
-    );
+    super(config, ...asArray(config.label ? (isView(config.label) ? config.label : Label(config.label)) : label));
     if (config.isOn != null) {
-      this.isOn =
-        typeof config.isOn === "function" ? config.isOn() : config.isOn;
+      this.isOn = typeof config.isOn === "function" ? config.isOn() : config.isOn;
     }
     if (isBindable(config.isOn)) {
       this.onReceive(config.isOn, (v) => {

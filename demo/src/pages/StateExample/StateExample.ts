@@ -15,11 +15,10 @@ export class StateExample extends Viewable {
   @StateObject state: ContentViewState = new ContentViewState();
 
   body = ({ state, $state }: Bound<this>) =>
-    VStack(
-      Text(state.count + ""),
-      Button("Count Up", state.countUp),
-      Button("Reset", state.reset)
-    ).onReceive($state, () => print(state.count));
+    VStack(Text(state.count + ""), Button("Count Up", state.countUp), Button("Reset", state.reset)).onReceive(
+      $state,
+      () => print(state.count),
+    );
 }
 
 @main

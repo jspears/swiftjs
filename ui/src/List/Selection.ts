@@ -3,14 +3,10 @@ import type { Bindable } from "@tswift/util";
 import { isInstanceOf } from "@tswift/util";
 import { hasId, Identity, SelectionType, Selection } from "./types";
 
-export const id = <V extends Identity>(
-  v: V
-): V extends Identifiable ? Identifiable["id"] : string =>
+export const id = <V extends Identity>(v: V): V extends Identifiable ? Identifiable["id"] : string =>
   hasId(v) ? v.id : v + "";
 
-export const createSelection = <V extends Identity>(
-  selection: Bindable<SelectionType>
-): Selection<V> => {
+export const createSelection = <V extends Identity>(selection: Bindable<SelectionType>): Selection<V> => {
   const isSingleSelection = (): boolean => isInstanceOf(selection(), OrigSet);
 
   return Object.assign(selection, {

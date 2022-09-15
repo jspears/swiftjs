@@ -1,32 +1,15 @@
 //https://developer.apple.com/documentation/swiftui/list/
 
-import {
-  Hashable,
-  Identifiable,
-  List,
-  swifty,
-  Text,
-  UUID,
-  Viewable,
-  CountSet,
-  ListConfig,
-  main,
-} from "@tswift/ui";
+import { Hashable, Identifiable, List, swifty, Text, UUID, Viewable, CountSet, ListConfig, main } from "@tswift/ui";
 
 const Ocean = swifty(
   class implements Identifiable, Hashable {
     constructor(public name: string, public id = UUID()) {}
-  }
+  },
 );
 @main
 export class SimpleList extends Viewable {
-  oceans = [
-    Ocean("Pacific"),
-    Ocean("Atlantic"),
-    Ocean("Indian"),
-    Ocean("Southern"),
-    Ocean("Arctic"),
-  ];
+  oceans = [Ocean("Pacific"), Ocean("Atlantic"), Ocean("Indian"), Ocean("Southern"), Ocean("Arctic")];
 
   body = List({
     data: this.oceans,

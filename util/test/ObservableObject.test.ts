@@ -38,9 +38,7 @@ describe("ObservableObject", function () {
   });
   it("should send", function () {
     let john = Contact("John Appleseed", 24);
-    const cancellable = john.objectWillChange.sink(() =>
-      print(`${john.age} will change`)
-    );
+    const cancellable = john.objectWillChange.sink(() => print(`${john.age} will change`));
     print(john.haveBirthday());
   });
 });

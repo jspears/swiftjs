@@ -1,12 +1,4 @@
-import {
-  Alignment,
-  AlignmentBase,
-  AlignmentKey,
-  Edge,
-  EdgeKey,
-  HorizontalAlignment,
-  VerticalAlignment,
-} from "../Edge";
+import { Alignment, AlignmentBase, AlignmentKey, Edge, EdgeKey, HorizontalAlignment, VerticalAlignment } from "../Edge";
 import { fromKey, Num } from "@tswift/util";
 import { CSSProperties } from "../types";
 import { isNum, unitFor } from "../unit";
@@ -35,10 +27,7 @@ export class PaddingMixin {
   padding(edge: EdgeKey[], l: Num): this;
   padding(edge: EdgeInsets, l: Num): this;
   padding(alignment: AlignmentKey, length?: Num): this;
-  padding(
-    a?: Config | Num | EdgeInsets | EdgeKey[] | AlignmentKey,
-    l?: Num
-  ): this {
+  padding(a?: Config | Num | EdgeInsets | EdgeKey[] | AlignmentKey, l?: Num): this {
     if (!this._padding) {
       this._padding = {};
     }
@@ -50,7 +39,7 @@ export class PaddingMixin {
           const edge = fromKey(Edge, v as EdgeKey);
           ret[`padding${edge.name}` as keyof CSSProperties] = size;
           return ret;
-        }, {} as CSSProperties)
+        }, {} as CSSProperties),
       );
     } else if (isNum(a) || a == null) {
       a = unitFor(a == null ? 10 : a);

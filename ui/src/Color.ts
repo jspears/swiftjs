@@ -12,10 +12,7 @@ type HSL = {
 };
 
 export class Color implements ShapeStyle, HasFill {
-  constructor(
-    public readonly value: string | RGB | HSL,
-    public _opacity: number = 1
-  ) {}
+  constructor(public readonly value: string | RGB | HSL, public _opacity: number = 1) {}
   static black = new Color("black");
   static blue = new Color("#007AFF");
   static brown = new Color("brown");

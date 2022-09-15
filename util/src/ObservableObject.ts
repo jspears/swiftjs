@@ -10,10 +10,7 @@ export function isObservableObject(v: unknown): v is ObservableObject {
   return isInstanceOf(v, ObservableObject);
 }
 
-export const Published = (
-  target: { objectWillChange: Bindable<any> },
-  key: PropertyKey
-) => {
+export const Published = (target: { objectWillChange: Bindable<any> }, key: PropertyKey) => {
   const opd = Reflect.getOwnPropertyDescriptor(target, key);
   let value = opd?.value;
 

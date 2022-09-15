@@ -13,7 +13,7 @@ export class Typeography extends Viewable {
     Text("Callout").font(".callout"),
     Text("Sub Headline").font(".subheadline"),
     Text("Headline").font(".headline"),
-    Text("Caption").font(".caption")
+    Text("Caption").font(".caption"),
   )
     .padding(".horizontal", 20)
     .padding(".vertical", 10)

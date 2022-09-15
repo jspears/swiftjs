@@ -1,10 +1,4 @@
-import {
-  SwiftDoc,
-  KindEnum,
-  References,
-  ReferenceType,
-  RelationshipsSection,
-} from "./types";
+import { SwiftDoc, KindEnum, References, ReferenceType, RelationshipsSection } from "./types";
 import { ClassDeclaration, Project, SourceFile } from "ts-morph";
 import { has, isClosure, split } from "./create";
 import { Generator } from "./Generator";
@@ -27,23 +21,11 @@ export class SwiftDocImpl {
   generate() {
     const ref: ReferenceType = this.reference(this.doc.identifier?.url);
     if (has(ref, "fragments")) {
-      if (
-        ref?.fragments?.find(
-          (v) => v?.kind === KindEnum.Keyword && v?.text === "protocol"
-        )
-      ) {
+      if (ref?.fragments?.find((v) => v?.kind === KindEnum.Keyword && v?.text === "protocol")) {
         this.addProtocol(ref);
-      } else if (
-        ref?.fragments?.find(
-          (v) => v?.kind === KindEnum.Keyword && v?.text === "class"
-        )
-      ) {
+      } else if (ref?.fragments?.find((v) => v?.kind === KindEnum.Keyword && v?.text === "class")) {
         this.addProtocol(ref);
-      } else if (
-        ref?.fragments?.find(
-          (v) => v?.kind === KindEnum.Keyword && v?.text === "struct"
-        )
-      ) {
+      } else if (ref?.fragments?.find((v) => v?.kind === KindEnum.Keyword && v?.text === "struct")) {
         this.addProtocol(ref);
       } else if (ref?.fragments?.find((v) => v?.kind === KindEnum.Keyword)) {
         console.log("dunno", this.title, ref.fragments[0]);
@@ -58,8 +40,7 @@ export class SwiftDocImpl {
   inherited() {
     const int: string[] =
       this.doc.relationshipsSections?.find(
-        ({ type, kind }: RelationshipsSection) =>
-          type === "inheritsFrom" && kind == "relationships"
+        ({ type, kind }: RelationshipsSection) => type === "inheritsFrom" && kind == "relationships",
       )?.identifiers || [];
     return int.map(this.reference, this);
   }
@@ -74,19 +55,13 @@ export class SwiftDocImpl {
       return [];
     }
     return Object.values(this.references).filter((v: ReferenceType) => {
-      return (
-        v?.identifier.startsWith(this.identifier + "/") &&
-        has(v, "role") &&
-        v?.role === "symbol"
-      );
+      return v?.identifier.startsWith(this.identifier + "/") && has(v, "role") && v?.role === "symbol";
     });
   }
   get methods() {
     return (
       this.properties?.filter(
-        ({ fragments = [] }) =>
-          fragments?.[0]?.kind === KindEnum.Keyword &&
-          fragments?.[0]?.text === "func"
+        ({ fragments = [] }) => fragments?.[0]?.kind === KindEnum.Keyword && fragments?.[0]?.text === "func",
       ) || []
     );
   }
@@ -110,9 +85,7 @@ export class SwiftDocImpl {
   _addProtocol(ref: ReferenceType) {
     const inherited = this.inherited();
     inherited.forEach(({ url }) =>
-      this.generator.registerType(
-        (url as string)?.replace("/documentation/swiftui/", "")
-      )
+      this.generator.registerType((url as string)?.replace("/documentation/swiftui/", "")),
     );
 
     let clz: ClassDeclaration;
@@ -121,9 +94,7 @@ export class SwiftDocImpl {
       this.source.addInterface({
         name: this.title as string,
         isExported: true,
-        extends: inherited
-          .filter(({ title, role }) => title && role === "symbol")
-          .map((v) => v?.title) as string[],
+        extends: inherited.filter(({ title, role }) => title && role === "symbol").map((v) => v?.title) as string[],
       });
 
       clz = this.source.addClass({
@@ -134,8 +105,7 @@ export class SwiftDocImpl {
     } else {
       clz = this.source.addClass({
         isExported: true,
-        extends:
-          inherited[0]?.role === "symbol" ? inherited[0]?.title : undefined,
+        extends: inherited[0]?.role === "symbol" ? inherited[0]?.title : undefined,
         name: this.title,
         docs: [ref.identifier],
       });
@@ -146,9 +116,7 @@ export class SwiftDocImpl {
     try {
       const decl = this.source
         .getImportDeclarations()
-        .find((v) =>
-          v.getModuleSpecifier().getText().includes(moduleSpecifier)
-        );
+        .find((v) => v.getModuleSpecifier().getText().includes(moduleSpecifier));
       if (decl != null) {
         const named = decl.getNamedImports().map((v) => v.getText());
         if (!named.includes(type)) {
@@ -187,20 +155,13 @@ export class SwiftDocImpl {
   addPropertyTo(clz: ClassDeclaration, type: ReferenceType): this {
     const orig = type["fragments"]?.map((v) => v.text).join("");
     const method = ClosureImpl.parseMethod(orig, this.addType);
-    const isSelfReturn =
-      method.returnType === "Self" ||
-      method.returnType.startsWith(`${clz.getName()}<`);
+    const isSelfReturn = method.returnType === "Self" || method.returnType.startsWith(`${clz.getName()}<`);
 
     try {
       const m = clz.addMethod({
         ...method,
         parameters: method.parameters,
-        returnType: (w) =>
-          w.write(
-            isSelfReturn
-              ? "this"
-              : method.returnType.replace(/\?$/, " | unknown")
-          ),
+        returnType: (w) => w.write(isSelfReturn ? "this" : method.returnType.replace(/\?$/, " | unknown")),
 
         docs: [type?.abstract?.[0]?.text].filter(Boolean) as string[],
       });

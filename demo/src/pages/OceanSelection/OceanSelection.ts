@@ -17,32 +17,19 @@ import {
 const Sea = swifty(
   class implements Hashable, Identifiable {
     constructor(public name: string, public id = UUID()) {}
-  }
+  },
 );
 
 const OceanRegion = swifty(
   class implements Identifiable {
-    constructor(
-      public name: string,
-      public seas: ReturnType<typeof Sea>[],
-      public id = UUID()
-    ) {}
-  }
+    constructor(public name: string, public seas: ReturnType<typeof Sea>[], public id = UUID()) {}
+  },
 );
 @main
 export class OceanSelection extends Viewable<{}> {
   oceanRegions = [
-    OceanRegion("Pacific", [
-      Sea("Australasian Mediterranean"),
-      Sea("Philippine"),
-      Sea("Coral"),
-      Sea("South China"),
-    ]),
-    OceanRegion("Atlantic", [
-      Sea("American Mediterranean"),
-      Sea("Sargasso"),
-      Sea("Caribbean"),
-    ]),
+    OceanRegion("Pacific", [Sea("Australasian Mediterranean"), Sea("Philippine"), Sea("Coral"), Sea("South China")]),
+    OceanRegion("Atlantic", [Sea("American Mediterranean"), Sea("Sargasso"), Sea("Caribbean")]),
     OceanRegion("Indian", [Sea("Bay of Bengal")]),
     OceanRegion("Southern", [Sea("Weddell")]),
     OceanRegion("Arctic", [Sea("Greenland")]),
@@ -57,9 +44,9 @@ export class OceanSelection extends Viewable<{}> {
         ForEach(oceanRegions, (region) =>
           Section(
             { header: Text(`Major ${region.name} Ocean Seas`) },
-            ForEach(region.seas, (sea) => Text(sea.name))
-          )
-        )
-      )
+            ForEach(region.seas, (sea) => Text(sea.name)),
+          ),
+        ),
+      ),
     ).navigationTitle("Oceans and Seas");
 }

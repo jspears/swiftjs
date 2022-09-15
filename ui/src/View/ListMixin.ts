@@ -49,10 +49,7 @@ export class ListMixin {
   listItemTint(color?: ColorKey): this {
     return this;
   }
-  listRowSeparator(
-    visibility: VisibilityKey,
-    edges: VerticalEdgeKey[] = Array.from(VerticalEdgeSet.all)
-  ) {
+  listRowSeparator(visibility: VisibilityKey, edges: VerticalEdgeKey[] = Array.from(VerticalEdgeSet.all)) {
     this._listRowSeparator = {
       visibility: fromKey(Visibility, visibility),
       edges: new VerticalEdgeSet(...edges),

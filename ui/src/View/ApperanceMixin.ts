@@ -104,12 +104,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   }
 
   tint(c: S | ColorKey): this {
-    this._tint =
-      typeof c === "string"
-        ? Color[c.slice(1) as keyof typeof Color]
-        : c instanceof Color
-        ? c
-        : undefined;
+    this._tint = typeof c === "string" ? Color[c.slice(1) as keyof typeof Color] : c instanceof Color ? c : undefined;
     return this;
   }
 
@@ -135,10 +130,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  background(
-    alignment: AlignmentKey | ColorKey | View,
-    content?: ShapeStyle
-  ): this {
+  background(alignment: AlignmentKey | ColorKey | View, content?: ShapeStyle): this {
     if (isView(alignment)) {
       this._backgroundView = alignment;
     } else if (isAlignmentKey(alignment)) {
@@ -159,18 +151,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  shadow({
-    color,
-    x,
-    y,
-    radius,
-    ...rest
-  }: {
-    color: ColorKey;
-    radius: Num;
-    x: Num;
-    y: Num;
-  }) {
+  shadow({ color, x, y, radius, ...rest }: { color: ColorKey; radius: Num; x: Num; y: Num }) {
     this._shadow = {
       color: fromKey(Color, color),
       x: x == 0 ? "0rem" : unitFor(x),
@@ -191,10 +172,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  fixedSize(
-    horizontal?: boolean | ".horizontal" | ".vertical",
-    vertical?: boolean
-  ) {
+  fixedSize(horizontal?: boolean | ".horizontal" | ".vertical", vertical?: boolean) {
     if (typeof vertical === "boolean" && typeof horizontal === "boolean") {
       this._fixedSize = {
         vertical,
@@ -208,10 +186,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
       if (typeof horizontal === "string") {
         Object.assign(this._fixedSize, dotToProp(true, horizontal));
       } else {
-        Object.assign(
-          this._fixedSize,
-          dotToProp(horizontal, ".vertical", ".horizontal")
-        );
+        Object.assign(this._fixedSize, dotToProp(horizontal, ".vertical", ".horizontal"));
       }
     }
     return this;
@@ -224,19 +199,13 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
 //     return ret;
 //   }, {} as any);
 // }
-type DotToProp<K extends string[], V> = K extends [
-  infer First extends string,
-  ...infer Rest extends string[]
-]
+type DotToProp<K extends string[], V> = K extends [infer First extends string, ...infer Rest extends string[]]
   ? First extends `.${infer K extends string}`
     ? { [k in K]: V } & DotToProp<Rest, V>
     : {}
   : {};
 
-const dotToProp = <V, K extends string[] = string[]>(
-  v: V,
-  ...args: K
-): DotToProp<K, V> => {
+const dotToProp = <V, K extends string[] = string[]>(v: V, ...args: K): DotToProp<K, V> => {
   return args.reduce((ret, k) => {
     ret[k.slice(1)] = v;
     return ret;

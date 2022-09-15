@@ -31,13 +31,7 @@ class OceanClass implements Identifiable, Hashable {
 const Ocean = swifty(OceanClass);
 @main
 export class OceanList extends Viewable {
-  oceans: OceanClass[] = [
-    Ocean("Pacific"),
-    Ocean("Atlantic"),
-    Ocean("Indian"),
-    Ocean("Southern"),
-    Ocean("Arctic"),
-  ];
+  oceans: OceanClass[] = [Ocean("Pacific"), Ocean("Atlantic"), Ocean("Indian"), Ocean("Southern"), Ocean("Arctic")];
 
   @State multiSelection = Set<string>();
 
@@ -49,7 +43,7 @@ export class OceanList extends Viewable {
         content: ($0) => Text($0.name),
       } as ListConfig<OceanClass>)
         .navigationTitle("Oceans")
-        .toolbar(EditButton())
+        .toolbar(EditButton()),
     ),
     Text(`${multiSelection.count} selections`),
   ];

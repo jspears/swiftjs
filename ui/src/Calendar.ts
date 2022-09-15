@@ -27,11 +27,7 @@ export class Calendar {
     }
     return _current;
   }
-  isDate(
-    d: Date,
-    equalTo = new Date(),
-    toGranularity: GranularityKey = Granularity.nanosecond
-  ): boolean {
+  isDate(d: Date, equalTo = new Date(), toGranularity: GranularityKey = Granularity.nanosecond): boolean {
     const to = toEnum(Granularity, toGranularity as any);
 
     for (const [gran, check] of Object.entries(Granularity)) {

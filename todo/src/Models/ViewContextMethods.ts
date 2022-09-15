@@ -15,12 +15,7 @@ type AddItem = {
   category: string;
 };
 export class ViewContextMethods {
-  static addItem(
-    context: ViewContext<ItemType>,
-    dueDate: Date,
-    toDoText: string,
-    category: string
-  ) {
+  static addItem(context: ViewContext<ItemType>, dueDate: Date, toDoText: string, category: string) {
     withAnimation(() => {
       const newItem = Item(context);
       newItem.timestamp = new Date();

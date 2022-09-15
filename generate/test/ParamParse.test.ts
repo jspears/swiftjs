@@ -47,10 +47,7 @@ describe("ParamParse", function () {
       invoked.push(a);
     };
 
-    const resp = ClosureImpl.parseMethod(
-      "func multiplyTwoInts(_ a: Int, _ b: Int) -> Int",
-      addType
-    );
+    const resp = ClosureImpl.parseMethod("func multiplyTwoInts(_ a: Int, _ b: Int) -> Int", addType);
     expect(resp.returnType).to.eql("Int");
     expect(resp.params + "").to.eql("a:Int, b:Int");
     expect(invoked).to.eql(["Int", "Int", "Int"]);
@@ -60,10 +57,7 @@ describe("ParamParse", function () {
   it("should parse 'func formUnion(AccessibilityTraits)'", function () {
     const [addType, verify] = oneArg("AccessibilityTraits", "Void");
 
-    const resp = ClosureImpl.parseMethod(
-      "func formUnion(AccessibilityTraits)",
-      addType
-    );
+    const resp = ClosureImpl.parseMethod("func formUnion(AccessibilityTraits)", addType);
     expect(resp.name).to.eql("formUnion");
     expect(resp.returnType).to.eql("Void");
     expect(resp.params + "").to.eql("_:AccessibilityTraits");
@@ -74,7 +68,7 @@ describe("ParamParse", function () {
 
     const ret = ClosureImpl.parseMethod(
       "func insert(AccessibilityTraits) -> (inserted: Bool, memberAfterInsert: AccessibilityTraits)",
-      addType
+      addType,
     );
     expect(ret.name).to.eql("insert");
     expect(ret.params + "").to.eql("_:AccessibilityTraits");
@@ -84,9 +78,7 @@ describe("ParamParse", function () {
 
 type AnyFn = (...args: any) => any;
 
-const oneArg = <T extends AnyFn>(
-  ...expected: ReturnType<T>[]
-): [T, () => void] => {
+const oneArg = <T extends AnyFn>(...expected: ReturnType<T>[]): [T, () => void] => {
   const result: ReturnType<T>[0][] = [];
   return [
     ((a) => {

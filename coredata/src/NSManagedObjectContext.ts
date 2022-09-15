@@ -43,10 +43,7 @@ export class NSManagedObjectContext {
   existingObject(withid: NSManagedObjectID) {}
   // Returns the number of objects the specified request fetches when it executes.
 }
-export type AnyHashable =
-  | NSDictionaryClass
-  | Record<string, unknown>
-  | Map<string, unknown>;
+export type AnyHashable = NSDictionaryClass | Record<string, unknown> | Map<string, unknown>;
 
 type ErrorFn = (error: Error) => void;
 type NeededUnionType<T extends string[]> = T[number];
@@ -63,11 +60,7 @@ export class NSDictionaryClass implements Record<string, unknown> {
   constructor(objects: unknown[], keys: string[]);
 
   constructor(
-    ...[objects, keys]:
-      | [URL, ErrorFn?]
-      | [AnyHashable, boolean?]
-      | [unknown, string]
-      | [unknown[], string[] | []]
+    ...[objects, keys]: [URL, ErrorFn?] | [AnyHashable, boolean?] | [unknown, string] | [unknown[], string[] | []]
   ) {
     if (objects === undefined) {
       //no objects ininitialization
@@ -91,9 +84,7 @@ export class NSDictionaryClass implements Record<string, unknown> {
       throw new Error(`URL loading not supported yet`);
     }
   }
-  sharedKeySet<K extends string[]>(
-    forKeys: K
-  ): Record<NeededUnionType<K>, unknown> {
+  sharedKeySet<K extends string[]>(forKeys: K): Record<NeededUnionType<K>, unknown> {
     return forKeys.reduce((ret, k) => {
       ret[k] = this.value(k);
       return ret;
@@ -160,9 +151,7 @@ export class NSMutableDictionaryClass extends NSDictionaryClass {
     this.dict.clear();
   }
 }
-export const NSDictionary = (
-  ...args: ConstructorParameters<typeof NSDictionaryClass>
-) => {
+export const NSDictionary = (...args: ConstructorParameters<typeof NSDictionaryClass>) => {
   const dic = new NSDictionaryClass(...args);
 
   return new Proxy(dic, {
@@ -174,9 +163,7 @@ export const NSDictionary = (
     },
   });
 };
-export const NSMutableDictionary = (
-  ...args: ConstructorParameters<typeof NSMutableDictionaryClass>
-) => {
+export const NSMutableDictionary = (...args: ConstructorParameters<typeof NSMutableDictionaryClass>) => {
   const dic = new NSMutableDictionaryClass(...args);
   return new Proxy(dic, {
     get(target, key) {

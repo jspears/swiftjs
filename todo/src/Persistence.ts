@@ -22,8 +22,7 @@ export class PersistenceController {
       newItem.timestamp = new Date();
       newItem.dueDate = new Date();
       newItem.category = "Business";
-      newItem.toDoText =
-        "You need to do this task in order to proceed with the next one";
+      newItem.toDoText = "You need to do this task in order to proceed with the next one";
     }
     try {
       viewContext.save();

@@ -37,10 +37,7 @@ class StackClass extends Viewable<StackOptions> {
     super(config, ...views);
 
     if (this.config?.alignment) {
-      const alignment = fromKey(
-        Alignment,
-        this.config.alignment as AlignmentKey
-      );
+      const alignment = fromKey(Alignment, this.config.alignment as AlignmentKey);
       if (this.config.spacing) {
         Object.assign(this.style, { padding: unitFor(this.config.spacing) });
       }
@@ -66,7 +63,7 @@ class StackClass extends Viewable<StackOptions> {
         class: `$${this.constructor.name}`,
         style: this.asStyle(this.style, this.config.style),
       },
-      super.render()
+      super.render(),
     );
   }
 }

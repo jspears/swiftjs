@@ -23,21 +23,11 @@ class AnimationClass {
   };
 
   @todo("figure it out")
-  static spring(conf: {
-    response: number;
-    dampingFraction: number;
-    blendDuration: number;
-  }) {
+  static spring(conf: { response: number; dampingFraction: number; blendDuration: number }) {
     return AnimationClass.default;
   }
   @todo("figure it out")
-  static timingCurve(curve: {
-    c0x: number;
-    c0y: number;
-    c1x: number;
-    c1y: number;
-    duration: number;
-  }) {
+  static timingCurve(curve: { c0x: number; c0y: number; c1x: number; c1y: number; duration: number }) {
     return AnimationClass.default;
   }
   constructor(easing: string | AnimationConfig) {
@@ -97,15 +87,9 @@ export const AnimationContext: AnimationContextType = {
  *
  *
  */
-export function withAnimation(
-  animationKey: AnimationKey,
-  result: Callback
-): void;
+export function withAnimation(animationKey: AnimationKey, result: Callback): void;
 export function withAnimation(result: Callback): void;
-export function withAnimation(
-  animation: AnimationKey | Callback,
-  result?: Callback
-): void {
+export function withAnimation(animation: AnimationKey | Callback, result?: Callback): void {
   let _animation = isInstanceOf(animation, AnimationClass)
     ? animation
     : typeof animation === "string"
@@ -135,7 +119,7 @@ type AnimatedBindable<T> = Bindable<T> & {
 
 export const tweenBindable = <T>(
   t: Bindable<T> = watchable<T>(0),
-  options: AnimationConfig = {}
+  options: AnimationConfig = {},
 ): AnimatedBindable<T> => {
   const animated = tween();
 

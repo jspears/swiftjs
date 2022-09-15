@@ -21,11 +21,7 @@ class Header extends Viewable<Content> {
     this.padding(".horizontal", 15);
   }
   render() {
-    return h(
-      "section",
-      { style: this.asStyle(), class: "section-header" },
-      super.render()
-    );
+    return h("section", { style: this.asStyle(), class: "section-header" }, super.render());
   }
 }
 class Footer extends Header {
@@ -39,19 +35,11 @@ class Body extends Viewable {
     return view.renderListItem(idx, total);
   };
   constructor(content?: View | string | View[]) {
-    super(
-      ...(typeof content === "string"
-        ? [Text(content)]
-        : Array.isArray(content)
-        ? content
-        : [content])
-    );
+    super(...(typeof content === "string" ? [Text(content)] : Array.isArray(content) ? content : [content]));
     this.padding(".horizontal", 0);
   }
   renderExec = () => {
-    return asArray(this.exec()).map((v, idx, { length }) =>
-      v.renderListItem(idx, length)
-    );
+    return asArray(this.exec()).map((v, idx, { length }) => v.renderListItem(idx, length));
   };
 
   render() {
@@ -74,25 +62,19 @@ function isConfig(v: unknown): v is SectionConfig {
 class SectionClass extends Viewable<SectionConfig> {
   constructor(header: Content, footer?: Content, content?: Content);
   constructor(config: SectionConfig, ...views: View[]);
-  constructor(
-    config: SectionConfig | Content,
-    footer?: Content,
-    content?: Content
-  ) {
+  constructor(config: SectionConfig | Content, footer?: Content, content?: Content) {
     super(
       ...((isConfig(config)
         ? toArray(
             config.header && new Header(config.header),
-            (config.content || content || footer) &&
-              new Body(config.content || content || footer),
-            (config.footer || (config && content)) &&
-              new Footer(config.footer || footer)
+            (config.content || content || footer) && new Body(config.content || content || footer),
+            (config.footer || (config && content)) && new Footer(config.footer || footer),
           )
         : toArray(
             config && new Header(config),
             (content || footer) && new Body(content || footer),
-            content && footer && new Footer(footer)
-          )) as View[])
+            content && footer && new Footer(footer),
+          )) as View[]),
     );
   }
   init() {}

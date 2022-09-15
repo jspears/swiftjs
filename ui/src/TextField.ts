@@ -85,10 +85,7 @@ interface BoundInputProps extends ViewComponentProps {
   onFocus(): void;
   onBlur(): void;
 }
-class BoundInput extends Component<
-  BoundInputProps,
-  PickBindable<BoundInputProps>
-> {
+class BoundInput extends Component<BoundInputProps, PickBindable<BoundInputProps>> {
   constructor(props: BoundInputProps) {
     super(props);
     this.state = bindToState(this, props);

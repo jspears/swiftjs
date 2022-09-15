@@ -24,10 +24,7 @@ interface CategoryCardsConfig {
   numberOfTasks: number;
   tasksDone: number;
 }
-class CategoryCardsClass
-  extends Viewable<CategoryCardsConfig>
-  implements Omit<CategoryCardsConfig, "color">
-{
+class CategoryCardsClass extends Viewable<CategoryCardsConfig> implements Omit<CategoryCardsConfig, "color"> {
   category: string;
   numberOfTasks: number;
   tasksDone: number;
@@ -51,9 +48,7 @@ class CategoryCardsClass
   body = (bound: Bound<this>, self = this) =>
     VStack(
       { alignment: ".leading" },
-      Text("(numberOfTasks) tasks")
-        .font(".callout")
-        .foregroundColor(".secondary"),
+      Text("(numberOfTasks) tasks").font(".callout").foregroundColor(".secondary"),
       Text(this.category || "").font(Font.title.bold()),
 
       ZStack(
@@ -69,8 +64,8 @@ class CategoryCardsClass
             width: self.numberOfTasks > 0 ? self.progress : 0,
             height: 5,
           })
-          .foregroundColor(self.config?.color?.opacity(0.9))
-      )
+          .foregroundColor(self.config?.color?.opacity(0.9)),
+      ),
     )
       .padding(10)
       .frame({ width: 200, height: 120, alignment: ".leading" })
@@ -78,10 +73,7 @@ class CategoryCardsClass
         ZStack(
           { alignment: ".leading" },
           LinearGradient({
-            colors: [
-              self.config?.color?.opacity(0.95),
-              self.config?.color?.opacity(0.3),
-            ],
+            colors: [self.config?.color?.opacity(0.95), self.config?.color?.opacity(0.3)],
             startPoint: ".topLeading",
             endPoint: ".bottomTrailing",
           })
@@ -91,8 +83,8 @@ class CategoryCardsClass
           VStack()
             // empty VStack for the blur
             .frame({ maxWidth: ".infinity", maxHeight: ".infinity" })
-            .background(".thinMaterial")
-        )
+            .background(".thinMaterial"),
+        ),
       )
       .clipShape(RoundedRectangle({ cornerRadius: 20, style: ".continuous" }))
       .shadow({ color: Color.black.opacity(0.1), radius: 20, x: 5, y: 10 })

@@ -1,13 +1,4 @@
-import {
-  main,
-  Viewable,
-  Text,
-  TextField,
-  State,
-  FocusState,
-  Bound,
-  False,
-} from "@tswift/ui";
+import { main, Viewable, Text, TextField, State, FocusState, Bound, False } from "@tswift/ui";
 
 function validate(t: unknown) {
   return () => console.log("figure this out", t);
@@ -21,12 +12,7 @@ export class TextUpdate extends Viewable<{}> {
   @State username: string = "";
   @FocusState emailFieldIsFocused = false;
 
-  body = ({
-    $username,
-    $emailFieldIsFocused,
-    emailFieldIsFocused,
-    username,
-  }: Bound<this>) => [
+  body = ({ $username, $emailFieldIsFocused, emailFieldIsFocused, username }: Bound<this>) => [
     TextField({
       label: "User name (email address)",
       text: $username,

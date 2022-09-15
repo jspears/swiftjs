@@ -1,12 +1,5 @@
 import { View, Viewable } from "../View";
-import {
-  asArray,
-  Dot,
-  isBindable,
-  isFunction,
-  keyPath,
-  swifty,
-} from "@tswift/util";
+import { asArray, Dot, isBindable, isFunction, keyPath, swifty } from "@tswift/util";
 import type { Bindable, Identifiable, Int } from "@tswift/util";
 import type { On } from "../View/EventsMixin";
 import { h, VNode } from "preact";
@@ -22,18 +15,14 @@ import { VStack } from "../Stack";
 import { TreeItem } from "./TreeItem";
 import { dataToView } from "./dataToView";
 
-export class ListClass<T extends HasId = HasId> extends Viewable<
-  ListConfig<T>
-> {
+export class ListClass<T extends HasId = HasId> extends Viewable<ListConfig<T>> {
   @Environment(".editMode")
   editMode?: Bindable<EditMode>;
   _level = 0;
   constructor(config?: ListConfig<T> | View, ...views: []) {
     super(...[config, ...views]);
     if (this.config.selection) {
-      this._selection = createSelection(
-        this.config.selection as Bindable<SelectionType>
-      );
+      this._selection = createSelection(this.config.selection as Bindable<SelectionType>);
     }
     this.background(Color.gray).padding(10);
   }
@@ -86,10 +75,7 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
     return this;
   }
 
-  renderExec = () =>
-    asArray(this.exec()).map((v, idx, all) =>
-      v.renderListItem(idx, all.length)
-    );
+  renderExec = () => asArray(this.exec()).map((v, idx, all) => v.renderListItem(idx, all.length));
 
   render(): VNode<any> {
     const isEdit = this.editMode?.()?.isEditing;
@@ -104,11 +90,10 @@ export class ListClass<T extends HasId = HasId> extends Viewable<
         style,
         listStyle: this._listStyle,
       } as ListComponentProps,
-      []
+      [],
     );
   }
 }
 
-export const List = <T extends HasId = HasId>(
-  ...args: ConstructorParameters<typeof ListClass<T>>
-) => new ListClass<T>(...args);
+export const List = <T extends HasId = HasId>(...args: ConstructorParameters<typeof ListClass<T>>) =>
+  new ListClass<T>(...args);

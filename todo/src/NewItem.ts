@@ -43,8 +43,7 @@ export interface NewItemConfig {
   newItemOpen: Bindable<boolean>;
 }
 class NewItemClass extends Viewable<NewItemConfig> {
-  @Environment(".managedObjectContext") private viewContext =
-    new ViewContext<ItemType>();
+  @Environment(".managedObjectContext") private viewContext = new ViewContext<ItemType>();
 
   namespace: typeof Namespace["ID"];
 
@@ -61,10 +60,7 @@ class NewItemClass extends Viewable<NewItemConfig> {
     this.newItemOpen = newItemOpen;
   }
 
-  body = (
-    { $category, category, newItemOpen, $dueDate, $toDoText }: Bound<this>,
-    self: typeof this = this
-  ) =>
+  body = ({ $category, category, newItemOpen, $dueDate, $toDoText }: Bound<this>, self: typeof this = this) =>
     ZStack(
       ScrollView(
         VStack(
@@ -86,12 +82,9 @@ class NewItemClass extends Viewable<NewItemConfig> {
               VStack()
                 // empty VStack for the blur
                 .frame({ maxWidth: ".infinity", maxHeight: ".infinity" })
-                .background(
-                  ".thinMaterial",
-                  RoundedRectangle({ cornerRadius: 5 })
-                )
-            )
-        )
+                .background(".thinMaterial", RoundedRectangle({ cornerRadius: 5 })),
+            ),
+        ),
         // '.leading'
       )
         .shadow({ color: black.opacity(0.1), radius: 20, x: 5, y: 10 })
@@ -101,10 +94,7 @@ class NewItemClass extends Viewable<NewItemConfig> {
         .pickerStyle(MenuPickerStyle())
         .padding(),
 
-      DatePicker(
-        { selection: $dueDate, displayedComponents: "date" },
-        Text("Due date")
-      )
+      DatePicker({ selection: $dueDate, displayedComponents: "date" }, Text("Due date"))
         .padding(".horizontal")
         .padding(".vertical", 10)
         .accentColor(Color.indigo)
@@ -118,13 +108,11 @@ class NewItemClass extends Viewable<NewItemConfig> {
           ? [
               VStack(
                 { alignment: ".leading" },
-                Text("Enter your todo item")
-                  .font(Font.body)
-                  .foregroundColor(Color.gray),
-                Spacer()
+                Text("Enter your todo item").font(Font.body).foregroundColor(Color.gray),
+                Spacer(),
               ),
             ]
-          : [])
+          : []),
       )
         .padding(".vertical", 12)
         .padding(".horizontal", 4)
@@ -148,18 +136,10 @@ class NewItemClass extends Viewable<NewItemConfig> {
       Button({
         role: ".none",
         action() {
-          ViewContextMethods.addItem(
-            self.viewContext,
-            self.dueDate,
-            self.toDoText,
-            self.category
-          );
+          ViewContextMethods.addItem(self.viewContext, self.dueDate, self.toDoText, self.category);
           withAnimation(() => self.newItemOpen?.(false));
         },
-        label: HStack(
-          Text("New task "),
-          Image({ systemName: "chevron.up" })
-        ).frame({ maxWidth: ".infinity" }),
+        label: HStack(Text("New task "), Image({ systemName: "chevron.up" })).frame({ maxWidth: ".infinity" }),
       })
         .buttonStyle(BorderedButtonStyle({ shape: ".roundedRectangle" }))
         .tint(".indigo")
@@ -193,12 +173,12 @@ class NewItemClass extends Viewable<NewItemConfig> {
                 x: 0,
                 y: 10,
               })
-              .padding()
-          )
+              .padding(),
+          ),
         ).matchedGeometryEffect({ id: "button", in: this.namespace }),
 
-        Spacer()
-      )
+        Spacer(),
+      ),
     );
 
   // textChanged(upper: number, text:string) {

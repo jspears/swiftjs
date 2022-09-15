@@ -21,10 +21,5 @@ export function isViewable(v: unknown): v is ViewableClass<unknown> {
 }
 
 export function isBounds(v: unknown): v is Bounds {
-  return (
-    has(v, "width") ||
-    has(v, "width") ||
-    has("v", "maxHeight") ||
-    has(v, "maxWidth")
-  );
+  return has(v, "width") || has(v, "width") || has("v", "maxHeight") || has(v, "maxWidth");
 }

@@ -1,16 +1,4 @@
-import {
-  main,
-  Button,
-  State,
-  Text,
-  Font,
-  degrees,
-  Viewable,
-  Bound,
-  Color,
-  Double,
-  withAnimation,
-} from "@tswift/ui";
+import { main, Button, State, Text, Font, degrees, Viewable, Bound, Color, Double, withAnimation } from "@tswift/ui";
 
 @main
 export class AnimationDemo extends Viewable {
@@ -34,7 +22,7 @@ export class AnimationDemo extends Viewable {
     Button("Press here", () =>
       withAnimation(() => {
         this.opacity = opacity -= 0.2;
-      })
+      }),
     )
       .padding()
       .opacity(opacity),

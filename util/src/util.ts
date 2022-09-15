@@ -1,20 +1,10 @@
-import {
-  Bindable,
-  Constructor,
-  Dot,
-  Identifiable,
-  KeyOf,
-  KeyPath,
-  KeyValue,
-  Listen,
-} from "./types";
+import { Bindable, Constructor, Dot, Identifiable, KeyOf, KeyPath, KeyValue, Listen } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { has } from "./guards";
 
 export const OrigSet = globalThis.Set;
 
-export const Set = <T>(...args: ConstructorParameters<typeof OrigSet<T>>) =>
-  new CountSet(...args);
+export const Set = <T>(...args: ConstructorParameters<typeof OrigSet<T>>) => new CountSet(...args);
 
 export class CountSet<T> extends OrigSet<T> {
   get count() {
@@ -64,14 +54,8 @@ export function isString(v: unknown): v is string {
 }
 
 export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(
-  clazz: T
-): (
-  property: K
-) => K extends `.${infer R extends keyof T & string}`
-  ? T[R]
-  : K extends T
-  ? K
-  : never;
+  clazz: T,
+): (property: K) => K extends `.${infer R extends keyof T & string}` ? T[R] : K extends T ? K : never;
 
 //export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(clazz:T, property:K)=>K extends `.${infer R extends keyof T & string}` ? K extends T ? K : never;
 
@@ -88,17 +72,13 @@ export function toValue<T extends Constructor>(clazz: T, property?: KeyOf<T>) {
   return fn(property);
 }
 
-export function applyMixins<T extends Constructor>(
-  derivedCtor: T,
-  ...constructors: Constructor[]
-): T {
+export function applyMixins<T extends Constructor>(derivedCtor: T, ...constructors: Constructor[]): T {
   constructors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
       Object.defineProperty(
         derivedCtor.prototype,
         name,
-        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
-          Object.create(null)
+        Object.getOwnPropertyDescriptor(baseCtor.prototype, name) || Object.create(null),
       );
     });
   });
@@ -133,12 +113,8 @@ export const isEmpty = (v?: HasLength | Bindable<HasLength>): boolean => {
  */
 export function keyPath<T extends object, K extends KeyPath<T> & string>(
   obj: T,
-  path: K
-): T extends undefined | null
-  ? undefined
-  : K extends undefined | null | ""
-  ? T
-  : KeyValue<T, K> {
+  path: K,
+): T extends undefined | null ? undefined : K extends undefined | null | "" ? T : KeyValue<T, K> {
   if (obj == null) {
     return undefined as any;
   }
@@ -149,10 +125,7 @@ export function keyPath<T extends object, K extends KeyPath<T> & string>(
   let ret: any = obj;
   let idx: number;
   let from: number = 0;
-  while (
-    (idx = key.indexOf(".", from)) > -1 &&
-    (ret = obj[key.slice(from, idx) as keyof unknown]) != null
-  ) {
+  while ((idx = key.indexOf(".", from)) > -1 && (ret = obj[key.slice(from, idx) as keyof unknown]) != null) {
     from = idx + 1;
   }
   return ret?.[key.slice(from) as keyof unknown];
@@ -166,19 +139,10 @@ export function keyPath<T extends object, K extends KeyPath<T> & string>(
  * @param key
  * @returns
  */
-export function fromKey<
-  T,
-  K extends Dot<keyof T> | (T extends Constructor ? InstanceType<T> : T) = Dot<
-    keyof T
-  >
->(
+export function fromKey<T, K extends Dot<keyof T> | (T extends Constructor ? InstanceType<T> : T) = Dot<keyof T>>(
   type: T,
-  key: K | undefined
-): K extends undefined
-  ? undefined
-  : K extends `.${infer P extends keyof T & string}`
-  ? T[P]
-  : K {
+  key: K | undefined,
+): K extends undefined ? undefined : K extends `.${infer P extends keyof T & string}` ? T[P] : K {
   if (key == null) {
     return undefined as any;
   }
@@ -199,10 +163,9 @@ export function isUndefined(v: unknown): v is undefined {
 }
 const notNull = (v: unknown) => v != null;
 
-export function asArray<
-  V,
-  R extends Exclude<V, null | undefined> = Exclude<V, null | undefined>
->(v?: V | V[] | undefined): R[] {
+export function asArray<V, R extends Exclude<V, null | undefined> = Exclude<V, null | undefined>>(
+  v?: V | V[] | undefined,
+): R[] {
   if (isUndefined(v)) {
     return [];
   }
@@ -213,10 +176,7 @@ export function asArray<
   return [v as any];
 }
 
-type Filter<T extends any[], V = null | undefined> = T extends [
-  infer First,
-  ...infer Rest
-]
+type Filter<T extends any[], V = null | undefined> = T extends [infer First, ...infer Rest]
   ? First extends V
     ? Filter<Rest, V>
     : [First, ...Filter<Rest, V>]

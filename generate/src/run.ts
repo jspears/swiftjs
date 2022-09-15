@@ -16,8 +16,5 @@ export async function run(name: string = "ModifiedContent") {
 }
 //@ts-ignore
 if (require.main === module) {
-  run(...process.argv.slice(2)).then(
-    (v) => console.dir(v, { depth: 10 }),
-    console.error
-  );
+  run(...process.argv.slice(2)).then((v) => console.dir(v, { depth: 10 }), console.error);
 }

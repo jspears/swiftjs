@@ -26,20 +26,14 @@ export class SettingsClass extends Viewable {
 
   body = ({ $username, dismiss, $userNameIsFocused }: Bound<this>) =>
     NavigationView(
-      Form(
-        TextField({ label: "Username", text: $username })
-          .focused($userNameIsFocused)
-          .submitLabel(".done")
-      )
+      Form(TextField({ label: "Username", text: $username }).focused($userNameIsFocused).submitLabel(".done"))
         .navigationBarItems({
-          trailing: Button({ label: "Done", action: dismiss }).accentColor(
-            ".indigo"
-          ),
+          trailing: Button({ label: "Done", action: dismiss }).accentColor(".indigo"),
         })
         .onSubmit(() => {
           this.userNameIsFocused = false;
           dismiss?.(); // we can use dismiss on submit if needed, especially if there is only one settings field
-        })
+        }),
     );
 }
 export const Settings = swifty(SettingsClass);

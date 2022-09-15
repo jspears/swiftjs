@@ -1,8 +1,4 @@
-import {
-  OverloadedConstructorParameters,
-  OverloadedInstanceType,
-  swiftyKey,
-} from "@tswift/util";
+import { OverloadedConstructorParameters, OverloadedInstanceType, swiftyKey } from "@tswift/util";
 import { expect } from "chai";
 
 describe("swiftyFor", function () {

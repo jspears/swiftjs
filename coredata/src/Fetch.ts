@@ -6,13 +6,7 @@ export class NSSortDescriptorClass {
   ascending?: boolean;
   keyPath?: string;
 
-  constructor({
-    keyPath,
-    ascending,
-  }: {
-    keyPath?: string;
-    ascending?: boolean;
-  }) {
+  constructor({ keyPath, ascending }: { keyPath?: string; ascending?: boolean }) {
     this.keyPath = keyPath;
     this.ascending = ascending;
   }

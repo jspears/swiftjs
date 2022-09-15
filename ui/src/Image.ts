@@ -22,13 +22,8 @@ export interface ImageConfig {
 }
 class ImageClass extends Viewable<ImageConfig> implements HasToDataURI {
   _imageScale?: ImageScale;
-  constructor(
-    systemName: SystemImageType | ImageConfig,
-    variableValue?: number
-  ) {
-    super(
-      typeof systemName == "string" ? { systemName, variableValue } : systemName
-    );
+  constructor(systemName: SystemImageType | ImageConfig, variableValue?: number) {
+    super(typeof systemName == "string" ? { systemName, variableValue } : systemName);
   }
   imageScale(scale: KeyOf<typeof ImageScale>) {
     this._imageScale = fromKey(ImageScale, scale);
@@ -114,8 +109,8 @@ const FontSVG = ({
           ...style,
         },
       },
-      [code]
-    )
+      [code],
+    ),
   );
 };
 export const Image = swifty(ImageClass);

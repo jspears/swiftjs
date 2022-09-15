@@ -25,14 +25,11 @@ export const toNode = (view?: View | View[], ...views: View[]): VNode<any> => {
   return h(
     Fragment,
     {},
-    asArray([...asArray(view), ...views]).map((v) => v?.render?.())
+    asArray([...asArray(view), ...views]).map((v) => v?.render?.()),
   );
 };
 
-export const findTarget = (
-  find: (v: HTMLElement) => boolean,
-  e?: HTMLElement | null
-): HTMLElement | undefined => {
+export const findTarget = (find: (v: HTMLElement) => boolean, e?: HTMLElement | null): HTMLElement | undefined => {
   if (e == null) return;
   if (find(e)) {
     return e;

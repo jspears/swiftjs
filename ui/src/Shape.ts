@@ -45,10 +45,7 @@ type StrokeKeys = keyof ReverseMap<typeof StrokeStyleMap> | "stroke";
 const strikeMap = (v: keyof StrokeStyle): StrokeKeys => {
   return StrokeStyleMap[v];
 };
-export class Shape<T = unknown>
-  extends Viewable<T>
-  implements FillStyle, HasToDataURI
-{
+export class Shape<T = unknown> extends Viewable<T> implements FillStyle, HasToDataURI {
   _fill?: FillStyle;
   _stroke: Partial<{ [k in StrokeKeys]: string }> = {};
   constructor(t?: T) {
@@ -75,7 +72,7 @@ export class Shape<T = unknown>
         Object.entries(style).reduce((ret, [k, val]) => {
           ret[strikeMap(k as any)] = val + "";
           return ret;
-        }, {} as any)
+        }, {} as any),
       );
     }
     return this;
@@ -106,7 +103,7 @@ export class Shape<T = unknown>
           style: { display: "inline", position: "relative" },
         },
         this.renderShape(),
-        view.render()
+        view.render(),
       );
     }
     return this.renderShape();
@@ -126,10 +123,10 @@ export const Circle = swifty(
       return svg(
         this.asStyle({ width: "100%" }),
         defs,
-        h("circle", { cx: 50, cy: 50, r: 50, fill, ...this._stroke }, [])
+        h("circle", { cx: 50, cy: 50, r: 50, fill, ...this._stroke }, []),
       );
     }
-  }
+  },
 );
 export const Ellipse = swifty(Shape);
 export const Capsule = swifty(Shape<RoundedRectangleConfig>);
@@ -153,10 +150,10 @@ export const Rectangle = swifty(
           style: this.asStyle({}),
         },
         defs,
-        h("rect", { height: 100, width: 100, fill, ...this._stroke }, [])
+        h("rect", { height: 100, width: 100, fill, ...this._stroke }, []),
       );
     }
-  }
+  },
 );
 
 interface ViewableClass {
@@ -194,12 +191,8 @@ export const RoundedRectangle = swifty(
           style: this.asStyle({}),
         },
         defs,
-        h(
-          "rect",
-          { height: 100, width: 100, rx, ry, fill, ...this._stroke },
-          []
-        )
+        h("rect", { height: 100, width: 100, rx, ry, fill, ...this._stroke }, []),
       );
     }
-  }
+  },
 );

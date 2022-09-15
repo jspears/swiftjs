@@ -7,11 +7,7 @@ let _id = 0;
 const UUID = () => `id${_id++}`;
 
 class ItemCategoryClass {
-  constructor(
-    public category: string,
-    public color: Color,
-    public id = UUID()
-  ) {}
+  constructor(public category: string, public color: Color, public id = UUID()) {}
 }
 export class ItemType {
   public dueDate?: Date;

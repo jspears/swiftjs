@@ -36,7 +36,7 @@ export class View implements Identifiable {
   set parent(v: View | undefined) {
     if (this._parent && v !== this._parent) {
       console.warn(
-        `${this?.constructor?.name} was assigned a different parent, this should not happen new '${v?.constructor?.name}' old '${this._parent?.constructor?.name}'`
+        `${this?.constructor?.name} was assigned a different parent, this should not happen new '${v?.constructor?.name}' old '${this._parent?.constructor?.name}'`,
       );
     }
     this._parent = v;
@@ -52,18 +52,8 @@ export class View implements Identifiable {
   renderListItem(index: number, total: number): VNode<any> {
     const isEdit = this.editMode?.().isEditing() ?? false;
     const id = this.id || index + "";
-    const selected =
-      this._selection?.isSingleSelection() || isEdit
-        ? this._selection?.isSelected(id) ?? false
-        : false;
-    return this._listStyle.renderListItem(
-      this,
-      index,
-      total,
-      id,
-      isEdit,
-      selected
-    );
+    const selected = this._selection?.isSingleSelection() || isEdit ? this._selection?.isSelected(id) ?? false : false;
+    return this._listStyle.renderListItem(this, index, total, id, isEdit, selected);
   }
 
   render(): VNode<any> {

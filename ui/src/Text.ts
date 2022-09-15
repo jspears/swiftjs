@@ -22,7 +22,7 @@ class TextClass extends Viewable<string> {
         watch: this.watch,
         style: this.asStyle({ whiteSpace: "nowrap", display: "block" }),
       },
-      this.text
+      this.text,
     );
   }
 }

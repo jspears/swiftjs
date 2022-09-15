@@ -61,10 +61,7 @@ export class Params {
 
   toString(): string {
     return this.params
-      .map(
-        ({ type, hasQuestionToken, name }) =>
-          `${name}${hasQuestionToken ? "?" : ""}:${type}`
-      )
+      .map(({ type, hasQuestionToken, name }) => `${name}${hasQuestionToken ? "?" : ""}:${type}`)
       .join(", ");
   }
 }
@@ -76,23 +73,11 @@ export class ClosureImpl {
 
     const reg =
       /(?:mutating\s)?(?:func\s)?\s*(.+?)?(?:<(.+?)>)?\(\s*(.*)\s*\)(?:\s*->\s*(?:some\s*)?(.+?)(?:<(.+?)>)?)?$/.exec(
-        str
+        str,
       ) || [];
-    const [
-      _,
-      name = "",
-      typeParameters = "",
-      parameters = "",
-      returnType = "",
-      returnTypeParameters = "",
-    ] = reg;
+    const [_, name = "", typeParameters = "", parameters = "", returnType = "", returnTypeParameters = ""] = reg;
 
-    const close = new ClosureImpl(
-      returnType?.trim(),
-      [],
-      [],
-      new Params(parameters, addType)
-    );
+    const close = new ClosureImpl(returnType?.trim(), [], [], new Params(parameters, addType));
     close.constraint = split(typeParameters);
     close.returnTypeParameters = split(returnTypeParameters);
     close.name = name;
@@ -111,7 +96,7 @@ export class ClosureImpl {
     private _returnType: string,
     public constraint: string[] = [],
     private returnTypeParameters: string[] = [],
-    public params: Params
+    public params: Params,
   ) {
     _returnType = this._returnType = _returnType || "Void";
 
@@ -130,9 +115,7 @@ export class ClosureImpl {
   }
   get returnType() {
     if (this.returnTypeParameters.length) {
-      return `${fixArray(this._returnType)}<${this.returnTypeParameters.join(
-        ","
-      )}>`;
+      return `${fixArray(this._returnType)}<${this.returnTypeParameters.join(",")}>`;
     }
     return fixArray(this._returnType);
   }

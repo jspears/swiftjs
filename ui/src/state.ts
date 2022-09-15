@@ -5,9 +5,7 @@ import { LifecycleProps } from "./preact";
 import { View } from "./View";
 
 export type PickBindable<T> = {
-  [K in keyof T as T[K] extends Bindable<any>
-    ? K
-    : never]: T[K] extends Bindable<infer Type> ? Type : never;
+  [K in keyof T as T[K] extends Bindable<any> ? K : never]: T[K] extends Bindable<infer Type> ? Type : never;
 };
 
 /**
@@ -16,12 +14,9 @@ export type PickBindable<T> = {
  * @param props
  * @returns
  */
-export const bindToState = <
-  T extends LifecycleProps = LifecycleProps,
-  Ret = PickBindable<T>
->(
+export const bindToState = <T extends LifecycleProps = LifecycleProps, Ret = PickBindable<T>>(
   comp: Component<T>,
-  { watch, exec, ...props }: T
+  { watch, exec, ...props }: T,
 ): Ret => {
   const state: Record<string, unknown> = {};
   const unsub = watchable(null);
@@ -30,7 +25,7 @@ export const bindToState = <
     unsub.sink(
       value.sink((v) => {
         comp.setState({ [$key]: v });
-      })
+      }),
     );
     state[$key] = value();
   }
@@ -45,9 +40,7 @@ export const bindToState = <
   return state as Ret;
 };
 
-export function flatRender(
-  render: (View | undefined) | (View | undefined)[]
-): VNode<any>[] {
+export function flatRender(render: (View | undefined) | (View | undefined)[]): VNode<any>[] {
   if (render == null) {
     return [];
   }
@@ -56,11 +49,7 @@ export function flatRender(
     .filter(Boolean) as VNode<any>[];
 }
 
-export const useBindableMap = <T extends LifecycleProps>({
-  watch,
-  exec,
-  ...props
-}: T): PickBindable<T> => {
+export const useBindableMap = <T extends LifecycleProps>({ watch, exec, ...props }: T): PickBindable<T> => {
   const [state, setState] = useState({} as Record<string, unknown>);
 
   useEffect(() => {
@@ -84,8 +73,5 @@ export const useBindableMap = <T extends LifecycleProps>({
 };
 export type BindableState<T> = Bindable<T> & { scope: View; property: string };
 
-export const bindableState = <T>(
-  val: T,
-  scope: View,
-  property: string
-): BindableState<T> => Object.assign(watchable<T>(val), { scope, property });
+export const bindableState = <T>(val: T, scope: View, property: string): BindableState<T> =>
+  Object.assign(watchable<T>(val), { scope, property });

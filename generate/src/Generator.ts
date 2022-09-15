@@ -15,10 +15,7 @@ const refreshDir = (dir: string) => {
   mkdirSync(dir, { recursive: true });
 };
 export class Generator {
-  visited = new Map<
-    string,
-    SwiftDocImpl | undefined | Promise<SwiftDocImpl | undefined>
-  >();
+  visited = new Map<string, SwiftDocImpl | undefined | Promise<SwiftDocImpl | undefined>>();
   public project: Project;
   constructor(
     private readDoc: (v: string) => Promise<SwiftDoc | undefined>,
@@ -26,7 +23,7 @@ export class Generator {
     private srcDir: string = `${projectDir}/src`,
     typesSource: string = `
 export {Bool, Int, Float, Character, Double, Void, Optional} from '@tswift/util';    
-   `
+   `,
   ) {
     refreshDir(srcDir);
     this.project = createProject(projectDir, {

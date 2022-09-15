@@ -13,24 +13,16 @@ export interface LabelConfig {
 }
 export const Label = swifty(
   class LabelClass extends Viewable {
-    constructor(
-      conf: LabelConfig | string,
-      systemImage?: SystemImageType,
-      ...children: View[]
-    ) {
+    constructor(conf: LabelConfig | string, systemImage?: SystemImageType, ...children: View[]) {
       super(makeBody(conf, systemImage, ...children));
     }
-  }
+  },
 );
 
 const asImage = (v: SystemImageType) => (isString(v) ? Image(v) : v);
 const asText = (v: string | View) => (isString(v) ? Text(v) : v);
 
-const makeBody = (
-  c: LabelConfig | string,
-  systemImage?: SystemImageType,
-  ...children: View[]
-) => {
+const makeBody = (c: LabelConfig | string, systemImage?: SystemImageType, ...children: View[]) => {
   const conf: LabelConfig = isString(c) ? { label: c } : c;
   const all = [...children];
   if (conf.label) {

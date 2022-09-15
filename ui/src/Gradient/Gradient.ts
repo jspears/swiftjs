@@ -16,11 +16,7 @@ class StopClass {
   }
 
   render() {
-    return h(
-      "stop",
-      { offset: this.offset, ["stop-color"]: this.color + "" },
-      []
-    );
+    return h("stop", { offset: this.offset, ["stop-color"]: this.color + "" }, []);
   }
 }
 
@@ -44,11 +40,7 @@ class GradientClass {
   public stops?: StopClass[];
   constructor({ colors, stops }: { colors?: ColorKey[]; stops?: StopClass[] }) {
     this.stops =
-      stops ??
-      colors?.map((v, idx) =>
-        GradientClass.Stop(fromKey(Color, v), percent(idx, colors.length - 1))
-      ) ??
-      [];
+      stops ?? colors?.map((v, idx) => GradientClass.Stop(fromKey(Color, v), percent(idx, colors.length - 1))) ?? [];
   }
 }
 export const Gradient = swifty(GradientClass);
@@ -73,7 +65,7 @@ abstract class BaseGradientClass implements HasFill {
       "svg",
       { viewBox: "0 0 100 100" },
       h("defs", {}, this.toSVGGradient()),
-      h("rect", { height: "100%", width: "100%", fill: `url(#${this.id})` }, [])
+      h("rect", { height: "100%", width: "100%", fill: `url(#${this.id})` }, []),
     );
   }
   abstract toFill(): string;
@@ -109,8 +101,7 @@ export const LinearGradient = swifty(
     constructor(config: LinearGradientConfig) {
       super();
       this.gradient = Gradient(config);
-      this.startPoint =
-        config.startPoint && fromKey(UnitPoint, config.startPoint);
+      this.startPoint = config.startPoint && fromKey(UnitPoint, config.startPoint);
       this.endPoint = config.endPoint && fromKey(UnitPoint, config.endPoint);
     }
     toFill(): string {
@@ -118,9 +109,7 @@ export const LinearGradient = swifty(
       if (this.startPoint && this.endPoint) {
         to = this.startPoint.toDeg(this.endPoint) + ",";
       }
-      return `linear-gradient(${to}${this.gradient.stops
-        ?.map((v) => v.color + " " + v.offset)
-        .join(",")})`;
+      return `linear-gradient(${to}${this.gradient.stops?.map((v) => v.color + " " + v.offset).join(",")})`;
     }
     toSVGGradient() {
       const opts = { id: this.id };
@@ -135,10 +124,10 @@ export const LinearGradient = swifty(
       return h(
         "linearGradient",
         opts,
-        this.gradient.stops?.map((v) => v.render())
+        this.gradient.stops?.map((v) => v.render()),
       );
     }
-  }
+  },
 );
 
 interface RadialGradientConfig {
@@ -162,9 +151,7 @@ export const RadialGradient = swifty(
       this.endRadius = config.endRadius;
     }
     toFill(): string {
-      const css = `radial-gradient(${this.gradient.stops
-        ?.map((v) => v.color + " " + v.offset)
-        .join(",")})`;
+      const css = `radial-gradient(${this.gradient.stops?.map((v) => v.color + " " + v.offset).join(",")})`;
       return css;
     }
     toSVGGradient() {
@@ -177,10 +164,10 @@ export const RadialGradient = swifty(
           cx: point(this.center.x),
           cy: point(this.center.y),
         },
-        this.gradient.stops?.map((v) => v.render())
+        this.gradient.stops?.map((v) => v.render()),
       );
     }
-  }
+  },
 );
 
 export function isGradient(v: unknown): v is BaseGradientClass {
@@ -241,13 +228,11 @@ export const AngularGradient = swifty(
       if (this.center) {
         to += `from ${this.startAngle} at ${this.center.x} ${this.center.y},`;
       }
-      const css = `conic-gradient(${to} ${stops
-        .map((v) => v.color + " " + v.location * 360 + "deg")
-        .join(",")})`;
+      const css = `conic-gradient(${to} ${stops.map((v) => v.color + " " + v.location * 360 + "deg").join(",")})`;
       return css;
     }
     toSVGGradient() {
       return h("text", { id: this.id }, "Not implemented in SVG");
     }
-  }
+  },
 );

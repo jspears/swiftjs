@@ -1,12 +1,4 @@
-import {
-  Bindable,
-  Num,
-  Stride,
-  StrideStr,
-  swifty,
-  toArray,
-  toStride,
-} from "@tswift/util";
+import { Bindable, Num, Stride, StrideStr, swifty, toArray, toStride } from "@tswift/util";
 import { h } from "preact";
 import { ViewComponent } from "./preact";
 import { HStack, VStack } from "./Stack";
@@ -27,14 +19,7 @@ class BodyClass extends Viewable<SliderConfig> {
   range: Stride;
 
   constructor(config: SliderConfig) {
-    super(
-      config,
-      ...toArray(
-        config.minimumValueLabel,
-        config.maximumValueLabel,
-        config.label
-      )
-    );
+    super(config, ...toArray(config.minimumValueLabel, config.maximumValueLabel, config.label));
     this.range = toStride(config.in || "0...100");
     if (config.step) {
       this.range.step = config.step;
@@ -84,8 +69,7 @@ class SliderClass extends Viewable<SliderConfig> {
   static Body = swifty(BodyClass);
 
   body = () => {
-    const { minimumValueLabel, label, maximumValueLabel, ...rest } =
-      this.config;
+    const { minimumValueLabel, label, maximumValueLabel, ...rest } = this.config;
     const minMax =
       minimumValueLabel || maximumValueLabel
         ? HStack(
@@ -94,20 +78,12 @@ class SliderClass extends Viewable<SliderConfig> {
                 flex: "0",
               },
             },
-            ...toArray(
-              minimumValueLabel,
-              SliderClass.Body(rest as SliderConfig),
-              maximumValueLabel
-            )
+            ...toArray(minimumValueLabel, SliderClass.Body(rest as SliderConfig), maximumValueLabel),
           )
         : SliderClass.Body(rest as SliderConfig);
 
     if (label) {
-      return VStack(
-        { style: { flex: "0", width: "-webkit-fill-available" } },
-        minMax,
-        label
-      );
+      return VStack({ style: { flex: "0", width: "-webkit-fill-available" } }, minMax, label);
     }
     return minMax;
   };

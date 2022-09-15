@@ -1,12 +1,4 @@
-import {
-  Constructor,
-  Dot,
-  fromKey,
-  KeyOf,
-  KeyOfTypeWithType,
-  Set,
-  swiftyKey,
-} from "@tswift/util";
+import { Constructor, Dot, fromKey, KeyOf, KeyOfTypeWithType, Set, swiftyKey } from "@tswift/util";
 import { applyMixins } from "@tswift/util";
 import { CSSProperties } from "./types";
 export abstract class AlignmentBase {
@@ -80,11 +72,11 @@ export const Alignment = swiftyKey(
         static horizontal = new HorizontalAlignment();
       },
       HorizontalAlignment,
-      VerticalAlignment
+      VerticalAlignment,
     ),
     HorizontalAlignment,
-    VerticalAlignment
-  )
+    VerticalAlignment,
+  ),
 );
 
 export type AlignmentKey = Dot<keyof AlignmentType>;
@@ -113,9 +105,7 @@ export class EdgeSet {
   }
 
   static [Symbol.iterator]() {
-    return [Edge.top, Edge.trailing, Edge.bottom, Edge.leading][
-      Symbol.iterator
-    ]();
+    return [Edge.top, Edge.trailing, Edge.bottom, Edge.leading][Symbol.iterator]();
   }
   [Symbol.iterator]() {
     return this._set[Symbol.iterator]();
@@ -169,6 +159,4 @@ export class HorizontalEdgeSet {
   }
 }
 
-export type HorizontalEdgeKey =
-  | HorizontalEdge
-  | Dot<keyof typeof HorizontalEdge>;
+export type HorizontalEdgeKey = HorizontalEdge | Dot<keyof typeof HorizontalEdge>;
