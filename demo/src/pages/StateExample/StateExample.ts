@@ -1,4 +1,4 @@
-import { Bound, Button, ObservableObject, print, Published, StateObject, Text, Viewable, VStack } from "@tswift/ui";
+import { main, Bound, Button, ObservableObject, print, Published, StateObject, Text, Viewable, VStack } from "@tswift/ui";
 
 export class StateExample extends Viewable {
   @StateObject state: ContentViewState = new ContentViewState();
@@ -13,6 +13,7 @@ export class StateExample extends Viewable {
 
 }
 
+@main
 class ContentViewState extends ObservableObject {
   @Published count: number = 0
 

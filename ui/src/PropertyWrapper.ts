@@ -14,10 +14,10 @@ export function FocusState(target: Object, propertyKey: PropertyKey) {
   });
 }
 export function State(target: Object, propertyKey: PropertyKey) {
-  const desc = Reflect.getOwnPropertyDescriptor(target, propertyKey);
   Reflect.defineProperty(target, propertyKey, {
+    configurable: true,
     get() {
-      return this.$(propertyKey)();
+      return this.$(propertyKey).value;
     },
     set(v) {
       this.$(propertyKey)(v);

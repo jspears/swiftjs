@@ -5,9 +5,10 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "composite": true,
+    "resolveJsonModule": true,
     "tsBuildInfoFile": "./lib/.tsbuildinfo-ui",
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "./images.json"],
   "references": [
     {
       "path":"../util"

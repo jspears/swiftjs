@@ -16,6 +16,7 @@ import {
   Viewable,
   CountSet,
   VStack,
+  main,
   SelectionType,
   Bindable,
   HasSelection,
@@ -28,7 +29,7 @@ class OceanClass implements Identifiable, Hashable {
 }
 
 const Ocean = swifty(OceanClass);
-
+@main
 export class OceanList extends Viewable {
   oceans: OceanClass[] = [
     Ocean("Pacific"),

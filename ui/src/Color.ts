@@ -1,6 +1,7 @@
 import { KeyOf, Num } from "@tswift/util";
-import { FillStyle } from "./Gradient";
 import type { ShapeStyle } from "./ShapeStyle";
+import { HasFill } from "./View/types";
+import Colour from "color";
 
 type RGB = { red: number; blue: number; green: number; opacity?: number };
 type HSL = {
@@ -10,7 +11,7 @@ type HSL = {
   opacity?: number;
 };
 
-export class Color implements ShapeStyle, FillStyle {
+export class Color implements ShapeStyle, HasFill {
   constructor(
     public readonly value: string | RGB | HSL,
     public _opacity: number = 1
@@ -20,13 +21,13 @@ export class Color implements ShapeStyle, FillStyle {
   static brown = new Color("brown");
   static clear = new Color("unset");
   static cyan = new Color("cyan");
-  static gray = new Color("rgb(239, 238, 245)");
+  static gray = new Color("rgb(239 238 245)");
   static green = new Color("green");
   static indigo = new Color("indigo");
   static mint = new Color("mint");
   static orange = new Color("orange");
   static pink = new Color("pink");
-  static purple = new Color("rgb(175,82,222)");
+  static purple = new Color("rgb(175 82 222)");
   static red = new Color("red");
   static teal = new Color("teal");
   static white = new Color("white");
@@ -44,7 +45,7 @@ export class Color implements ShapeStyle, FillStyle {
     return this.toString();
   }
   opacity(opacity: number) {
-    return new Color(this.value, opacity);
+    return new Color(new Colour(this.value).alpha(opacity)+'');
   }
   shadow(def: { color: ColorKey; radius: Num; x: Num; y: Num }) {
     return this;

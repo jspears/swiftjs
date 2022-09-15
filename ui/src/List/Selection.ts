@@ -1,6 +1,6 @@
 import { Set, CountSet, OrigSet, Identifiable } from "@tswift/util";
-import { Bindable } from "@tswift/util";
-import { isInstanceOf } from "../guards";
+import type {  Bindable } from "@tswift/util";
+import { isInstanceOf } from "@tswift/util";
 import { hasId, Identity, SelectionType, Selection } from "./types";
 
 export const id = <V extends Identity>(

@@ -1,7 +1,8 @@
-import { Bindable } from "@tswift/util";
+import type { Bindable } from "@tswift/util";
 import { Component, VNode } from "preact";
 import { bindToState, PickBindable } from "./state";
-import { CSSProperties } from "./types";
+import type { CSSProperties } from "./types";
+import type { On } from "./View/EventsMixin";
 
 export interface LifecycleProps {
   //Calling it exec, cause children has special meaning,
@@ -14,6 +15,8 @@ export interface LifecycleProps {
 export interface ViewComponentProps extends LifecycleProps {
   style?: CSSProperties;
   id?: string;
+  onClick?:On;
+
 }
 
 export class ViewComponent<T, S = {}> extends Component<

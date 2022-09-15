@@ -10,6 +10,7 @@ import {
   Viewable,
   CountSet,
   ListConfig,
+  main,
 } from "@tswift/ui";
 
 const Ocean = swifty(
@@ -17,7 +18,7 @@ const Ocean = swifty(
     constructor(public name: string, public id = UUID()) {}
   }
 );
-
+@main
 export class SimpleList extends Viewable {
   oceans = [
     Ocean("Pacific"),

@@ -94,3 +94,9 @@ a {
   -webkit-box-shadow: inset 0 1px 0 0 #0d0e0f, inset 0 -1px 0 0 #3a3d42;
   outline: none; 
 }*/
+
+
+@font-face {
+ font-family: "SF Pro";
+ src: url("https://www.apple.com/wss/fonts/SF-Pro-Icons/v3/sf-pro-icons_regular.woff2") format("woff2");
+}

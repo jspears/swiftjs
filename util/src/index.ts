@@ -1,3 +1,4 @@
+export * from "./guards";
 export * from "./types";
 export * from "./util";
 export * from "./stride";
@@ -7,4 +8,5 @@ export * from "./print";
 export * from "./sequence";
 export * from "./swifty";
 export * from "./testUtils";
+export * from "./Timer"
 export * from "./zip";

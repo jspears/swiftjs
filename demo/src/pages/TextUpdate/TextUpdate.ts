@@ -1,4 +1,5 @@
 import {
+  main,
   Viewable,
   Text,
   TextField,
@@ -15,6 +16,7 @@ function validate(t: unknown) {
 //import '@tswift/UI'
 
 //https://developer.apple.com/documentation/swiftui/textfield
+@main
 export class TextUpdate extends Viewable<{}> {
   @State username: string = "";
   @FocusState emailFieldIsFocused = false;

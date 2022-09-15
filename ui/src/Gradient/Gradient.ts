@@ -1,13 +1,9 @@
-import { fromKey, has, ID, swifty } from "@tswift/util";
+import { fromKey, has, isInstanceOf, ID, swifty } from "@tswift/util";
 import { h, VNode } from "preact";
 import { Color, ColorKey } from "../Color";
-import { isInstanceOf } from "../guards";
 import { Angle } from "../unit";
 import { UnitPoint, UnitPointKey, UnitPointType } from "../View/TransformMixin";
-
-export interface FillStyle {
-  toFill(): string;
-}
+import { HasFill } from "../View/types";
 
 class StopClass {
   public color: Color;
@@ -57,7 +53,7 @@ class GradientClass {
 }
 export const Gradient = swifty(GradientClass);
 
-abstract class BaseGradientClass implements FillStyle {
+abstract class BaseGradientClass implements HasFill {
   static _count = 0;
   _id?: string;
 

@@ -1,5 +1,6 @@
-import { Bound, Num, Slider, State, Text, Viewable } from "@tswift/ui";
+import { Bound, Num, Slider, main, State, Text, Viewable } from "@tswift/ui";
 
+@main
 export class SliderDemo extends Viewable {
   @State speed: Num = 50.0;
   @State isEditing = false;

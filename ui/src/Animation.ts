@@ -1,21 +1,28 @@
-import { swifty } from "@tswift/util";
+import { Bindable, swifty, swiftyKey } from "@tswift/util";
 import { Dot, KeyOf, KeyOfTypeWithType } from "@tswift/util";
-
+ 
 class AnimationClass {
-  static default = new AnimationClass();
-  static easeInOut = new AnimationClass();
-  static easeIn = new AnimationClass();
-  static easeOut = new AnimationClass();
-  static linear = new AnimationClass();
+  static easeInOut = new AnimationClass("ease-in-out");
+  static easeIn = new AnimationClass("ease-in");
+  static easeOut = new AnimationClass("ease-out");
+  static linear = new AnimationClass("linear");
+  static default = AnimationClass.easeInOut;
+
+  constructor(private name: string) {
+    
+  }
+  sink(v: Bindable<number>) {
+ //   let prev = v();
+   // new AnimationEffect()
+  }
 }
-export const Animation = swifty(AnimationClass);
 
 export type AnimationType = typeof AnimationClass;
 
 export type AnimationKey = KeyOf<typeof AnimationClass>;
 
-type Callback = () => void;
-
+export type Callback = () => void;
+export const AnimationTool = swiftyKey(AnimationClass);
 export function withAnimation(result: Callback): void;
 export function withAnimation(
   animation: AnimationKey | Callback,
@@ -35,3 +42,4 @@ function isAnimation(v: unknown): v is AnimationClass {
     (typeof v === "string" && Object.hasOwnProperty.call(AnimationClass, v))
   );
 }
+

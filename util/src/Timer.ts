@@ -30,12 +30,13 @@ class TimerClass {
       if (delta > 0) {
         this._cancel = setTimeout(this._start, delta);
       }
-    } else {
-      this.fireDate = new Date();
-      setImmediate(this._start);
-    }
+    } 
   }
-
+  autoconnect = ()=> {
+    this.fireDate = new Date();
+    setTimeout(this._start,0);
+    return this;
+  }
   _start = () => {
     this.fire();
     if (this.config.repeats && this.config.interval) {

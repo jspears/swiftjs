@@ -9,6 +9,7 @@ import {
   Listen,
 } from "./types";
 import { v4 as uuidv4 } from "uuid";
+import { has } from './guards';
 
 export const OrigSet = globalThis.Set;
 
@@ -27,31 +28,30 @@ export const UUID = (): Identifiable["id"] => {
 export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
   const listening = Set<Listen<T>>(listen);
   let currentValue: T = value;
-
-  return Object.assign(
-    (...args: any[]) => {
-      if (args.length > 0) {
-        currentValue = args[0];
-        listening.forEach((v) => v(currentValue));
-      }
+  const fn = (...args: any[]) => {
+    if (args.length > 0) {
+      currentValue = args[0];
+      listening.forEach((v) => v(currentValue));
+    }
+    return currentValue;
+  };
+  const ext = {
+    clear: listening.clear.bind(listening),
+    valueOf() {
       return currentValue;
     },
-    {
-      clear: listening.clear.bind(listening),
-      valueOf() {
-        return currentValue;
-      },
-      sink(listen: Listen<T>) {
-        listening.add(listen);
-        return () => listening.delete(listen);
-      },
-    }
+    sink(listen: Listen<T>) {
+      listening.add(listen);
+      return () => listening.delete(listen);
+    },
+  };
+  Object.defineProperty(fn, 'value', {get:fn, set:fn, configurable: true});
+  return Object.assign(
+    fn,
+    ext
   );
 }
 
-export function has<T, K>(v: unknown, k: PropertyKey): k is keyof T {
-  return v != null && k != null && Object.prototype.hasOwnProperty.call(v, k);
-}
 
 export function toEnum<T>(enm: T, property: T | Dot<keyof T> | keyof T): T {
   if (typeof property === "string") {
@@ -72,10 +72,10 @@ export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(
 ): (
   property: K
 ) => K extends `.${infer R extends keyof T & string}`
-  ? T[R]
-  : K extends T
-  ? K
-  : never;
+    ? T[R]
+    : K extends T
+    ? K
+    : never;
 
 //export function toValue<T extends Constructor, K extends KeyOf<T> = KeyOf<T>>(clazz:T, property:K)=>K extends `.${infer R extends keyof T & string}` ? K extends T ? K : never;
 
@@ -102,7 +102,7 @@ export function applyMixins<T extends Constructor>(
         derivedCtor.prototype,
         name,
         Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
-          Object.create(null)
+        Object.create(null)
       );
     });
   });
@@ -128,9 +128,6 @@ export const isEmpty = (v?: HasLength | Bindable<HasLength>): boolean => {
   const val = isBindable<{ length: number }>(v) ? v() : v;
   return has(val, "length") ? val.length == 0 : false;
 };
-export function isFunction(v: unknown): v is (...args: any) => any {
-  return typeof v === "function";
-}
 
 /**
  * This should work with '.path' and 'path' the same.
@@ -164,20 +161,29 @@ export function keyPath<T extends object, K extends KeyPath<T> & string>(
   }
   return ret?.[key.slice(from) as keyof unknown];
 }
-
+/**
+ * Tries to find the type and return the value of
+ * a static property. It does not do this deeply, although
+ * maybe in the future.
+ * 
+ * @param type 
+ * @param key 
+ * @returns 
+ */
 export function fromKey<
   T,
   K extends
-    | Dot<keyof T>
-    | (T extends Constructor ? InstanceType<T> : never) = Dot<keyof T>
+  | Dot<keyof T>
+  | (T extends Constructor ? InstanceType<T> : T) = Dot<keyof T>
 >(
   type: T,
-  key: K
-): K extends `.${infer P extends keyof T & string}`
-  ? T[P]
-  : K extends string
-  ? undefined
-  : K {
+  key: K | undefined
+): K extends undefined ? undefined : K extends `.${infer P extends keyof T & string}`
+? T[P]
+: K {
+  if (key == null) {
+    return undefined as any;
+  }
   if (typeof key == "string") {
     const ret = (type as any)[key.slice(1)];
     if (ret == null) {
@@ -214,8 +220,8 @@ type Filter<T extends any[], V = null | undefined> = T extends [
   ...infer Rest
 ]
   ? First extends V
-    ? Filter<Rest, V>
-    : [First, ...Filter<Rest, V>]
+  ? Filter<Rest, V>
+  : [First, ...Filter<Rest, V>]
   : [];
 
 export function toArray<T extends any[]>(...args: T): Filter<T> {

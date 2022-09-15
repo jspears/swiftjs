@@ -4,6 +4,7 @@ import {
   Viewable,
   UUID,
   swifty,
+  main,
   ID,
   State,
   NavigationView,
@@ -28,7 +29,7 @@ const OceanRegion = swifty(
     ) {}
   }
 );
-
+@main
 export class OceanSelection extends Viewable<{}> {
   oceanRegions = [
     OceanRegion("Pacific", [

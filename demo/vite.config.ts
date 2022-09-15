@@ -9,11 +9,8 @@ const writeHtml = (name:string,
   <div id='wrapper'>
   <div id="phone"><div id="app"></div><button id='button'></div>
   </div>
-  <script type="module" src="./${name}.ts"></script>
-  
-  `, run = `import {App} from "../src/pages/${name}/index";
-  import {run} from "../src/run";
-  run(new App);`)=>{
+  <script type="module" src="../src/pages/${name}/${name}.ts"></script>
+  `, run = '')=>{
 
   const html = `${dirname}/public/${name}.html`;
   writeFileSync(html, `<!DOCTYPE html>
@@ -28,7 +25,7 @@ const writeHtml = (name:string,
     <h2>TSwift: ${name}</h2>
     <div class='wrap'>
       <ul class='nav'>
-      ${pages.map(v=>`<li><a href='./${v}.html'>${v}</a></li>`).join('')}
+      ${pages.map(v=>v == name ? `<li><a>${v}</a></li>` : `<li><a href='./${v}.html'>${v}</a></li>`).join('')}
       </ul>
       <div class='content'>
       ${content}
@@ -64,7 +61,16 @@ export default defineConfig({
   },
   ...(process.argv.find(v=>/^--base($|=)/.test(v)) ? {root: './public'} :{}),
   base: './',
-  
+  server: {
+    cors: {
+      origin:'*'
+    }
+  },
+  preview: {
+    cors: {
+      origin:'*'
+    }
+  },
   build: {
     outDir:`${dirname}/dist`,  
     rollupOptions: {

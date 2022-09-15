@@ -11,7 +11,8 @@
     "build": "lage build",
     "format": "prettier ./*/{src,test}/**/*.ts --write",
     "lage": "lage",
-    "reset":"yarn clean && yarn install"
+    "reset":"yarn clean && yarn install",
+    "demo":"./demo/demo.sh"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 import { Dot, fromKey, KeyOf } from "@tswift/util";
 import { Angle } from "../unit";
-import { swifty } from "@tswift/util";
+import { swiftyKey } from "@tswift/util";
 import { CSSProperties } from "../types";
 class UnitPointClass {
   static zero = new UnitPointClass(0, 0);
@@ -53,35 +53,39 @@ const deg = (v: number | string | undefined): number => {
   }
   return 0;
 };
-export const UnitPoint = swifty(UnitPointClass);
+export const UnitPoint = swiftyKey(UnitPointClass);
 export type UnitPointType = ReturnType<typeof UnitPoint>;
 
 export type UnitPointKey = KeyOf<typeof UnitPointClass>;
 
 export class TransformMixin {
-  _transforms: CSSProperties = {};
+ // _transforms: CSSProperties = {};
+  _rotate?: [angle:Angle, point:UnitPointType];
+  _scale?: number;
 
-  rotationEffect(angle: Angle, point: UnitPointKey = UnitPoint.zero) {
-    if (!this._transforms) {
-      this._transforms = {};
+  get _transforms():CSSProperties{
+    if (!this._rotate && !this._scale){
+      return {};
     }
-    const unitPoint = fromKey(UnitPoint, point);
-    this._transforms["transformOrigin"] = unitPoint.toTranslate();
-    this._transforms["transform"] = `${
-      this._transforms["transform"] || ""
-    } rotate(${angle})`;
-    //        this._transforms['transition'] = `${ this._transforms['transition']||''} transform .4s ease-in-out`
+    const ret:CSSProperties = {};
+    if(this._rotate){
+      ret['transformOrigin'] = this._rotate[1].toTranslate();
+      ret['transform'] = `rotate(${this._rotate[0]})`;
+    }
+    if (this._scale != null){
+      ret['transform'] = `${ret['transform']||''} scale(${this._scale})`;
+
+    }
+    return ret;
+
+  }
+  rotationEffect(angle: Angle, point: UnitPointKey = UnitPoint.zero) {
+    this._rotate = [angle, UnitPoint.fromKey(point)]
     return this;
   }
 
   scaleEffect(num: number) {
-    if (!this._transforms) {
-      this._transforms = {};
-    }
-    this._transforms["transform"] = `${
-      this._transforms["transform"] || ""
-    } scale(${num})`;
-
+    this._scale = num;
     return this;
   }
 }

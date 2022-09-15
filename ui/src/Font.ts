@@ -1,20 +1,7 @@
-import { Dot, KeyOf, PickValue } from "@tswift/util";
+import { Dot,isKeyOf, fromKey, KeyOf, PickValue } from "@tswift/util";
 import { CSSProperties } from "./types";
 import { unitFor } from "./unit";
-/*
-font-family: -apple-system-body
-font-family: -apple-system-headline
-font-family: -apple-system-subheadline
-font-family: -apple-system-caption1
-font-family: -apple-system-caption2
-font-family: -apple-system-footnote
-font-family: -apple-system-short-body
-font-family: -apple-system-short-headline
-font-family: -apple-system-short-subheadline
-font-family: -apple-system-short-caption1
-font-family: -apple-system-short-footnote
-font-family: -apple-system-tall-body
-*/
+
 export enum Weight {
   black = "900",
   bold = "700",
@@ -102,9 +89,42 @@ export class Font {
       textDecoration: "underline",
     });
   }
+  static system(v: number | FontConfig['weight'] | FontConfig['design'] | Partial<FontConfig>) {
+    const val = typeof v === 'number' ? {size:v} : isKeyOf(v,  Design) ? {design:v} : 
+    isKeyOf(v, Weight) ? {weight:v} : {};
+    
+    let ret:Font = Font.body;
+    if (val.design){
+      const design = fromKey(Design, val.design);
+      switch(design){
+        case Design.monospaced:
+          ret = ret.monospaced();
+          break;
+      }
+    }
+    if (val.size != null){
+      ret = ret.apply({fontSize:unitFor(val.size)});
+    }
+    if (val.weight){
+      ret = ret.weight(val.weight as WeightKey);
+    }
+    return ret;
+  }
 }
+type FontConfig = {
+  size: number,
+  weight: WeightKey,
+  design: DesignKey
+}
+enum Design {
+  default = 'default',
+  monospaced = 'monospaced',
+  rounded = 'rounded',
+  serif = 'serif',
+}
+export type DesignKey = typeof Design | Dot<keyof typeof Design>;
 
 export type LeadingKey = Leading | Dot<keyof typeof Leading>;
 export type WeightKey = Weight | Dot<keyof typeof Weight>;
 
-export type FontKey = KeyOf<typeof Font>;
+export type FontKey = KeyOf<Font>;

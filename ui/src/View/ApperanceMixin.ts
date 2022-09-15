@@ -4,9 +4,6 @@ import {
   Alignment,
   AlignmentKey,
   AlignmentType,
-  EdgeSet,
-  VerticalEdge,
-  VerticalEdgeKey,
 } from "../Edge";
 import { fromKey, KeyOf, Num } from "@tswift/util";
 import { View } from "./View";
@@ -17,7 +14,8 @@ import { Inherit } from "../Inherit";
 import { ColorScheme } from "./ColorScheme";
 import { isAlignmentKey, isColorKey, isView } from "../guards";
 import { unitFor } from "../unit";
-import { FillStyle, isGradient } from "../Gradient";
+import { ToggleStyle } from "./ToggleStyle";
+import { HasFill } from "./types";
 
 export class Visibility {
   static readonly automatic = new Visibility("automatic");
@@ -29,14 +27,6 @@ export class Visibility {
 export type VisibilityKey = KeyOf<typeof Visibility>;
 
 export type ColorSchemeKey = KeyOf<typeof ColorScheme>;
-
-class ToggleStyleClass {
-  static checkbox = new ToggleStyleClass("checkbox");
-  static button = new ToggleStyleClass("button");
-  static switcher = new ToggleStyleClass("switcher");
-  static automatic = new ToggleStyleClass("automatic");
-  constructor(protected name: string) {}
-}
 
 export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   _style: CSSProperties = {};
@@ -57,11 +47,13 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   _hidden?: boolean;
   @Inherit
   _labelsHidden?: boolean;
-  _shadow?: { color: ColorKey; radius: Num; x: Num; y: Num };
+  _shadow?: { color: ColorKey; radius: string; x:string; y: string };
   _zIndex?: Num;
   _fixedSize?: { horizontal?: boolean; vertical?: boolean };
   _backgroundView?: string | Color | View;
   _backgroundAlignnment?: AlignmentType;
+
+  _toggleStyle?: ToggleStyle;
 
   toCSS(): CSSProperties {
     const ret: CSSProperties = {};
@@ -82,7 +74,10 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  backgroundStyle(fill: FillStyle) {
+  backgroundStyle(fill: HasFill | ColorKey ) {
+    if (isColorKey(fill)){
+      fill = fromKey(Color, fill);
+    }
     if (!this._style) {
       this._style = {};
     }
@@ -93,7 +88,10 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  foregroundStyle(fill: FillStyle) {
+  foregroundStyle(fill: HasFill | ColorKey) {
+    if (isColorKey(fill)){
+      fill = fromKey(Color, fill);
+    }
     if (!this._style) {
       this._style = {};
     }
@@ -105,8 +103,7 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
   }
 
   foregroundColor(c?: ColorKey): this {
-    this._foregroundColor =
-      typeof c === "string" ? Color[c.slice(1) as keyof typeof Color] : c;
+    this._foregroundColor = fromKey(Color, c);
     return this;
   }
 
@@ -139,10 +136,6 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  overlay(alignment: AlignmentKey, content: Content | View) {
-    return this;
-  }
-
   background(
     alignment: AlignmentKey | ColorKey | View,
     content?: ShapeStyle
@@ -167,8 +160,14 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  shadow(def: { color: ColorKey; radius: Num; x: Num; y: Num }) {
-    this._shadow = def;
+  shadow({color,x,y, radius, ...rest}: { color: ColorKey; radius: Num; x: Num; y: Num }) {
+    this._shadow = {
+      color: fromKey(Color, color),
+      x: x == 0 ? '0rem' : unitFor(x),
+      y: y == 0 ? '0rem' : unitFor(y),
+      radius: unitFor(radius),
+      ...rest,
+    };
     return this;
   }
 
@@ -177,7 +176,8 @@ export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
     return this;
   }
 
-  toggleStyle(style: KeyOf<typeof ToggleStyleClass>) {
+  toggleStyle(style: KeyOf<typeof ToggleStyle>) {
+    this._toggleStyle = fromKey(ToggleStyle, style);
     return this;
   }
 

@@ -1,5 +1,6 @@
 import type { VNode } from "preact";
 import type { View } from "./View";
+import type SystemImage from '../images.json';
 
 type CSS = Omit<
   CSSStyleDeclaration,
@@ -26,3 +27,8 @@ export interface ListStyleRenderListItem {
 }
 export type CSSProperties = Partial<CSS>;
 export type TransformFn = (v: View, idx: number, total: number) => VNode<any>;
+
+export interface HasToDataURI {
+  toDataURI():string;
+}
+export type SystemImageType = keyof typeof SystemImage;

@@ -1,5 +1,6 @@
-import { Text, VStack, Color, Viewable } from "@tswift/ui";
+import {main, Text, VStack, Color, Viewable } from "@tswift/ui";
 
+@main
 export class Typeography extends Viewable {
   body = VStack(
     { alignment: ".leading", spacing: 10 },

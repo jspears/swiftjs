@@ -27,7 +27,9 @@ export const bindToState = <
   const unsub = watchable(null);
   for (const [key, value] of watch) {
     const $key = `$${key}`;
-    unsub.sink(value.sink((v) => comp.setState({ [$key]: v })));
+    unsub.sink(value.sink((v) => {
+      comp.setState({ [$key]: v })
+    }));
     state[$key] = value();
   }
   for (const [key, value] of Object.entries(props)) {
@@ -78,3 +80,7 @@ export const useBindableMap = <T extends LifecycleProps>({
 
   return state as any;
 };
+export type BindableState<T> = Bindable<T> & {scope:View, property:string};
+
+export const bindableState = <T >(val:T, scope:View, property:string):BindableState<T>=>
+  Object.assign(watchable<T>(val), {scope, property});

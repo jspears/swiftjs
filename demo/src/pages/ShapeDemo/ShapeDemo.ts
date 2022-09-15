@@ -3,12 +3,14 @@ import {
   RadialGradient,
   Gradient,
   Text,
+  main,
   LinearGradient,
   Viewable,
   Rectangle,
   AngularGradient,
 } from "@tswift/ui";
 
+@main
 export class ShapeDemo extends Viewable {
   body = () => [
     Text("Text With Gradient")
@@ -21,7 +23,7 @@ export class ShapeDemo extends Viewable {
         })
       ),
     Text("I have a background shape").backgroundStyle(
-      Circle().fill(LinearGradient({ colors: [".yellow", ".white"] }))
+      Circle().fill(LinearGradient({ colors: [".yellow", ".pink", ".green"] }))
     ),
     Text("Angular gradients are real")
       .backgroundStyle(

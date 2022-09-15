@@ -8,8 +8,9 @@ fi
 DIR=${0:a:h}
 mkdir $DIR/src/pages/${NAME}
 cat <<eos > $DIR/src/pages/${NAME}/${NAME}.ts
-import {Viewable, Bound} from "@tswift/ui";
+import {main, Viewable, Bound} from "@tswift/ui";
 
+@main
 export class ${NAME} extends Viewable {
 
     body = (self:Bound<this>)=>{
@@ -42,3 +43,4 @@ struct ${NAME} : View {
 }
 eos
 
+echo "Created demo in $DIR/src/pages/${NAME}"

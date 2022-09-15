@@ -4,6 +4,7 @@ export type Dot<T> = T extends string ? `.${T}` : never;
 export type EnumOrString<T> = T | Dot<keyof T>;
 export type Listen<T> = (e: T) => unknown;
 export type Bindable<T> = ((t?: T) => T) & {
+  value:T;
   sink(listen: Listen<T>): () => void;
   clear(): void;
 };
@@ -69,17 +70,22 @@ export type PickValue<T, V = T> = {
     : never]: T[K];
 };
 
-export type Constructor = new (...args: any) => any;
-
 export type KeyOfTypeWithType<
   T extends Constructor,
-  V extends Constructor = T
-> = KeyOf<T, V>;
+> = KeyOf<T>;
 
-export type KeyOf<T extends new (...args: any) => any, V = InstanceType<T>> =
+export type AbstractConstructor = abstract new (...args: any) => any;
+export type Constructor = new (...args: any) => any;
+export type AnyConstructor = AbstractConstructor | Constructor;
+
+
+export type KeyOf<T> = T extends AnyConstructor ? _KeyOf<T> :
+  Dot<Exclude<keyof T, "prototype">> | T;
+
+export type _KeyOf<T extends AnyConstructor> =
   | Dot<
       keyof {
-        [K in keyof T as T[K] extends V
+        [K in keyof T as T[K] extends InstanceType<T>
           ? K extends "prototype"
             ? never
             : K
@@ -154,3 +160,40 @@ export type ReverseMap<T extends Record<keyof T, keyof any>> = {
     [K in keyof T]: T[K] extends P ? K : never;
   }[keyof T];
 };
+//https://github.com/microsoft/TypeScript/issues/37079
+
+type ConstructorOverloads<T> =
+    T extends {
+        new(...args: infer A1): infer R1;
+        new(...args: infer A2): infer R2;
+        new(...args: infer A3): infer R3;
+        new(...args: infer A4): infer R4
+    } ?  readonly [
+        new (...args: A1) => R1,
+        new (...args: A2) => R2,
+        new (...args: A3) => R3, 
+        new (...args: A4) => R4
+    ] : T extends {
+        new(...args: infer A1): infer R1; 
+        new(...args: infer A2): infer R2;
+        new(...args: infer A3): infer R3
+    } ?  readonly [
+        new (...args: A1) => R1, new (...args: A2) => R2,
+        new (...args: A3) => R3
+    ] : T extends {
+        new(...args: infer A1): infer R1; new(...args: infer A2): infer R2
+    } ? readonly  [
+        new (...args: A1) => R1, new (...args: A2) => R2
+    ] : T extends {
+        new(...args: infer A1): infer R1
+    } ? readonly [
+        new (...args: A1) => R1
+    ] : never;
+
+export type OverloadedConstructorParameters<T> =
+    ConstructorOverloads<T> extends infer O ?
+    { [K in keyof O]: ConstructorParameters<Extract<O[K], new (...args: any) => any>> } : never
+
+export type OverloadedInstanceType<T> =
+    ConstructorOverloads<T> extends infer O ?
+    { [K in keyof O]: InstanceType<Extract<O[K], new (...args: any) => any>> } : never
