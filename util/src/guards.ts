@@ -18,17 +18,23 @@ export function isInstanceOf<T>(v: unknown, of: AnyConstructor<T>): v is T {
   }
   return false;
 }
-export function isKeyOf<T>(key: unknown, of: T): key is KeyOf<T> {
+export function isKeyOf<T extends AnyConstructor<any>>(key: unknown, of: T): key is KeyOf<T> {
   if (key == null) {
     return false;
   }
   if (typeof key === "string") {
     return has(of, key.slice(1));
   }
-  if (isConstructable(of)) {
-    return isInstanceOf(key, of);
+  return isInstanceOf(key, of);
+}
+export function isEnumOf<T extends object>(key:unknown, ofType:T): key is T[keyof T] {
+  if (key == null){
+    return false;
   }
-  return false;
+  if (typeof key === 'string'){
+    return has(ofType, key) || has (ofType, key.slice(1));
+  }
+  return Object.values(ofType).includes(key);
 }
 
 export function isConstructable(v: unknown): v is Constructor<unknown> {

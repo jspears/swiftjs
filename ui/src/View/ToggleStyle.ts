@@ -45,7 +45,7 @@ export abstract class ToggleStyle {
   //     super("automatic");
   //   }
   // };
-  private constructor(name: string) {
+  constructor(name: string) {
     this.name = name;
   }
 }

@@ -1,4 +1,4 @@
-import { View, Viewable, ViewableClass } from "./View";
+import { Viewable } from "./View";
 import { render } from "./dom";
 import { App } from "./App";
 
@@ -22,17 +22,17 @@ class Resolvable<T> {
 }
 
 export const AppRegistry = new (class {
-  view = new Resolvable<ViewableClass>();
+  view = new Resolvable<typeof Viewable>();
   doc = new Resolvable<HTMLElement>();
   selector: string = "#app";
   constructor() {
     Promise.all([this.view.promise, this.doc.promise]).then(this.render);
     this.init();
   }
-  register = (view: ViewableClass) => {
+  register = (view: typeof Viewable) => {
     this.view.resolve(view);
   };
-  render = ([View, appNode]: [ViewableClass, HTMLElement]) => {
+  render = ([View, appNode]: [typeof Viewable, HTMLElement]) => {
     if (!appNode) {
       throw new Error("Could not find #app");
     }
@@ -55,6 +55,6 @@ export const AppRegistry = new (class {
   };
 })();
 
-export function main(MainView: ViewableClass) {
+export function main(MainView: typeof Viewable) {
   AppRegistry.register(MainView);
 }

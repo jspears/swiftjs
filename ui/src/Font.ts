@@ -1,4 +1,4 @@
-import { Dot, isKeyOf, fromKey, KeyOf, PickValue } from "@tswift/util";
+import { Dot, fromEnum, isKeyOf, fromKey, KeyOf, PickValue, isEnumOf } from "@tswift/util";
 import { CSSProperties } from "./types";
 import { unitFor } from "./unit";
 
@@ -93,16 +93,15 @@ export class Font {
     const val =
       typeof v === "number"
         ? { size: v }
-        : isKeyOf(v, Design)
+        : isEnumOf(v, Design)
         ? { design: v }
-        : isKeyOf(v, Weight)
+        : isEnumOf(v, Weight)
         ? { weight: v }
         : {};
 
     let ret: Font = Font.body;
     if (val.design) {
-      const design = fromKey(Design, val.design);
-      switch (design) {
+      switch (fromEnum(Design, val.design)) {
         case Design.monospaced:
           ret = ret.monospaced();
           break;
@@ -128,9 +127,9 @@ enum Design {
   rounded = "rounded",
   serif = "serif",
 }
-export type DesignKey = typeof Design | Dot<keyof typeof Design>;
+export type DesignKey = typeof Design[keyof typeof Design] | Dot<keyof typeof Design>;
 
 export type LeadingKey = Leading | Dot<keyof typeof Leading>;
 export type WeightKey = Weight | Dot<keyof typeof Weight>;
 
-export type FontKey = KeyOf<Font>;
+export type FontKey = KeyOf<typeof Font>;

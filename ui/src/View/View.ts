@@ -6,11 +6,12 @@ import { DefaultListStyle, ListStyle } from "../List/ListStyle";
 import { Selection } from "../List/types";
 import { Environment } from "../PropertyWrapper";
 import { BindableState } from "../state";
+import { HasWatch } from "./HasWatch";
 
-export class View implements Identifiable {
+export class View implements Identifiable, HasWatch {
   id: string = "";
 
-  watch = new Map<string, BindableState<unknown>>();
+  watch?:Map<string, BindableState<unknown>> = new Map<string, BindableState<unknown>>();
 
   @Environment(".editMode")
   editMode?: Bindable<EditMode>;

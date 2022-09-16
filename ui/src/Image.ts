@@ -41,11 +41,11 @@ class ImageClass extends Viewable<ImageConfig> implements HasToDataURI {
     const style = {
       fontFamily: "SF Pro",
       textShadow,
-      opacity: this.config.variableValue || "1",
+      opacity: (this.config.variableValue || "1")+'',
     };
     return h(FontSVG, {
       fill: (this._foregroundColor || Color.black).toString(),
-      code: images[this.config.systemName],
+      code: (this.config.systemName && images[this.config.systemName]) ||'',
       style,
     });
   }

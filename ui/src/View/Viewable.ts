@@ -9,6 +9,7 @@ import {
   isBindable,
   asArray,
   Dot,
+  ObservableObject,
   fromKey,
 } from "@tswift/util";
 import type { Bindable, Bound, Bounds } from "@tswift/util";
@@ -84,14 +85,17 @@ export class ViewableClass<T = any> extends View {
   protected $ = <V extends typeof this = typeof this, K extends keyof V & string = keyof V & string, R = V[K]>(
     key: K,
   ): Bindable<R> => {
-    let bound = this.watch.get(key);
+    let bound = this.watch?.get(key);
     if (!bound) {
       const value = has(this, key) ? this[key] : null;
-      bound = isObservableObject(value)
-        ? Object.assign(value.objectWillChange, { scope: this, property: key })
-        : isBindable(value)
-        ? value
-        : bindableState<R>(value as unknown as R, this, key);
+      if (isObservableObject(value)){
+        bound = Object.assign((value as ObservableObject).objectWillChange, { scope: this, property: key })  as any
+      }else if (isBindable(value)){
+        bound = value;
+      }else {
+        bound = bindableState<R>(value as unknown as R, this, key) as any;
+      }
+
 
       Object.defineProperty(this, key, {
         configurable: true,
@@ -105,7 +109,7 @@ export class ViewableClass<T = any> extends View {
       if (!bound) {
         throw new Error(`This should never happen`);
       }
-      this.watch.set(key, bound);
+      this.watch?.set(key, bound);
     }
     if (AnimationContext.withAnimation) {
       const tween = AnimationContext.withAnimation.tween<R>(bound as any);
@@ -181,7 +185,7 @@ export class ViewableClass<T = any> extends View {
   renderExec = () => flatRender(this.exec());
 
   render() {
-    if (this.body) {
+    if (this.body && this.watch) {
       return h(
         ViewComponent,
         {

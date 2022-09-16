@@ -63,18 +63,24 @@ class SectionClass extends Viewable<SectionConfig> {
   constructor(header: Content, footer?: Content, content?: Content);
   constructor(config: SectionConfig, ...views: View[]);
   constructor(config: SectionConfig | Content, footer?: Content, content?: Content) {
-    super(
-      ...((isConfig(config)
-        ? toArray(
-            config.header && new Header(config.header),
-            (config.content || content || footer) && new Body(config.content || content || footer),
-            (config.footer || (config && content)) && new Footer(config.footer || footer),
-          )
-        : toArray(
-            config && new Header(config),
-            (content || footer) && new Body(content || footer),
-            content && footer && new Footer(footer),
-          )) as View[]),
+      //@ts-ignore
+      super({},
+      //@ts-ignore
+      ...toArray(...(isConfig(config) ? [
+      //@ts-ignore
+      config.header ? new Header(config.header) : undefined,
+      //@ts-ignore
+      (config.content || content || footer) ? new Body(config.content || content || footer) : undefined,
+      //@ts-ignore
+      (config.footer || (config && content)) ? new Footer(config.footer || footer) : undefined,
+        ] : [ 
+      //@ts-ignore
+      config ? new Header(config) : undefined,
+      //@ts-ignore
+      (content || footer) ? new Body(content || footer) : undefined,
+      //@ts-ignore
+      content && footer ? new Footer(footer) : undefined,
+        ]))
     );
   }
   init() {}

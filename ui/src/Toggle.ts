@@ -27,7 +27,7 @@ class ToggleClass extends Viewable<ToggleConfig> {
       });
     }
   }
-
+  
   toggle(v?: boolean): this {
     if (v != null) {
       this.config.$isOn?.(v);
@@ -36,8 +36,6 @@ class ToggleClass extends Viewable<ToggleConfig> {
     }
     return this;
   }
-  body = ({ isOn }: Bound<this>) => {};
-  renderExec = () => flatRender(this.exec());
 }
 
 interface ToggleComponentProps extends ViewComponentProps, ToggleConfig {}

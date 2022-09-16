@@ -1,4 +1,4 @@
-export type Dot<T> = T extends string ? `.${T}` : never;
+export type Dot<T> = T extends 'prototype' ? never : T extends string ? `.${T}` : never;
 //This is to support `.property` notation from swift.
 
 export type EnumOrString<T> = T | Dot<keyof T>;
@@ -60,14 +60,9 @@ export type AbstractConstructor = abstract new (...args: any) => any;
 export type Constructor = new (...args: any) => any;
 export type AnyConstructor = AbstractConstructor | Constructor;
 
-export type KeyOf<T> = T extends AnyConstructor ? _KeyOf<T> : Dot<Exclude<keyof T, "prototype">> | T;
 
-export type _KeyOf<T extends AnyConstructor> =
-  | Dot<
-      keyof {
-        [K in keyof T as T[K] extends InstanceType<T> ? (K extends "prototype" ? never : K) : never]: true;
-      }
-    >
+export type KeyOf<T extends AnyConstructor> =
+  | Dot<KeysOfTypeBest<T, InstanceType<T>>>
   | InstanceType<T>;
 
 export interface Identifiable {
@@ -162,3 +157,42 @@ export type OverloadedConstructorParameters<T> = ConstructorOverloads<T> extends
 export type OverloadedInstanceType<T> = ConstructorOverloads<T> extends infer O
   ? { [K in keyof O]: InstanceType<Extract<O[K], new (...args: any) => any>> }
   : never;
+/**
+ * Tries to find the type and return the value of
+ * a static property. It does not do this deeply, although
+ * maybe in the future.
+ *
+ * @param type
+ * @param key
+ * @returns
+ */
+
+ type KeysOfType<T, U> = {
+  [P in keyof T]: T[P] extends U ? P : never;
+}[keyof T];
+
+type PickByType<T, U> = Pick<T, KeysOfType<T, U>>;
+
+type KeysOfTypeStrict<T, U> = {
+    [P in keyof T]: T[P] extends U ? (U extends T[P] ? P : never) : never;
+}[keyof T];
+type PickByTypeStrict<T, U> = Pick<T, KeysOfTypeStrict<T, U>>;
+
+/**
+ * https://stackoverflow.com/questions/46583883/typescript-pick-properties-with-a-defined-type
+ * Returns an interface stripped of all keys that don't resolve to U, defaulting 
+ * to a non-strict comparison of T[key] extends U. Setting B to true performs
+ * a strict type comparison of T[key] extends U & U extends T[key]
+ */
+export type KeysOfTypeBest<T, U, B = false> = {
+  [P in keyof T]: B extends true 
+    ? T[P] extends U 
+      ? (U extends T[P] 
+        ? P 
+        : never)
+      : never
+    : T[P] extends U 
+      ? P 
+      : never;
+}[keyof T];
+//type PickByTypeBest<T, U, B = false> = Pick<T, KeysOfTypeBest<T, U, B>>;

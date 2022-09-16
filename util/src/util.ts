@@ -1,4 +1,4 @@
-import { Bindable, Constructor, Dot, Identifiable, KeyOf, KeyPath, KeyValue, Listen } from "./types";
+import { AnyConstructor, Bindable, Constructor, Dot, Identifiable, KeyOf, KeyPath,KeysOfTypeBest, KeyValue, Listen,} from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { has } from "./guards";
 
@@ -36,7 +36,7 @@ export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
     },
   };
   Object.defineProperty(fn, "value", { get: fn, set: fn, configurable: true });
-  return Object.assign(fn, ext);
+  return Object.assign(fn, ext) as any;
 }
 
 export function toEnum<T>(enm: T, property: T | Dot<keyof T> | keyof T): T {
@@ -130,20 +130,12 @@ export function keyPath<T extends object, K extends KeyPath<T> & string>(
   }
   return ret?.[key.slice(from) as keyof unknown];
 }
-/**
- * Tries to find the type and return the value of
- * a static property. It does not do this deeply, although
- * maybe in the future.
- *
- * @param type
- * @param key
- * @returns
- */
-export function fromKey<T, K extends Dot<keyof T> | (T extends Constructor ? InstanceType<T> : T) = Dot<keyof T>>(
-  type: T,
-  key: K | undefined,
-): K extends undefined ? undefined : K extends `.${infer P extends keyof T & string}` ? T[P] : K {
-  if (key == null) {
+
+type KeyType<T extends AnyConstructor> = undefined | KeyOf<T>;
+export function fromKey<T extends AnyConstructor,
+K extends KeyType<T> = KeyType<T>
+>(type:T, key:K ): K extends undefined ? undefined : InstanceType<T>{
+   if (key == null) {
     return undefined as any;
   }
   if (typeof key == "string") {
@@ -156,6 +148,18 @@ export function fromKey<T, K extends Dot<keyof T> | (T extends Constructor ? Ins
     return ret;
   }
   return key as any;
+}
+export function fromEnum<T, K extends (undefined | Dot<keyof T>| T[keyof T])>(type:T, key:K):K extends undefined ? undefined: T[keyof T]{
+    if (key == undefined){
+      return undefined as any;
+    }
+    if (typeof key === 'string') {
+      if (key[0] === '.'){
+        return type[key.slice(1) as unknown as keyof T] as any
+      }
+      return type[key as keyof T] as any;
+    }
+    return key as any;
 }
 
 export function isUndefined(v: unknown): v is undefined {

@@ -2,7 +2,7 @@ import { CSSProperties } from "../types";
 
 export type On<T = unknown> = (t: T) => unknown;
 export class EventsMixin {
-  _style?: CSSProperties;
+  protected _style?: CSSProperties;
   _onTapGesture?: On;
   _onLongPressGesture?: On;
   _onHover?: On;

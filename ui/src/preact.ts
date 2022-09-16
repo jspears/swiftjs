@@ -3,12 +3,12 @@ import { Component, VNode } from "preact";
 import { bindToState, PickBindable } from "./state";
 import type { CSSProperties } from "./types";
 import type { On } from "./View/EventsMixin";
+import type {HasWatch} from "./View/HasWatch";
 
-export interface LifecycleProps {
+export interface LifecycleProps extends HasWatch {
   //Calling it exec, cause children has special meaning,
   //that doesn't quite work for us.
   exec?(): VNode<any>[];
-  watch: Map<string, Bindable<unknown>>;
   class?: string;
 }
 

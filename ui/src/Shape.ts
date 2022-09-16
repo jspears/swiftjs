@@ -1,9 +1,9 @@
 import { fromKey, Num, ReverseMap, Size } from "@tswift/util";
 import { swifty } from "@tswift/util";
 import { h, VNode } from "preact";
-import { FillStyle, isGradient } from "./Gradient";
+import {  isGradient } from "./Gradient";
 import { RoundedCornerStyle, RoundedCornerStyleKey } from "./style";
-import { View, Viewable } from "./View";
+import {  Viewable } from "./View";
 import { CSSProperties, HasToDataURI } from "./types";
 import { isNum, unitFor } from "./unit";
 import { Color, ColorKey } from "./Color";
@@ -45,8 +45,8 @@ type StrokeKeys = keyof ReverseMap<typeof StrokeStyleMap> | "stroke";
 const strikeMap = (v: keyof StrokeStyle): StrokeKeys => {
   return StrokeStyleMap[v];
 };
-export class Shape<T = unknown> extends Viewable<T> implements FillStyle, HasToDataURI {
-  _fill?: FillStyle;
+export class Shape<T = unknown> extends Viewable<T> implements HasFill, HasToDataURI {
+  _fill?: HasFill;
   _stroke: Partial<{ [k in StrokeKeys]: string }> = {};
   constructor(t?: T) {
     super(t);
@@ -85,12 +85,14 @@ export class Shape<T = unknown> extends Viewable<T> implements FillStyle, HasToD
     return toCSS(this.toDataURI());
   }
 
-  renderShape() {}
+  renderShape():VNode<any> {
+    return null as any;
+  }
 
-  render() {
+  render():VNode<any> {
     if (this._overlay) {
       const [view, location] = this._overlay;
-      view._style = Object.assign(view._style, {
+      (view as any)._style = Object.assign((view as any)._style, {
         position: "absolute",
         top: 0,
         left: 0,
@@ -155,10 +157,6 @@ export const Rectangle = swifty(
     }
   },
 );
-
-interface ViewableClass {
-  Rectangle: typeof Rectangle;
-}
 
 export const RoundedRectangle = swifty(
   class RoundedRectangle extends Shape<{

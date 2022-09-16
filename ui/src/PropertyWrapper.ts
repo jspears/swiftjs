@@ -28,7 +28,7 @@ function boundToParent(view: View, property: string): Bindable<unknown> {
   if (!view) {
     throw new Error(`Could not find state for binding '${property}' in parents check name`);
   }
-  const current = view.watch.get(property);
+  const current = view.watch?.get(property);
   if (current != null) {
     return current;
   }

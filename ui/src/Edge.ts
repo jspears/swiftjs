@@ -1,4 +1,4 @@
-import { Constructor, Dot, fromKey, KeyOf, KeyOfTypeWithType, Set, swiftyKey } from "@tswift/util";
+import { asArray, Constructor, Dot, fromEnum, fromKey, KeyOf, KeyOfTypeWithType, Set, swiftyKey } from "@tswift/util";
 import { applyMixins } from "@tswift/util";
 import { CSSProperties } from "./types";
 export abstract class AlignmentBase {
@@ -101,7 +101,10 @@ export class EdgeSet {
       this.name = name.name;
       this._set = name._set;
     }
-    edges.forEach((v) => this._set.add(fromKey(Edge, v as EdgeKey)));
+    edges.forEach((v) =>{
+      const e = fromKey(Edge, v);
+      if (e)  this._set.add(e);
+    });
   }
 
   static [Symbol.iterator]() {
@@ -132,7 +135,7 @@ export class VerticalEdgeSet {
   static bottom = new VerticalEdgeSet(".bottom");
   private edges = Set<VerticalEdge>();
   constructor(...edges: VerticalEdgeKey[]) {
-    this.edges = Set(edges.map((v) => fromKey(VerticalEdge, v as any)));
+    this.edges = Set(asArray(...edges.map((v) => fromEnum(VerticalEdge, v as any))));
   }
   [Symbol.iterator]() {
     return this.edges[Symbol.iterator]();
@@ -152,7 +155,7 @@ export class HorizontalEdgeSet {
   static trailing = new HorizontalEdgeSet(".trailing");
   private edges = Set<HorizontalEdge>();
   constructor(...edges: HorizontalEdgeKey[]) {
-    this.edges = Set(edges.map((v) => fromKey(HorizontalEdge, v as any)));
+    this.edges = Set(asArray(...edges.map((v) => fromEnum(HorizontalEdge, v as any))));
   }
   [Symbol.iterator]() {
     return this.edges[Symbol.iterator]();

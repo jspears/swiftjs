@@ -20,6 +20,7 @@ export const bindToState = <T extends LifecycleProps = LifecycleProps, Ret = Pic
 ): Ret => {
   const state: Record<string, unknown> = {};
   const unsub = watchable(null);
+  if (watch)
   for (const [key, value] of watch) {
     const $key = `$${key}`;
     unsub.sink(
@@ -54,7 +55,7 @@ export const useBindableMap = <T extends LifecycleProps>({ watch, exec, ...props
 
   useEffect(() => {
     const unsub = watchable(null);
-
+    if (watch)
     for (const [key, value] of watch) {
       const $key = `$${key}`;
       unsub.sink(value.sink((v) => setState({ ...state, [$key]: v })));

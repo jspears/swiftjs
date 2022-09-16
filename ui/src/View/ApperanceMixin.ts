@@ -25,7 +25,7 @@ export type VisibilityKey = KeyOf<typeof Visibility>;
 export type ColorSchemeKey = KeyOf<typeof ColorScheme>;
 
 export class ApperanceMixin<S extends ShapeStyle = ShapeStyle> {
-  _style: CSSProperties = {};
+  protected _style: CSSProperties = {};
   protected _border?: CSSProperties;
   @Inherit
   _color?: Color;
