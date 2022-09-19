@@ -53,6 +53,8 @@ export default defineConfig({
       '@tswift/coredata':`${dirname}/../coredata/src/index.ts`,
       '@tswift/util':`${dirname}/../util/src/index.ts`,
       '@tswift/ui':`${dirname}/../ui/src/index.ts`,
+      "react": "preact/compat",
+      "react-dom": "preact/compat"
     }
 
   },

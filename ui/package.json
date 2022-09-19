@@ -22,6 +22,7 @@
     "@types/color": "^3.0.3",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.6",
+    "@types/react-transition-group": "^4.4.5",
     "@types/uuid": "^8.3.4",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
@@ -33,9 +34,13 @@
   "dependencies": {
     "@tswift/coredata": "^1.0.0",
     "@tswift/util": "^1.0.0",
+    "@use-gesture/react": "^10.2.20",
     "color": "^4.2.3",
     "preact": "^10.10.2",
     "preact-render-to-string": "^5.2.3",
+    "preact-transition-group": "^2.0.0",
+    "react-spring": "^9.5.4",
+    "react-transition-group": "^4.4.5",
     "serve": "^14.0.1",
     "shifty": "^2.19.0"
   }

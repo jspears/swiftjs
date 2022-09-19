@@ -1,6 +1,7 @@
 import { KeyOf, Bindable, swiftyKey, todo, isInstanceOf } from "@tswift/util";
 import { has, isFunction, watchable } from "@tswift/util";
 import { tween, Tweenable } from "shifty";
+import { TransitionContext } from "./AnyTransition";
 import { BindableState } from "./state";
 interface AnimationConfig {
   duration?: number;
@@ -12,10 +13,10 @@ interface AnimationConfig {
   easing?: string;
 }
 class AnimationClass {
-  static easeInOut = new AnimationClass("easeInOutExpo");
-  static easeIn = new AnimationClass("easeInExpo");
-  static easeOut = new AnimationClass("easeOutExpo");
-  static linear = new AnimationClass("linear");
+  static easeInOut = new AnimationClass("easeInOutExpo", "ease-in-out");
+  static easeIn = new AnimationClass("easeInExpo", "ease-in");
+  static easeOut = new AnimationClass("easeOutExpo", "ease-out");
+  static linear = new AnimationClass("linear", "linear");
   static default = AnimationClass.easeInOut;
 
   conf: AnimationConfig = {
@@ -30,27 +31,30 @@ class AnimationClass {
   static timingCurve(curve: { c0x: number; c0y: number; c1x: number; c1y: number; duration: number }) {
     return AnimationClass.default;
   }
-  constructor(easing: string | AnimationConfig) {
+  constructor(easing: string | AnimationConfig, public cssName:string) {
     if (typeof easing == "string") {
       this.conf.easing = easing;
     } else {
       Object.assign(this.conf, easing);
     }
   }
+  apply(conf:Partial<AnimationConfig>){
+      return new AnimationClass(Object.assign({}, this.conf, conf), this.cssName);
+  }
   repeatCount(repeatCount: number, autoreverses: boolean = false) {
-    return new AnimationClass({ repeatCount, autoreverses });
+    return this.apply({ repeatCount, autoreverses })
   }
   repeatForever(autoreverses: boolean) {
-    return new AnimationClass({ repeatForever: true, autoreverses });
+    return this.apply({ repeatForever: true, autoreverses });
   }
   speed(speed: number) {
-    return new AnimationClass({ speed });
+    return this.apply({ speed });
   }
   delay(delay: number) {
-    return new AnimationClass({ delay: delay * 1000 });
+    return this.apply({ delay: delay * 1000 });
   }
   duration(duration: number) {
-    return new AnimationClass({ duration: duration * 1000 });
+    return this.apply({ duration: duration * 1000 })
   }
   tween<T>(cb: Bindable<T>) {
     return tweenBindable<T>(cb, this.conf);
@@ -61,7 +65,7 @@ export const easeIn = AnimationClass.easeIn;
 export const easeOut = AnimationClass.easeOut;
 export const easeInOut = AnimationClass.easeInOut;
 
-export type AnimationType = typeof AnimationClass;
+export type AnimationType =  AnimationClass;
 
 export type AnimationKey = KeyOf<typeof AnimationClass>;
 
@@ -69,7 +73,7 @@ export type Callback = () => void;
 export const AnimationTool = swiftyKey(AnimationClass);
 
 type AnimationContextType = {
-  withAnimation?: AnimationClass;
+  withAnimation?: typeof AnimationClass;
 };
 /**
  * This holds an animation context.   When bound
@@ -104,10 +108,12 @@ export function withAnimation(animation: AnimationKey | Callback, result?: Callb
   try {
     result?.();
   } finally {
+    setTimeout(TransitionContext.transition.toggle,100);
     AnimationContext.withAnimation = undefined;
   }
 }
 export const Animation = swiftyKey(AnimationClass);
+export const AnimationType =  AnimationClass;
 
 export function isBindableState(v: unknown): v is BindableState<unknown> {
   return isFunction(v) && has(v, "scope") && has(v, "property");
@@ -121,25 +127,29 @@ export const tweenBindable = <T>(
   t: Bindable<T> = watchable<T>(null as T),
   options: AnimationConfig = {},
 ): AnimatedBindable<T> => {
+  const v=  t();
+  if (typeof v === 'boolean'){
+    setTimeout(t, ((options.duration || .4) + (options.delay || 0))* 1000 , !v);
+    return t as any;
+  }
   const animated = tween();
 
-  const watched = watchable(t(), (to) => {
+  const watched = Object.defineProperty(watchable(v, (to) => 
     animated.tween({
       easing: "easeInQuint",
-      duration: 400,
+      duration: 350,
       ...options,
       render({ value }) {
         t(value);
       },
       from: { value: t() },
       to: { value: to },
-    });
+    })), "value", {
+    get:t,
   });
-  Object.defineProperty(watched, "value", {
-    get() {
-      return t();
-    },
+
+  return Object.assign(watched, { 
+    animated,
+    sink:t.sink,
   });
-  watched.sink = t.sink;
-  return Object.assign(watched, { animated });
 };

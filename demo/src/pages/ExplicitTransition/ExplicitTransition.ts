@@ -1,4 +1,6 @@
-import {main, Viewable,State,Button,withAnimation,Text, Bound} from "@tswift/ui";
+import {main, Viewable,State,Button,withAnimation,Text, Bound, Animation, AnimationTool} from "@tswift/ui";
+import {SlideIn} from './SlideIn';
+import {h} from 'preact';
 
 @main
 export class ExplicitTransition extends Viewable {
@@ -6,10 +8,13 @@ export class ExplicitTransition extends Viewable {
     
      body = ()=>[
         Button("Toggle",()=>
-            withAnimation('.easeInOut', ()=> this.showBanana = !this.showBanana )
+            withAnimation('.easeIn', ()=> this.showBanana = !this.showBanana )
         ),
         this.showBanana && Text("🍌")
-                .transition('.slide')
+                .transition('.slide') 
     ]
+    // render(){
+    //     return h(SlideIn, {}, this.renderExec());
+    // }
     
 }

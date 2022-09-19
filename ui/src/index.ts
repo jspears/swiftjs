@@ -2,6 +2,7 @@ export * from "./export";
 export * from "./App";
 export * from "./Animation";
 export * from "./AnyTransition"
+export * from "./AnyTransition";
 export * from "./Axis";
 export * from "./Button";
 export * from "./Calendar";

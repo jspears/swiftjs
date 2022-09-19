@@ -27,7 +27,7 @@ export class PaddingMixin {
   padding(edge: EdgeKey[], l: Num): this;
   padding(edge: EdgeInsets, l: Num): this;
   padding(alignment: AlignmentKey, length?: Num): this;
-  padding(a?: Config | Num | EdgeInsets | EdgeKey[] | AlignmentKey, l?: Num): this {
+  padding(a?: Config | Num | EdgeInsets | EdgeKey[] | AlignmentKey = 10, l?: Num): this {
     if (!this._padding) {
       this._padding = {};
     }
@@ -41,7 +41,7 @@ export class PaddingMixin {
           return ret;
         }, {} as CSSProperties),
       );
-    } else if (isNum(a) || a == null) {
+    } else if (isNum(a)) {
       a = unitFor(a == null ? 10 : a);
       Object.assign(this._padding, {
         paddingTop: a,

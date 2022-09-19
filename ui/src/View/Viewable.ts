@@ -33,6 +33,8 @@ import { isBounds, isView } from "../guards";
 import { ViewComponent } from "../preact";
 import { TransformMixin } from "./TransformMixin";
 import { AnimationContext } from "../Animation";
+import { Transition, AnyTransition } from "../AnyTransition";
+import { TransitionView } from "./TransitionView";
 
 export type Body<T> = View | View[] | ((bound: Bound<T> & T) => View | undefined | (View | undefined)[]);
 
@@ -54,15 +56,9 @@ export class ViewableClass<T = any> extends View {
       get(scope, key) {
         if (isString(key)) {
           if (key[0] === "$") {
-            const property = key.slice(1);
-            return Object.assign(
-              (v: unknown) => {
-                return scope.$(property as any)(v);
-              },
-              { scope, property },
-            );
+            return scope.$(key.slice(1) as any);
           }
-          return scope.$(key as unknown as any).value;
+          return scope.$(key as any).value;
         }
       },
     }) as Bound<this>;
@@ -85,36 +81,26 @@ export class ViewableClass<T = any> extends View {
   protected $ = <V extends typeof this = typeof this, K extends keyof V & string = keyof V & string, R = V[K]>(
     key: K,
   ): Bindable<R> => {
-    let bound = this.watch?.get(key);
+    if (!this.watch) {
+      this.watch = new Map();
+    }
+    let bound = this.watch.get(key);
     if (!bound) {
       const value = has(this, key) ? this[key] : null;
-      if (isObservableObject(value)){
-        bound = Object.assign((value as ObservableObject).objectWillChange, { scope: this, property: key })  as any
-      }else if (isBindable(value)){
+      if (isObservableObject(value)) {
+        bound = Object.assign((value as ObservableObject).objectWillChange, { scope: this, property: key }) as any
+      } else if (isBindable(value)) {
         bound = value;
-      }else {
+      } else {
         bound = bindableState<R>(value as unknown as R, this, key) as any;
       }
-
-
-      Object.defineProperty(this, key, {
-        configurable: true,
-        get() {
-          return this.watch.get(key)?.value;
-        },
-        set(v) {
-          this.watch.get(key)?.(v);
-        },
-      });
-      if (!bound) {
-        throw new Error(`This should never happen`);
+      if (bound == null) {
+        throw new Error(`this should not happen, like ever`)
       }
-      this.watch?.set(key, bound);
+      this.watch.set(key, bound);
     }
     if (AnimationContext.withAnimation) {
-      const tween = AnimationContext.withAnimation.tween<R>(bound as any);
-      //      this.watch.set(key, tween as any);
-      return tween as Bindable<R>;
+      return AnimationContext.withAnimation.tween(bound) as any;
     }
     return bound as Bindable<R>;
   };
@@ -166,7 +152,28 @@ export class ViewableClass<T = any> extends View {
 
   body?: Body<this>;
 
+  _transition?: AnyTransition;
+  transition(transition: TransitionKey) {
+    this._transition = Transition.fromKey(transition);
+    return this;
+  }
+
   exec = (): View[] => {
+    return this._exec().map(v => {
+      if (v._transition || v._onAppear || v._onDisappear) {
+        return new TransitionView(
+          v._transition,
+          v._onAppear,
+          v._onDisappear,
+          v
+        )
+      }
+
+      return v;
+    });
+  }
+
+  _exec = (): View[] => {
     this._unsub?.();
     if (!this.body) {
       return asArray(this.children);
@@ -178,12 +185,15 @@ export class ViewableClass<T = any> extends View {
       return this.body;
     }
     return asArray(this.body(this._bound)).flatMap((v) => {
+      if (!v) {
+        return [];
+      };
       v.parent = this;
       return v;
     });
   };
   renderExec = () => flatRender(this.exec());
-
+ 
   render() {
     if (this.body && this.watch) {
       return h(
@@ -202,18 +212,18 @@ export class ViewableClass<T = any> extends View {
 
 export interface ViewableClass
   extends ApperanceMixin,
-    AnimationMixin,
-    ControlMixin,
-    EnvironmentMixin,
-    EventsMixin,
-    FontMixin,
-    ListMixin,
-    NavigationMixin,
-    PaddingMixin,
-    PickerMixin,
-    Searchable,
-    ShapeMixin,
-    TransformMixin {}
+  AnimationMixin,
+  ControlMixin,
+  EnvironmentMixin,
+  EventsMixin,
+  FontMixin,
+  ListMixin,
+  NavigationMixin,
+  PaddingMixin,
+  PickerMixin,
+  Searchable,
+  ShapeMixin,
+  TransformMixin { }
 export const Viewable = applyMixins(
   ViewableClass,
   ApperanceMixin,
