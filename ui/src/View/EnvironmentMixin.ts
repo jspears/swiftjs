@@ -4,13 +4,13 @@ import { Inherit } from "../Inherit";
 
 export class EnvironmentMixin {
   @Inherit
-  _environmentObject?: EnvironmentValuesClass;
+  _environment?: EnvironmentValues;
 
-  environmentObject(v: EnvironmentValuesClass) {
-    this._environmentObject = v;
+  environmentObject(v: EnvironmentValues) {
+    this._environment = v;
   }
-  environment<K extends Dot<keyof  EnvironmentValuesClass>>(key: K, t: K extends `.${infer Key extends keyof EnvironmentValuesClass & string}` ? EnvironmentValuesClass[Key]: never) {
-    this._environmentObject = new EnvironmentValuesClass({
+  environment<K extends Dot<keyof  EnvironmentValues>>(key: K, t: K extends `.${infer Key extends keyof EnvironmentValues & string}` ? EnvironmentValues[Key]: never) {
+    this._environment = new EnvironmentValuesClass({
       [key]: t
     }); 
     return this;

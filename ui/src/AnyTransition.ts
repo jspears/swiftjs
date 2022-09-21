@@ -28,15 +28,15 @@ const TRANSITION = [
 ] as const;
 type Transitionable = typeof TRANSITION[number]
 type TranFn = (v: number) => string | number;
-interface TransitionFuncs extends Partial<Record<Transitionable, TranFn | undefined>> {
-}
+type TransitionFunctions  = { 
+    [k in Transitionable]?:TranFn;
+};
 
-export class AnyTransition implements TransitionFuncs {
-
+export class AnyTransition implements TransitionFunctions {
     insertion: AnyTransition = this;
     removal: AnyTransition = this;
     _animation?: AnimationType;
-    _toggle:TransitionToggle;
+    _toggle?:TransitionToggle;
 
     static identity = new AnyTransition();
     static move(edge: EdgeKey) {
@@ -126,6 +126,12 @@ export class AnyTransition implements TransitionFuncs {
             }
         }
     }
+    /** 
+     * This is here soley to make Typescript happy, otherwise there is no overlap.
+    */
+    transition(v:number){
+        return '';
+    }
 
     animation(v: AnimationKey) {
         this._animation = Animation.fromKey(v);
@@ -168,9 +174,8 @@ export class AnyTransition implements TransitionFuncs {
     }
 
     toStyle(): TransitionStyles {
-        const animation = this._animation || AnimationContext.withAnimation;
-        const { duration = .35, delay = 0 } = animation?.conf || {};
-        const cssName = animation?.cssName || 'ease-in-out';
+        const animation:AnimationType | undefined = this._animation || AnimationContext.withAnimation;
+        const { cssName = 'ease-in-out', duration = .35, delay = 0 } = animation?.conf || {} ;
         const ret = {
             entering: this.insertion.style(0),
             entered: this.insertion.style(1),
@@ -284,7 +289,8 @@ export const TransitionContext: {
 
 } = {
     initialize(start: boolean, duration: number) {
-        return (TransitionContext.transition = new TransitionToggle(start, duration));
+        return null as any;
+//        return (TransitionContext.transition = new TransitionToggle(start));
     }
 }
 

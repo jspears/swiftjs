@@ -142,7 +142,7 @@ class EditButtonClass extends ButtonClass {
     this.editMode?.isEditing.sink((v) => {
       this.label = v ? "Done" : "Edit";
     });
-    this.label = this.editMode?.().isEditing() ? "Done" : "Edit";
+    this.label = this.editMode?.isEditing() ? "Done" : "Edit";
   }
 
   onAction = () => {

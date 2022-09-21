@@ -3,7 +3,8 @@ import { has, isFunction, watchable } from "@tswift/util";
 import { tween, Tweenable } from "shifty";
 import { TransitionContext } from "./AnyTransition";
 import { BindableState } from "./state";
-interface AnimationConfig {
+
+export interface AnimationConfig {
   duration?: number;
   delay?: number;
   repeatCount?: number;
@@ -11,17 +12,15 @@ interface AnimationConfig {
   autoreverses?: boolean;
   speed?: number;
   easing?: string;
+  cssName?: string;
 }
 class AnimationClass {
+
   static easeInOut = new AnimationClass("easeInOutExpo", "ease-in-out");
   static easeIn = new AnimationClass("easeInExpo", "ease-in");
   static easeOut = new AnimationClass("easeOutExpo", "ease-out");
   static linear = new AnimationClass("linear", "linear");
   static default = AnimationClass.easeInOut;
-
-  conf: AnimationConfig = {
-    duration: 350,
-  };
 
   @todo("figure it out")
   static spring(conf: { response: number; dampingFraction: number; blendDuration: number }) {
@@ -37,7 +36,14 @@ class AnimationClass {
     } else {
       Object.assign(this.conf, easing);
     }
+    this.conf.cssName = cssName;
   }
+
+
+  conf:AnimationConfig = {
+    duration:3.5
+  };
+
   apply(conf:Partial<AnimationConfig>){
       return new AnimationClass(Object.assign({}, this.conf, conf), this.cssName);
   }
@@ -58,7 +64,7 @@ class AnimationClass {
   }
   tween<T>(cb: Bindable<T>) {
     const inAnimation = AnimationContext.inAnimation = tweenBindable<T>(cb, this.conf);
-    const done = _ => {
+    const done = () => {
       AnimationContext.inAnimation = undefined;
     };
     inAnimation.animated?.then(done, done);
@@ -70,16 +76,12 @@ export const easeIn = AnimationClass.easeIn;
 export const easeOut = AnimationClass.easeOut;
 export const easeInOut = AnimationClass.easeInOut;
 
-export type AnimationType =  AnimationClass;
-
-export type AnimationKey = KeyOf<typeof AnimationClass>;
-
 export type Callback = () => void;
 export const AnimationTool = swiftyKey(AnimationClass);
 
 type AnimationContextType = {
   inAnimation?: AnimatedBindable<any>;
-  withAnimation?: typeof AnimationClass;
+  withAnimation?: AnimationType;
 };
 /**
  * This holds an animation context.   When bound
@@ -119,7 +121,8 @@ export function withAnimation(animation: AnimationKey | Callback, result?: Callb
   }
 }
 export const Animation = swiftyKey(AnimationClass);
-export const AnimationType =  AnimationClass;
+export type AnimationType =  AnimationClass;
+export type AnimationKey = KeyOf<typeof AnimationClass>;
 
 export function isBindableState(v: unknown): v is BindableState<unknown> {
   return isFunction(v) && has(v, "scope") && has(v, "property");

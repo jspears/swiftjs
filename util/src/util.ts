@@ -1,6 +1,6 @@
 import { AnyConstructor, Bindable, Constructor, Dot, Identifiable, KeyOf, KeyPath,KeysOfTypeBest, KeyValue, Listen,} from "./types";
 import { v4 as uuidv4 } from "uuid";
-import { has } from "./guards";
+import { has, isObjectWithProp } from "./guards";
 
 export const OrigSet = globalThis.Set;
 
@@ -42,8 +42,8 @@ export function watchable<T>(value: T, ...listen: Listen<T>[]): Bindable<T> {
 export function toEnum<T>(enm: T, property: T | Dot<keyof T> | keyof T): T {
   if (typeof property === "string") {
     const p = property[0] === "." ? property.slice(1) : property;
-    if (has(enm, p)) {
-      return enm[p];
+    if (isObjectWithProp(enm, p)) {
+      return enm[p] as any;
     }
     throw new Error(`not an enum ${property} in ${enm}`);
   }

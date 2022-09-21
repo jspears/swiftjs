@@ -1,5 +1,5 @@
 import { Viewable } from "./View";
-import { Hasher, swiftyKey } from "@tswift/util";
+import { HashI, Hasher, swiftyKey } from "@tswift/util";
 import { h, Fragment, Component } from "preact";
 import { bindToState } from "./state";
 import { ViewComponentProps } from "./preact";
@@ -27,7 +27,7 @@ class TextClass extends Viewable<string> {
       this.text,
     );
   }
-  hash(hasher:Hasher):Hasher{
+  hash(hasher:HashI):HashI{
     return hasher.combine('Text').combine(this.text);
   }
 }

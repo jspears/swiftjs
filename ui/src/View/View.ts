@@ -1,4 +1,4 @@
-import { asArray, Bindable, Hashable, Hasher, Identifiable } from "@tswift/util";
+import { asArray, Bindable, HashI, Hashable, Hasher, Identifiable } from "@tswift/util";
 import { h, VNode, Fragment } from "preact";
 import { EditMode } from "../EditMode";
 import { Inherit } from "../Inherit";
@@ -15,8 +15,7 @@ export class View implements Identifiable, HasWatch, Hashable {
   _id = ''
   watch?:Map<string, BindableState<unknown>> = new Map<string, BindableState<unknown>>();
 
-  @Environment(".editMode")
-  editMode?: EditMode;
+  editMode?:EditMode;
 
   @Inherit
   _selection?: Selection;
@@ -66,8 +65,8 @@ export class View implements Identifiable, HasWatch, Hashable {
     }
     return h(Fragment, {});
   }
-  hash(hasher:Hasher):Hasher {
-    return hasher.combine(this.constructor.name).combine(this.id)
+  hash(hasher:HashI):HashI {
+    return hasher.combine(this.constructor.name).combine(this.id);
   }
 }
 

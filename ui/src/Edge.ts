@@ -81,7 +81,7 @@ export const Alignment = swiftyKey(
 
 export type AlignmentKey = Dot<keyof AlignmentType>;
 
-export const Edge = class Edge {
+export class Edge {
   constructor(public name: string) {}
   static top = new Edge("Top");
   static bottom = new Edge("Bottom");

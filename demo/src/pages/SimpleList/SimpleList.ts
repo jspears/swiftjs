@@ -3,7 +3,7 @@
 import { Hashable, Identifiable, List, swifty, Text, UUID, Viewable, CountSet, ListConfig, main } from "@tswift/ui";
 
 const Ocean = swifty(
-  class implements Identifiable, Hashable {
+  class implements Identifiable {
     constructor(public name: string, public id = UUID()) {}
   },
 );

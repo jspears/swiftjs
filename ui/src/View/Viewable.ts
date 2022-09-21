@@ -5,14 +5,12 @@ import {
   applyMixins,
   has,
   watchable,
-  Void,
   isBindable,
   asArray,
-  Dot,
   ObservableObject,
   Hasher,
 } from "@tswift/util";
-import type { Bindable, Bound, Bounds } from "@tswift/util";
+import type { Void, HashI, Dot, Bindable, Bound, Bounds } from "@tswift/util";
 import { ApperanceMixin } from "./ApperanceMixin";
 import { PaddingMixin } from "./PaddingMixin";
 import { PickerMixin } from "./PickerMixin";
@@ -31,11 +29,13 @@ import { EnvironmentMixin } from "./EnvironmentMixin";
 import { bindableState, BindableState, flatRender } from "../state";
 import { isBounds, isView } from "../guards";
 import { ViewComponent } from "../preact";
+import { Environment } from '../PropertyWrapper';
 import { TransformMixin } from "./TransformMixin";
 import { AnimationContext } from "../Animation";
-import { Transition, AnyTransition } from "../AnyTransition";
+import { Transition, TransitionKey, AnyTransition } from "../AnyTransition";
 import { TransitionView } from "./TransitionView";
 import { idFor } from "./identify";
+import { EditMode } from '../EditMode';
 
 export type Body<T> = View | View[] | ((bound: Bound<T> & T) => View | undefined | (View | undefined)[]);
 
@@ -64,6 +64,10 @@ export class ViewableClass<T = any> extends View {
       },
     }) as Bound<this>;
   }
+
+  @Environment(".editMode")
+  editMode?: EditMode;
+
   overlay(overlay: View, alignment: AlignmentKey = ".center") {
     this._overlay = [overlay, Alignment.fromKey(alignment)];
     return this;
@@ -92,7 +96,7 @@ export class ViewableClass<T = any> extends View {
       if (isObservableObject(value)) {
         bound = Object.assign((value as ObservableObject).objectWillChange, { scope: this, property: key }) as any
       } else if (isBindable(value)) {
-        bound = value;
+        bound = Object.assign(value, { scope: this, property: key }) as any
       } else {
         bound = bindableState<R>(value as unknown as R, this, key) as any;
       }
@@ -237,7 +241,7 @@ export class ViewableClass<T = any> extends View {
     }
     return super.render?.();
   }
-  hash(hasher:Hasher):Hasher {
+  hash(hasher:HashI):HashI {
     return hasher.combine(this.constructor.name).combine(this._tag).combine(this._id);
   }
 }

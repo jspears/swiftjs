@@ -33,7 +33,3 @@ export interface HasToDataURI {
 }
 
 export type SystemImageType = keyof typeof SystemImage;
-
-export interface Hashable {
-  hashValue():number;
-}
