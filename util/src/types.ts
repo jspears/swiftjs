@@ -1,3 +1,5 @@
+import { Hasher } from "./Hasher";
+
 export type Dot<T> = T extends 'prototype' ? never : T extends string ? `.${T}` : never;
 //This is to support `.property` notation from swift.
 
@@ -70,8 +72,12 @@ export interface Identifiable {
 }
 
 export type ID = Identifiable["id"];
-
-export interface Hashable {}
+export type HashI = {
+  combine(v:undefined|number|boolean|bigint|string|Hashable):HashI;
+}
+export interface Hashable {
+  hash(hasher:HashI):HashI;
+}
 
 type D = "." | "";
 export type KeyValue<T, S> = S extends `${D}${infer P extends keyof T & string}.${infer Rest}`

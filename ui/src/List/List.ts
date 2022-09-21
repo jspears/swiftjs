@@ -17,7 +17,7 @@ import { dataToView } from "./dataToView";
 
 export class ListClass<T extends HasId = HasId> extends Viewable<ListConfig<T>> {
   @Environment(".editMode")
-  editMode?: Bindable<EditMode>;
+  editMode?: EditMode;
   _level = 0;
   constructor(config?: ListConfig<T> | View, ...views: []) {
     super(...[config, ...views]);
@@ -78,7 +78,7 @@ export class ListClass<T extends HasId = HasId> extends Viewable<ListConfig<T>> 
   renderExec = () => asArray(this.exec()).map((v, idx, all) => v.renderListItem(idx, all.length));
 
   render(): VNode<any> {
-    const isEdit = this.editMode?.()?.isEditing;
+    const isEdit = this.editMode?.isEditing;
     const style = this.asStyle({ flex: "1", width: "100%" });
     return h(
       ListComponent,

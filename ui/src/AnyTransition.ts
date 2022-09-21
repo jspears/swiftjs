@@ -1,10 +1,14 @@
 
-import { Num, Size, KeyOf, False, Bool, Bindable } from '@tswift/util';
+import { Num, Size, KeyOf, False, Bool, Bindable, Listen, isObjectWithProp, isObjectWithPropType, isFunction } from '@tswift/util';
 import { swiftyKey, fromKey, watchable } from '@tswift/util';
+import { watch } from 'fs';
+import { TransitionTo } from 'react-spring';
+import { tween, Tweenable } from 'shifty';
 import { AnimationContext, Animation, AnimationKey, AnimationType } from './Animation';
 import { Edge, EdgeKey } from './Edge';
 import { CSSProperties } from './types';
 import { isNum, unitFor } from './unit';
+import { View } from './View';
 import { UnitPointKey } from './View/TransformMixin';
 
 const TRANSITION = [
@@ -19,24 +23,22 @@ const TRANSITION = [
     'opacity',
     'translate',
     'rotate',
+    'transition',
 
 ] as const;
 type Transitionable = typeof TRANSITION[number]
 type TranFn = (v: number) => string | number;
-interface TransitionFuncs extends Partial<Record<Transitionable, TranFn>> {
+interface TransitionFuncs extends Partial<Record<Transitionable, TranFn | undefined>> {
+}
 
-}
-export const TransitionContext = {
-    transition: Bool(false),
-}
 export class AnyTransition implements TransitionFuncs {
 
     insertion: AnyTransition = this;
     removal: AnyTransition = this;
     _animation?: AnimationType;
+    _toggle:TransitionToggle;
 
     static identity = new AnyTransition();
-
     static move(edge: EdgeKey) {
         const to = fromKey(Edge, edge);
         return new class Move extends AnyTransition {
@@ -114,8 +116,9 @@ export class AnyTransition implements TransitionFuncs {
 
         }
     }
-    static assymetric(insertion: AnyTransition, removal: AnyTransition) {
-        return new class Assymetric extends AnyTransition {
+
+    static asymetric(insertion: AnyTransition, removal: AnyTransition) {
+        return new class Asymetric extends AnyTransition {
             constructor() {
                 super()
                 this.insertion = insertion;
@@ -129,29 +132,43 @@ export class AnyTransition implements TransitionFuncs {
         return this;
     }
 
+    style = (v: number, _style: CSSProperties = {}): CSSProperties => {
+        const self = this;
+        return TRANSITION.reduce((ret, key) => {
+            if (isObjectWithPropType(isFunction, key, self)) {
+                ret[key] = self[key](v);
+            }
+            return ret;                
+        }, _style);
+    }
+
     combined(with_: AnyTransition) {
         const self = this;
         return new class Combined extends AnyTransition {
             _animation = self._animation;
-            style(n: number) {
+            style = (n: number)=> {
                 return self.style(n, with_.style(n));
             }
 
         }
     }
+    toggle() {
+        if (!this._toggle) {
+            this._toggle = new TransitionToggle(this);
+        }
+        this._toggle.toggle();
+        return this;
+    }
 
-    style = (v: number, _style: CSSProperties = {}): CSSProperties => {
-       return TRANSITION.reduce((ret, key) => {
-            const val = this[key]?.(v);
-            if (val != null) {
-                ret[key] = val;
-            }
-            return ret;
-        }, _style);
+    styles(listen: Listen<CSSProperties>) {
+        if (!this._toggle) {
+            this._toggle = new TransitionToggle(this);
+        }     
+        return this._toggle.styles(listen);
     }
 
     toStyle(): TransitionStyles {
-        let animation = this._animation || AnimationContext.withAnimation;
+        const animation = this._animation || AnimationContext.withAnimation;
         const { duration = .35, delay = 0 } = animation?.conf || {};
         const cssName = animation?.cssName || 'ease-in-out';
         const ret = {
@@ -161,24 +178,24 @@ export class AnyTransition implements TransitionFuncs {
             exited: this.removal.style(0),
         }
 
-        const transition = [...new Set(Object.values(ret).flatMap(v=>Object.keys(v)))].reduce((ret, k)=>{
+        const transition = [...new Set(Object.values(ret).flatMap(v => Object.keys(v)))].reduce((ret, k) => {
             const trans = `${k} ${duration}s ${cssName} ${delay}s`;
-            return ret  ? `${ret}, ${trans}` : trans;
+            return ret ? `${ret}, ${trans}` : trans;
         }, '');
 
         return {
-            duration:duration * 1000,
-            style:{
+            duration: duration * 1000,
+            style: {
                 ...ret.entering,
                 transition
             },
-            ...ret            
+            ...ret
         };
     }
 }
 
 export type TransitionStyles = {
-    duration:number,
+    duration: number,
     style: CSSProperties;
     entering: CSSProperties;
     exiting: CSSProperties;
@@ -189,11 +206,88 @@ export type TransitionStyles = {
 export const Transition = swiftyKey(AnyTransition);
 export type TransitionKey = KeyOf<typeof AnyTransition>;
 
+type TransitionStates = 'entering' | 'entered' | 'exiting' | 'exited';
+
 class TransitionToggle {
-    in: Bindable<boolean>;
-    out: Bindable<boolean>
-    constructor(init:boolean ) {
-        this.in = watchable(init);
-        this.out = watchable(init);
+
+    get state() {
+        return this._change();
     }
+
+    set state(v) {
+        this._change(v);
+    }
+
+    _change = watchable<TransitionStates | undefined>(undefined);
+    _props = watchable<CSSProperties>({});
+
+    constructor(private _transition: AnyTransition) {
+        this._change.sink(this.transition);
+    }
+
+    transition = async(state: TransitionStates|undefined):Promise<void> => {
+        const self = this;
+        switch (state) {
+            case 'entering': {
+                const trans = this._transition.insertion;
+                const tw = tween({
+                    ...trans._animation?.conf,
+                    from: { value: 0 },
+                    to: { value: 1 },
+                    render({ value }) {
+                        self._props(trans.style(value))
+                    }
+                });
+                if (isFakePromise(tw)) {
+                    await tw;
+                }
+                this.state = 'entered';
+                break
+            }
+            case 'exiting': {
+                const trans = this._transition.removal;
+                const t = tween({
+                    ...trans._animation?.conf,
+                    from: { value: 1 },
+                    to: { value: 0 },
+                    render({ value }) {
+                        self._props(trans.style(value))
+                    }
+                });
+                if (isFakePromise(t)) {
+                    await t;
+                }
+                this.state = 'exited';
+                break;
+            }
+        }
+    }
+    sink(listen:Listen<TransitionStates|undefined>){
+        return this._change.sink(listen);
+    }
+    styles(listen: Listen<CSSProperties>) {
+        return this._props.sink(listen);
+    }
+
+    toggle = () => {
+        if (this.state === 'entered' || this.state === 'entering') {
+            this.state = 'exiting';
+        } else {
+            this.state = 'entering';
+        }
+    }
+
+}
+export const TransitionContext: {
+    transition?: TransitionToggle,
+    initialize(start: boolean, duration: number): TransitionToggle,
+
+} = {
+    initialize(start: boolean, duration: number) {
+        return (TransitionContext.transition = new TransitionToggle(start, duration));
+    }
+}
+
+function isFakePromise(v: unknown): v is Promise<unknown> {
+    return true;
 }

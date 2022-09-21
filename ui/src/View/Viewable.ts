@@ -10,7 +10,7 @@ import {
   asArray,
   Dot,
   ObservableObject,
-  fromKey,
+  Hasher,
 } from "@tswift/util";
 import type { Bindable, Bound, Bounds } from "@tswift/util";
 import { ApperanceMixin } from "./ApperanceMixin";
@@ -35,6 +35,7 @@ import { TransformMixin } from "./TransformMixin";
 import { AnimationContext } from "../Animation";
 import { Transition, AnyTransition } from "../AnyTransition";
 import { TransitionView } from "./TransitionView";
+import { idFor } from "./identify";
 
 export type Body<T> = View | View[] | ((bound: Bound<T> & T) => View | undefined | (View | undefined)[]);
 
@@ -80,6 +81,7 @@ export class ViewableClass<T = any> extends View {
   }
   protected $ = <V extends typeof this = typeof this, K extends keyof V & string = keyof V & string, R = V[K]>(
     key: K,
+    bindTo?:Bindable<unknown>
   ): Bindable<R> => {
     if (!this.watch) {
       this.watch = new Map();
@@ -158,19 +160,46 @@ export class ViewableClass<T = any> extends View {
     return this;
   }
 
-  exec = (): View[] => {
-    return this._exec().map(v => {
-      if (v._transition || v._onAppear || v._onDisappear) {
-        return new TransitionView(
-          v._transition,
-          v._onAppear,
-          v._onDisappear,
-          v
-        )
-      }
+  _transitionMap = new Map<number, TransitionView>();
 
-      return v;
-    });
+  exec = (): View[] => {
+    const ret: View[] = [];
+    const views = this._exec();
+    const max = Math.max(views.length, Math.max(...(this._transitionMap.keys()))+1);
+    for (let idx = 0; idx < max ; idx++){
+      const v = views[idx];
+      const trans = this._transitionMap.get(idx);
+      if (v == null) {
+        if (trans) {
+          trans.toggle()
+          ret.push(trans);
+        }      
+        continue;
+      }
+      v.parent = this;
+      v._id = idFor(v, idx);
+      if (v instanceof Viewable) {
+        const isTransition = !!(v._transition || v._onAppear || v._onDisappear)
+        if (trans && !isTransition) {
+          trans.toggle();
+          ret.push(v);
+        }else if (isTransition){
+          const t = new TransitionView(
+            v._transition,
+            v._onAppear,
+            v._onDisappear,
+            v
+          );
+          this._transitionMap.set(idx, t);
+          ret.push(t);
+        } else {
+          ret.push(v);
+        }
+      } else {
+        ret.push(v);
+      }
+    }
+    return views;
   }
 
   _exec = (): View[] => {
@@ -184,11 +213,11 @@ export class ViewableClass<T = any> extends View {
     if (Array.isArray(this.body)) {
       return this.body;
     }
-    return asArray(this.body(this._bound)).flatMap((v) => {
+    return asArray(this.body(this._bound)).flatMap((v, idx) => {
       if (!v) {
         return [];
       };
-      v.parent = this;
+      
       return v;
     });
   };
@@ -207,6 +236,9 @@ export class ViewableClass<T = any> extends View {
       );
     }
     return super.render?.();
+  }
+  hash(hasher:Hasher):Hasher {
+    return hasher.combine(this.constructor.name).combine(this._tag).combine(this._id);
   }
 }
 

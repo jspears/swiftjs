@@ -1,4 +1,4 @@
-import { asArray, Bindable, Identifiable } from "@tswift/util";
+import { asArray, Bindable, Hashable, Hasher, Identifiable } from "@tswift/util";
 import { h, VNode, Fragment } from "preact";
 import { EditMode } from "../EditMode";
 import { Inherit } from "../Inherit";
@@ -8,13 +8,15 @@ import { Environment } from "../PropertyWrapper";
 import { BindableState } from "../state";
 import { HasWatch } from "./HasWatch";
 
-export class View implements Identifiable, HasWatch {
-  id: string = "";
 
+export class View implements Identifiable, HasWatch, Hashable {
+  id: string = "";
+  
+  _id = ''
   watch?:Map<string, BindableState<unknown>> = new Map<string, BindableState<unknown>>();
 
   @Environment(".editMode")
-  editMode?: Bindable<EditMode>;
+  editMode?: EditMode;
 
   @Inherit
   _selection?: Selection;
@@ -26,10 +28,11 @@ export class View implements Identifiable, HasWatch {
   _parent?: View;
 
   set children(children) {
-    asArray(children).forEach((v) => (v.parent = this));
+    asArray(children).forEach((v) =>{ 
+      v.parent = this
+    });
     this._children = children;
   }
-
   get children(): View[] {
     return this._children;
   }
@@ -51,7 +54,7 @@ export class View implements Identifiable, HasWatch {
   init() {}
 
   renderListItem(index: number, total: number): VNode<any> {
-    const isEdit = this.editMode?.().isEditing() ?? false;
+    const isEdit = this.editMode?.isEditing() ?? false;
     const id = this.id || index + "";
     const selected = this._selection?.isSingleSelection() || isEdit ? this._selection?.isSelected(id) ?? false : false;
     return this._listStyle.renderListItem(this, index, total, id, isEdit, selected);
@@ -62,6 +65,9 @@ export class View implements Identifiable, HasWatch {
       return h(Fragment, {}, ...this.children.map((v) => v.render?.()));
     }
     return h(Fragment, {});
+  }
+  hash(hasher:Hasher):Hasher {
+    return hasher.combine(this.constructor.name).combine(this.id)
   }
 }
 

@@ -132,21 +132,21 @@ class ButtonComponent extends Component<ButtonProps> {
 }
 class EditButtonClass extends ButtonClass {
   @Environment(".editMode")
-  editMode?: Bindable<EditMode>;
+  editMode?: EditMode;
 
   @State
   label: string;
 
   constructor() {
     super();
-    this.editMode?.().isEditing.sink((v) => {
+    this.editMode?.isEditing.sink((v) => {
       this.label = v ? "Done" : "Edit";
     });
     this.label = this.editMode?.().isEditing() ? "Done" : "Edit";
   }
 
   onAction = () => {
-    const editMode = this.editMode?.()?.isEditing.toggle();
+    const editMode = this.editMode?.isEditing.toggle();
     this.label = editMode ? "Done" : "Edit";
   };
 }

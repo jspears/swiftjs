@@ -6,6 +6,7 @@ import type { View } from "./View";
 import { DefaultListStyle } from "./List";
 
 export class AppClass extends Viewable {
+  _id = 'root';
   constructor(...views: View[]) {
     super(...views);
     this.background(Color.white);

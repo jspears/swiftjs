@@ -1,7 +1,8 @@
 import { AnimationKey } from "./Animation";
 import { View, ViewableClass } from "./View/index";
 import { EnvironmentValues, EnvironmentValuesKeys } from "./EnvironmentValues";
-import { Bindable, Dot, fromKey, keyPath, ObservableObject, UUID } from "@tswift/util";
+import { Bindable, Dot, fromKey, isObject, isObjectWithProp, isObjectWithPropType, isObservableObject, keyPath, ObservableObject, UUID } from "@tswift/util";
+import { selfOrParent } from "./privateUtils";
 
 export function FocusState(target: Object, propertyKey: PropertyKey) {
   Reflect.defineProperty(target, propertyKey, {
@@ -32,7 +33,7 @@ function boundToParent(view: View, property: string): Bindable<unknown> {
   if (current != null) {
     return current;
   }
-  return boundToParent(view, property);
+  return boundToParent(view.parent as View, property);
 }
 
 export function Binding(target: View, property: string) {
@@ -52,12 +53,27 @@ export function Namespace(target: Object, propertyKey: PropertyKey) {
     value: UUID(),
   });
 }
+export function ObservedObject(target:Object, propertyKey:PropertyKey){
+   
+  Reflect.defineProperty(target, propertyKey, {
+    get(){
+      return this.$(propertyKey)?.value;
+    },
+    set(v){
+      return this.$(propertyKey)(v);
+    }
+  });
+}
 
 export function Environment(property: EnvironmentValuesKeys) {
-  return function (target: Object, propertyKey: PropertyKey) {
+  return function (target: {_environment?:EnvironmentValues}, propertyKey: PropertyKey) {
     Reflect.defineProperty(target, propertyKey, {
       get() {
-        return keyPath(EnvironmentValues, property);
+        const env = selfOrParent(this, '_environment') as EnvironmentValues
+        if (isObservableObject(env)) {
+          env.objectWillChange.sink(this.$(propertyKey));
+        }
+        return keyPath(env, property);
       },
     });
   };

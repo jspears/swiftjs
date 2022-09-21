@@ -31,4 +31,9 @@ export type TransformFn = (v: View, idx: number, total: number) => VNode<any>;
 export interface HasToDataURI {
   toDataURI(): string;
 }
+
 export type SystemImageType = keyof typeof SystemImage;
+
+export interface Hashable {
+  hashValue():number;
+}

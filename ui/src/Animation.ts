@@ -57,7 +57,12 @@ class AnimationClass {
     return this.apply({ duration: duration * 1000 })
   }
   tween<T>(cb: Bindable<T>) {
-    return tweenBindable<T>(cb, this.conf);
+    const inAnimation = AnimationContext.inAnimation = tweenBindable<T>(cb, this.conf);
+    const done = _ => {
+      AnimationContext.inAnimation = undefined;
+    };
+    inAnimation.animated?.then(done, done);
+    return inAnimation;
   }
 }
 export const linear = AnimationClass.linear;
@@ -73,6 +78,7 @@ export type Callback = () => void;
 export const AnimationTool = swiftyKey(AnimationClass);
 
 type AnimationContextType = {
+  inAnimation?: AnimatedBindable<any>;
   withAnimation?: typeof AnimationClass;
 };
 /**
@@ -105,10 +111,10 @@ export function withAnimation(animation: AnimationKey | Callback, result?: Callb
     _animation = AnimationClass.default;
   }
   AnimationContext.withAnimation = _animation;
+  
   try {
     result?.();
   } finally {
-    setTimeout(TransitionContext.transition.toggle,100);
     AnimationContext.withAnimation = undefined;
   }
 }

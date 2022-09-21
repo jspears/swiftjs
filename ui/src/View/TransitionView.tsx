@@ -6,40 +6,25 @@ import { On } from "./EventsMixin";
 import { AnyTransition, TransitionContext, TransitionStyles } from "../AnyTransition";
 import { CSSProperties } from "../types";
 
-export interface TransitionComponentProps extends TransitionStyles {
+export interface TransitionComponentProps {
   onDisappear?: On;
   onAppear?: On;
-  unmounted?: CSSProperties;
+  transition?: AnyTransition
 }
 
 export const TransitionComponent:FC<TransitionComponentProps> = ({
     children,
     onAppear,
     onDisappear,
-    style,
-    duration,
-    ...transitionStyles
+    transition,
 }) =>{
-  const nodeRef = useRef(null);
-
-  const [in_,setIn] = useState(TransitionContext.transition());
-
+  const [style, setStyle] = useState<CSSProperties>({});
   useEffect(()=>{
-     return   TransitionContext.transition.sink(setIn)
+     return transition?.styles(setStyle)
   });
-  const onTransition = (state:TransitionStatus) =>{
-    const s = !transitionStyles[state] ? style : {...style, ...transitionStyles[state]};
-    console.log('onTransition '+ state, s, duration, children?.length);
-    return  ( <div style={s} ref={nodeRef} key={in_ ? 'in' :'out'}>
-      hello
-     {children}
-    </div>)
-  };
-  console.log('render', in_);
-  return (
-    <Transition key='my-fine-key' in={in_} timeout={duration} onEntered={onAppear} onExited={onDisappear} >
-    {onTransition}
-  </Transition>);
+  return <div style={style}>
+    {children}
+  </div>
 }
 // export class TransitionComponent extends Component<TransitionComponentProps, {in:boolean}> {
 //    state = {
@@ -75,7 +60,9 @@ export class TransitionView extends View {
     private child?: View,
   ) {
     super();
-    this.style = this.transition.toStyle();
+  }
+  toggle() {
+    return this.transition?.toggle();
   }
   render() {
     return h(
@@ -83,7 +70,7 @@ export class TransitionView extends View {
       {
         onAppear: this.onAppear,
         onDisappear: this.onDisappear,
-        ...this.style,
+        transition: this.transition,
       },
       [this.child?.render()],
     );
