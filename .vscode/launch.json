@@ -5,6 +5,7 @@
     "version": "0.2.0",
     "configurations": [
 
+
   
         {
              "args": [
@@ -25,6 +26,24 @@
             "type": "node"
         },
         {
+            "args": [
+           //     "-u",
+           //     "tdd",
+                "--timeout",
+                "999999",
+                "--colors"
+            ],
+           "internalConsoleOptions": "openOnSessionStart",
+           "name": "Mocha Transpile",
+           "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+           "request": "launch",
+           "cwd": "${workspaceFolder}/transpile",
+           "skipFiles": [
+               "<node_internals>/**"
+           ],
+           "type": "node"
+       },
+       {
             "args": [
            //     "-u",
            //     "tdd",
@@ -67,6 +86,36 @@
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Transpile",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/transpile",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "program": "${workspaceFolder}/transpile/src/transpile.ts",
+            "args": ["${workspaceFolder}/demo/src/pages/AnimationDemo/AnimationDemo.swift"],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ]
+        },
+        {
+            "name": "Debug Mocha Transpile Tests",
+            "type": "node",
+            "request": "attach",
+            "port": 9229,
+            "continueOnAttach": true,
+            "autoAttachChildProcesses": false,
+            "resolveSourceMapLocations": [
+              "!**/node_modules/**",
+              "!**/.vscode/extensions/hbenl.vscode-mocha-test-adapter-*/**"
+            ],
+            "skipFiles": [
+              "<node_internals>/**"
+            ]
+          }
     ]
 }

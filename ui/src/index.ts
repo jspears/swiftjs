@@ -23,6 +23,7 @@ export * from "./List";
 export * from "./main";
 export * from "./NavigationView";
 export * from "./Picker";
+export * from "./PreviewProvider";
 export * from "./PropertyWrapper";
 export * from "./ScrollView";
 export * from "./Section";

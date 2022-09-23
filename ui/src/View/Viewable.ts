@@ -175,7 +175,7 @@ export class ViewableClass<T = any> extends View {
       const trans = this._transitionMap.get(idx);
       if (v == null) {
         if (trans) {
-          trans.toggle()
+        //  trans.toggle()
           ret.push(trans);
         }      
         continue;
@@ -185,7 +185,7 @@ export class ViewableClass<T = any> extends View {
       if (v instanceof Viewable) {
         const isTransition = !!(v._transition || v._onAppear || v._onDisappear)
         if (trans && !isTransition) {
-          trans.toggle();
+        //  trans.toggle();
           ret.push(v);
         }else if (isTransition){
           const t = new TransitionView(
@@ -203,6 +203,7 @@ export class ViewableClass<T = any> extends View {
         ret.push(v);
       }
     }
+    AnimationContext.withAnimation = undefined;
     return views;
   }
 

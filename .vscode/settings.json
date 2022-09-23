@@ -4,5 +4,11 @@
   },
   "files.eol": "\n",
   "editor.formatOnSave": false,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+ // "mocha.files.glob": "transpile/test/**/*.test.ts",
+  "mocha.options":{
+    "extension": ["ts"],
+    "spec": "transpile/test/**/*.test.ts",
+    "require": ["tsconfig-paths/register","ts-node/register"]
+  }
 }

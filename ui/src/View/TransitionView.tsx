@@ -20,7 +20,10 @@ export const TransitionComponent:FC<TransitionComponentProps> = ({
 }) =>{
   const [style, setStyle] = useState<CSSProperties>({});
   useEffect(()=>{
-     return transition?.styles(setStyle)
+     return transition?.styles((v)=>{
+      console.log('transition',v);
+      setStyle(v);
+     })
   });
   return <div style={style}>
     {children}

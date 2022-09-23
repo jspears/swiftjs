@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./lib",
+    //"rootDir": ".",
+    "composite": true,
+    "tsBuildInfoFile": "./lib/.tsbuildinfo",
+    "skipLibCheck": true,
+    "lib":["ES2022", "ES2021.String", "DOM"],
+    "baseUrl": "./src/",
+    "paths": {
+      "@tswift/generate":["./src/index.ts"]
+    }
+  },
+  "exclude": ["out/project/**", "example/**"]
+}

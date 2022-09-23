@@ -8,6 +8,7 @@ import {
   Viewable,
   Rectangle,
   AngularGradient,
+  RoundedRectangle,
 } from "@tswift/ui";
 
 @main
@@ -35,6 +36,11 @@ export class ShapeDemo extends Viewable {
         }),
       )
       .frame({ width: 200, height: 200 }),
+      RoundedRectangle({cornerRadius:25})
+      .fill(LinearGradient({
+        colors:['.purple', '.green']
+      }))
+    .frame({width: 200, height:200})    ,
     Circle()
       .fill(
         RadialGradient({
@@ -48,7 +54,6 @@ export class ShapeDemo extends Viewable {
       )
       .stroke(".red", 10)
       .frame({ width: 200, height: 200 }),
-
     Rectangle()
       .fill(LinearGradient({ colors: [".gray", ".blue"] }))
       .frame({ width: 200, height: 200 }),

@@ -11,8 +11,8 @@
     "build": "lage build",
     "format": "prettier ./*/{src,test}/**/*.ts --write",
     "lage": "lage",
-    "reset":"yarn clean && yarn install",
-    "demo":"./demo/demo.sh"
+    "reset": "yarn clean && yarn install",
+    "demo": "./demo/demo.sh"
   },
   "repository": {
     "type": "git",
@@ -31,13 +31,16 @@
       "util",
       "todo",
       "demo",
-      "generate"
+      "generate",
+      "transpile"
     ]
   },
   "devDependencies": {
     "lage": "^1.7.9",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
-
+  },
+  "dependencies": {
+    "nyc": "^15.1.0"
   }
 }

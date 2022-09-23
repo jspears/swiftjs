@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "./lib",
+    "rootDir": ".",
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "lib":["ES2022", "ES2021.String", "DOM"],
+    "baseUrl": "./src/",
+    "paths": {
+    }
+  },
+  "exclude": ["out/project/**"]
+}

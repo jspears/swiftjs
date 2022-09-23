@@ -117,7 +117,7 @@ export function withAnimation(animation: AnimationKey | Callback, result?: Callb
   try {
     result?.();
   } finally {
-    AnimationContext.withAnimation = undefined;
+  //  AnimationContext.withAnimation = undefined;
   }
 }
 export const Animation = swiftyKey(AnimationClass);

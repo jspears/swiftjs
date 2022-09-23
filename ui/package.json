@@ -38,8 +38,6 @@
     "color": "^4.2.3",
     "preact": "^10.10.2",
     "preact-render-to-string": "^5.2.3",
-    "preact-transition-group": "^2.0.0",
-    "react-spring": "^9.5.4",
     "react-transition-group": "^4.4.5",
     "serve": "^14.0.1",
     "shifty": "^2.19.0"
