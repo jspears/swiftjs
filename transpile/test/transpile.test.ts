@@ -1,5 +1,6 @@
 import { Transpile, TranspileConfig } from "../src/transpile";
 import { Project } from 'ts-morph';
+import { matchSnapshot } from 'tap';
 
 const testTranspile = (conf:Partial<TranspileConfig> = {}) => new Transpile({
     ...conf,
@@ -16,15 +17,24 @@ const testTranspile = (conf:Partial<TranspileConfig> = {}) => new Transpile({
         },
         useInMemoryFileSystem:true
 })})
-const logTranspile = async (content:string)=>console.log(await runTranspile(content));
-const runTranspile = async (content:string, conf: Partial<TranspileConfig> = {}) => (await testTranspile(conf).transpile('test.ts', content)).getText();
-
+const runTranspile = async (content: string, conf: Partial<TranspileConfig> = {}) => {
+    let resp;
+    try {
+        resp = (await testTranspile(conf).transpile('test.ts', content)).getText();
+    } catch (e) {
+        console.log(e);
+    }
+    matchSnapshot(resp, 'snapshots');
+    return 'done';
+}
 describe('transpile', function () {
-    it('should parse a regex', async function () {
-        const t = testTranspile();
-        const r = await t.parse(`struct Foo : View { var type = /hello/ }`)
-        console.log(r.rootNode.toString());
-    })
+    it('should transpile infered property', () => runTranspile(
+        `
+        struct TestInferredProp {
+            private let stuff = 0;
+        }
+        `
+    ));
     it('should transpile properties', async function () {
         const r = await runTranspile(`
         import SwiftUI
@@ -43,9 +53,6 @@ describe('transpile', function () {
         }
        
         `)
-
-        console.log(r);
-
     });
     it('should do get/set', async () => {
         const resp = await runTranspile(`
@@ -71,21 +78,19 @@ describe('transpile', function () {
             }
         }
         `)
-        console.log(resp);
     })
 
     it('should do get/set', async () => {
-        const resp = await runTranspile(`
+        await runTranspile(`
         struct Point {
             var x = 0.0, y = 0.0
         }
         let p = Point(x:1, y:2)
       
         `)
-        console.log(resp);
     })
     it('should init when it can', async () => {
-        console.log(await runTranspile(`
+        await runTranspile(`
         struct Celsius {
             var temperatureInCelsius: Double
             init(fromFahrenheit fahrenheit: Double) {
@@ -99,10 +104,10 @@ describe('transpile', function () {
             }
         }
         let boilingPointOfWater = Celsius(fromFahrenheit: 212.0)
-        `))
+        `)
     });
     it('should parse generic template', async () => {
-        console.log(await runTranspile(`struct Stack<Element> {
+        await runTranspile(`struct Stack<Element> {
             var items: [Element] = []
             mutating func push(_ item: Element) {
                 items.append(item)
@@ -111,19 +116,18 @@ describe('transpile', function () {
                 return items.removeLast()
             }
         }
-        `))
+        `)
     });
     it('should parse computed props', async ()=>{
-        console.log(await runTranspile(`struct Cuboid {
+        await runTranspile(`struct Cuboid {
             var width = 0.0, height = 0.0, depth = 0.0
             var volume: Double {
                 return width * height * depth
             }
         }
-        let fourByFiveByTwo = Cuboid(width: 4.0, height: 5.0, depth: 2.0)`))
+        let fourByFiveByTwo = Cuboid(width: 4.0, height: 5.0, depth: 2.0)`);
     });
-    it.only('should support willget', async()=>{
-        return logTranspile(`class StepCounter {
+    it('should support willget', async () =>  runTranspile(`class StepCounter {
             var totalSteps: Int = 0 {
                 willSet(newTotalSteps) {
                     print("About to set totalSteps to \(newTotalSteps)")
@@ -135,6 +139,13 @@ describe('transpile', function () {
                 }
             }
         }
-        let stepCounter = StepCounter()`);
-    })
+        let stepCounter = StepCounter()`));
+    
+    it('should parse optional props', async ()=>{
+        await runTranspile(`struct Cuboid {
+            var volume: Double? = 0.0;
+        }
+        `)
+    });
+   
 });

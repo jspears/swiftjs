@@ -207,3 +207,7 @@ export interface Range {
   from:number;
   to:number;
 }
+
+export interface Predicate<S> {
+  (v: S):boolean;
+}

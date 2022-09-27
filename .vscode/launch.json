@@ -33,6 +33,7 @@
                 "999999",
                 "--colors"
             ],
+            "env": {"TAP_SNAPSHOT":"1"},
            "internalConsoleOptions": "openOnSessionStart",
            "name": "Mocha Transpile",
            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",

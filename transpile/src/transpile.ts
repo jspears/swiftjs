@@ -1,16 +1,16 @@
 import { getParser } from "./parser";
 import {
     CallExpression, GetAccessorDeclaration, OptionalKind,
-    Project, PropertyDeclarationStructure, Scope, SetAccessorDeclaration, SourceFile, StructureKind
+    PropertyDeclaration,
+    Project, PropertyDeclarationStructure, Scope, SetAccessorDeclaration, SourceFile, StructureKind, DecoratorStructure
 } from "ts-morph";
 import { readFile as fsReadFile } from 'fs/promises';
 import { basename, join } from "path";
 import Parser from "web-tree-sitter";
 import { ClassDeclaration } from "ts-morph";
-import { Param, replaceEnd, replaceStart, toParameter, toScope } from "text";
-import { isSourceFile, isClassDecl } from "guards";
-import { MethodSignature } from "typescript";
-import { parseStr, toStringLit } from "parseStr";
+import { Param, replaceEnd, replaceStart, toParameter, toScope } from "./text";
+import { isSourceFile, isClassDecl } from "./guards";
+import { parseStr, toStringLit } from "./parseStr";
 
 type CParam = Partial<{
     name: string;
@@ -48,6 +48,7 @@ export class Transpile {
     asType(srcOrClz: Context, namedImport?: string, moduleSpecifier: string = '@tswift/ui'): string {
         const src = asSrc(srcOrClz);
         if (namedImport) {
+            namedImport = namedImport.replace('import("/undefined").','').replace(/<.*>/, '');
             if (namedImport in this.config.builtInTypeMap) {
                 return this.config.builtInTypeMap[namedImport];
             }
@@ -72,7 +73,7 @@ export class Transpile {
         overwrite = true,
         basedir = basename,
         importMap = { 'SwiftUI': '@tswift/ui' },
-        builtInTypeMap = { 'Bool': 'boolean', 'Double': 'number', 'Int': 'number', 'String': 'string' },
+        builtInTypeMap = { 'Bool': 'boolean', 'number':'number', 'Double': 'number', 'Int': 'number', 'String': 'string' },
         srcDir = '${__dirname}/../example/src',
         project = new Project({
             tsConfigFilePath: `${__dirname}/../example/tsconfig.json`
@@ -123,23 +124,23 @@ export class Transpile {
                 console.log('handleRoot did not handle node', node.type);
         }
     }
-    processExpression(node: Parser.SyntaxNode, clz: Context): string[] {
-        let ret: string[] = [];
+    // processExpression(node: Parser.SyntaxNode, clz: Context): string[] {
+    //     let ret: string[] = [];
 
-        node.children.forEach(n => {
-            switch (n.type) {
-                case 'simple_identifier':
-                    ret.push(this.simpleIdentifier(n.text, clz));
-                    break;
-                case 'navigation_expression':
-                    ret.push(this.processExpression(n, clz).join(''));
-                    break;
-                default:
-                    ret.push(n.text);
-            }
-        });
-        return ret;
-    }
+    //     node.children.forEach(n => {
+    //         switch (n.type) {
+    //             case 'simple_identifier':
+    //                 ret.push(this.simpleIdentifier(n.text, clz));
+    //                 break;
+    //             case 'navigation_expression':
+    //                 ret.push(this.processExpression(n, clz).join(''));
+    //                 break;
+    //             default:
+    //                 ret.push(n.text);
+    //         }
+    //     });
+    //     return ret;
+    // }
 
 
     /**
@@ -175,7 +176,7 @@ export class Transpile {
                     ret.push('let');
                     break;
                 case 'additive_expression':
-                    ret.push(this.processExpression(n, clz).join(' '));
+                    ret.push(this.processStatement(n, clz).join(' '));
                     break;
                 default:
                     ret.push(n.text);
@@ -270,7 +271,7 @@ export class Transpile {
 
                         break;
                     }
-                    //fall through
+                //fall through
                 case 'statements':
                     ret.push(this.processStatement(n, clz).join(' '))
                     break;
@@ -302,19 +303,12 @@ export class Transpile {
             }
         }
 
-        return [ret.join(' ')];
+        return ret;
     }
 
     handleProperty(node: Parser.SyntaxNode, clz: ClassDeclaration) {
         let prop: OptionalKind<PropertyDeclarationStructure> = { name: '__unknown__' };
         let expression: CallExpression | undefined;
-
-        let getter: { statements: string[] } | undefined;
-        let setter: {
-            statements: string[];
-            parameters: { name: string; type?: string }[];
-        } | undefined;
-
         for (let i = 0; i < node.childCount; i++) {
             const n = node.child(i);
             if (!n) continue;
@@ -326,7 +320,7 @@ export class Transpile {
                     break;
                 case 'pattern':
                     prop.name = n.text;
-                    
+
                     break;
                 case 'modifiers': {
                     n.children.forEach(m => {
@@ -361,8 +355,17 @@ export class Transpile {
                 }
                 case 'real_literal':
                 case 'line_string_literal':
-                case 'boolean_literal':
+                    prop.initializer = n.text;
+                    prop.type = 'string';
+                    break;
+                case 'boolean_literal':                   
+                    prop.initializer = n.text;
+                    prop.type = 'boolean';
+                    break;
+                case 'float_literal':
+                case 'double_literal':    
                 case 'integer_literal':
+                    prop.type = 'number';                    
                     prop.initializer = n.text;
                     break;
                 case '=':
@@ -370,12 +373,17 @@ export class Transpile {
                 case 'type_annotation':
                     n.children?.forEach(t => {
                         switch (t.type) {
+                            case 'optional_type':
+                                prop.hasQuestionToken = true;
+                                prop.type = this.asType(clz, t.child(0)?.text);
+                                break;
                             case ':': break;
                             case 'user_type':
                                 prop.type = this.asType(clz, t.text);
                                 break;
                             case 'opaque_type':
-                                console.log(t.text);
+                                prop.type = this.asType(clz, t.text);
+                                console.log('unknown opaque_type: ' + t.text);
                                 break;
                             case 'array_type':
                                 this.asType(clz, 'Array', '@tswift/util');
@@ -393,6 +401,45 @@ export class Transpile {
                         prop.initializer = `${type}${n.text}`
                     }
                     break;
+                case ',':
+                    clz.addProperty(prop);
+                    break;
+                case 'computed_property':
+                case 'call_expression':
+                    //we'll cycle through props again, adding them
+                    break;
+                case 'array_literal':
+                    prop.initializer = this.processStatement(n, clz).join('');
+                    break;
+                default:
+                    console.log('unknown property: ' + n.type);
+            }
+        }
+        // if (prop.initializer == null) {
+        //     prop.hasQuestionToken = true;
+        // }
+
+        const p = clz.addProperty(prop);
+        if (expression) {
+            console.log(expression);
+        }
+        return p;
+    }
+    handleComputedProperty(node: Parser.SyntaxNode, clz: ClassDeclaration) {
+        let prop: PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | undefined;
+        let getter: { statements: string[] } | undefined;
+        let setter: {
+            statements: string[];
+            parameters: { name: string; type?: string }[];
+        } | undefined;
+        let decoratorType: string;
+        for (let i = 0; i < node.childCount; i++) {
+            const n = node.child(i);
+            if (!n) continue;
+            switch (n.type) {
+                case 'pattern':
+                    prop = clz.getPropertyOrThrow(n.text);
+                    break;
                 case 'computed_property':
                     n.children.forEach(v => {
                         switch (v.type) {
@@ -409,11 +456,25 @@ export class Transpile {
                                         case '}': break;
                                         case 'statements':
                                             if (!setter) setter = { statements: [], parameters: [] };
-                                            setter.statements.push(...this.processStatement(s, clz));
+                                            setter.statements = this.processStatement(s, clz);
+                                            if (prop) {
+                                                const { kind, ...struct } = prop.getStructure();
+                                                if (prop instanceof PropertyDeclaration) {
+                                                    prop.remove();
+                                                }
+                                                prop = clz.addSetAccessor({
+                                                    ...struct,
+                                                    ...setter,
+                                                    returnType:'void',
+                                                });
+                                            }
                                             break;
                                         case 'simple_identifier':
                                             if (!setter) setter = { statements: [], parameters: [] };
-                                            setter.parameters.push({ name: s.text, type: prop.type as string });
+                                            setter.parameters.push({
+                                                name: s.text, type:
+                                                    this.asType(clz, prop?.getType().getText())
+                                            });
                                             break;
                                         default:
                                             console.log('unknown computed_setter', s.type);
@@ -430,6 +491,20 @@ export class Transpile {
                                         case 'statements':
                                             if (!getter) getter = { statements: [] };
                                             getter.statements.push(...this.processStatement(s, clz));
+
+                                            if (prop) {
+                                                const returnType = this.asType(clz, prop.getType().getText());
+                                                const { kind, ...struct } = prop.getStructure();
+                                                if (prop instanceof PropertyDeclaration) {
+                                                    prop.remove();
+                                                }
+
+                                                prop = clz.addGetAccessor({
+                                                    ...struct,
+                                                    ...getter,
+                                                    returnType,
+                                                });
+                                            }
                                             break;
                                         default:
                                             console.log('unknown computed_getter', s.type);
@@ -442,49 +517,43 @@ export class Transpile {
                             case 'statements':
                                 if (!getter) getter = { statements: [] };
                                 getter.statements.push(...this.processStatement(v, clz));
+                                if (prop) {
+                                    const { kind, ...struct } = prop?.getStructure();
+                                    if (prop instanceof PropertyDeclaration) {
+                                        prop.remove();
+                                    }
+                                    prop = clz.addGetAccessor({
+                                        ...struct,
+                                        ...getter
+                                    });
+                                }
                                 break;
                             default:
                                 console.log('unknown computed property', v.type);
                         }
                     });
                     break;
-                case '/':
-                    console.log('what', n.text);
-                    break;
-                case ',':
-                    clz.addProperty(prop);
-                    break;
                 case 'call_expression':
                     if (n.children[1]?.children[0]?.type === 'lambda_literal') {
-                        prop.initializer = n.children[0].text;
+                        if (prop instanceof PropertyDeclaration)
+                            prop.setInitializer(n.children[0].text)
                         const lamda = n.children[1].children[0].children[1];
                         lamda?.children.forEach(d => {
                             d.children?.forEach(l => {
                                 switch (l.type) {
                                     case 'call_suffix':
-                                        const d = prop.decorators;
-                                        if (d?.length) {
-                                            const dec = d?.slice(-1)[0];
-                                            if (dec) {
-                                                const proc = this.processStatement(l, clz).join(' ');
+                                        const d = prop?.getDecorator(decoratorType);
 
-                                                dec.arguments = [
-                                                    'function' + (proc.startsWith('(') ? '' : '(oldValue)') + proc
-                                                ]
-                                            }
+                                        const proc = this.processStatement(l, clz).join(' ');
 
-                                        }
+                                        d?.addArgument(
+                                            'function' + (proc.startsWith('(') ? '' : '(oldValue)') + proc
+                                        );
                                         break;
                                     //implement willSet/didSet
                                     case 'simple_identifier':
-                                        if (!prop.decorators) {
-                                            prop.decorators = [];
-                                        }
-                                        ;
-                                        prop.decorators.push({
-                                            name: this.asType(clz, l.text)
-
-                                        })
+                                        decoratorType = this.asType(clz, l.text)
+                                        prop?.addDecorator({ name: decoratorType });
                                         break;
                                     default:
                                         console.log('unknown lamda willset prop ' + l.type);
@@ -494,61 +563,22 @@ export class Transpile {
                         })
 
                     } else {
-                        prop.initializer = this.processStatement(n, clz).join('');
+                        if (prop instanceof PropertyDeclaration)
+                            prop?.setInitializer(this.processStatement(n, clz).join(''));
                     }
                     break;
-                case 'array_literal':
-                    prop.initializer = this.processStatement(n, clz).join('');
-                    break;
-                default:
-                    console.log('unknown property: ' + n.type);
-            }
-        }
-        if (prop.initializer == null) {
-            prop.hasQuestionToken = true;
-        }
-        // if (prop.decorators && prop.decorators.length) {
-        //     //can't have decorators on scopeed properties
-        //     delete prop.scope;
-        // }
-        if (getter || setter) {
-            let g: GetAccessorDeclaration | undefined, s: SetAccessorDeclaration | undefined;
-            if (getter) {
-                g = clz.addGetAccessor({
-                    kind: StructureKind.GetAccessor,
-                    name: prop.name,
-                    scope: prop.scope,
-                    isStatic: prop.isStatic,
-                    returnType: prop.type,
-                    ...getter,
-                })
-            }
-            if (setter) {
-                s = clz.addSetAccessor({
-                    kind: StructureKind.SetAccessor,
-                    name: prop.name,
-                    scope: prop.scope,
-                    isStatic: prop.isStatic,
-                    ...setter,
-                })
-            }
-            if (!g && !s) {
-                throw new Error(`no accessor and setter should not happen`);
-            }
-            return g || s;
 
+            }
         }
-
-        const p = clz.addProperty(prop);
-
-        if (expression) {
-            console.log(expression);
-        }
-        return p;
+        return prop;
     }
     handleClassBody(node: Parser.SyntaxNode, clz: ClassDeclaration): void {
         let comment: string | undefined;
         let constructors = [];
+        node.children.filter(p => p.type === 'property_declaration').forEach(p => {
+            this.handleProperty(p, clz);
+        });
+
         for (let i = 0; i < node.childCount; i++) {
             const n = node.child(i);
             if (!n) continue;
@@ -558,7 +588,7 @@ export class Transpile {
                 case '}':
                     break;
                 case 'property_declaration': {
-                    const p = this.handleProperty(n, clz);
+                    const p = this.handleComputedProperty(n, clz);
                     if (comment) {
                         p?.addJsDoc(comment);
                         comment = undefined;
@@ -626,7 +656,7 @@ export class Transpile {
                     type,
                 })),
                 statements: this.processStatement(node, clz),
-            })
+            });
         } else {
             parameters.forEach(([params, node], idx) => clz.addMethod({
                 name: cname(idx),
@@ -646,14 +676,15 @@ export class Transpile {
                 parameters.forEach(([param, node], idx) => {
                     const name = cname(idx, cType);
                     types.push(name);
-                    src.insertInterface(clz.getChildIndex(), {
+                    const intf = src.insertInterface(clz.getChildIndex(), {
                         name,
                         properties: param.map(({ name = '__unknown__', type, optional: hasQuestionToken }) => ({
                             name,
-                            type,
+                            type:this.asType(clz, type),
                             hasQuestionToken
                         }))
                     });
+                    console.log(intf.getText());
                 });
                 src.insertTypeAlias(clz.getChildIndex(), {
                     name: cType,
@@ -682,33 +713,38 @@ export class Transpile {
                 // If a property is optional, than the param is optional, 
                 // if a property has a initial value than the param is optional.
                 // otherwise a property will be required.
-                asSrc(clz).insertInterface(clz.getChildIndex(), {
+                // if all parameters are optional, than so should 
+                // the constructor param.
+                let hasQuestionTokenParam = true;
+                const intf = asSrc(clz).insertInterface(clz.getChildIndex(), {
                     name: cType,
                     typeParameters,
-                    properties: clz.getProperties().map(d => {
+                    properties: clz.getProperties().filter(v => {
+                        return !(v.isReadonly() || v.isStatic());
+                    }).map(d => {
                         const name = d.getName();
-                        const type = d.getType().getText();
+                        
+                        const type = this.asType(clz, d.getType().getText());
 
                         const hasQuestionToken = d.hasQuestionToken() || d.getInitializer() != null;
+                        hasQuestionTokenParam = hasQuestionTokenParam && hasQuestionToken;
                         return ({ name, type, hasQuestionToken })
                     })
                 });
+                
                 clz.addConstructor({
                     parameters: [{
                         name: 'param',
+                        hasQuestionToken: hasQuestionTokenParam,
                         type: cType + (typeParameters.length ? `<${typeParameters.join(',')}>` : '')
                     }],
                     statements: [
                         clz.getExtends() ? 'super()' : '//assign params',
                         `Object.assign(this, param);`
                     ]
-                })
-
-
+                });
             }
         }
-
-
     }
     handleFunction(node: Node, clz: Context): void {
         let func: Parameters<ClassDeclaration['addMethod']>[0] = {

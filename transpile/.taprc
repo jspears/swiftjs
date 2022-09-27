@@ -1,0 +1,9 @@
+node-arg:
+  - --require=./mocha.js
+  - --require=tsconfig-paths/register
+  - --require=ts-node/register 
+test-regex: ((\/|^)(test?|__tests?__)\/.*|\.(tests?|test|spec)|^\/?tests?)\.([mc]js|[jt]sx?)$
+lines: 50
+branches: 50
+statements: 50
+functions: 50

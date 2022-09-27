@@ -6,18 +6,20 @@ interface StringParts {
 
 export function parseStr(str:string):StringParts {
 
-  let re = /(.+?)(?:\((.+?)\))/g;
+  let re = /(.*)(?:\\\((.+?)\))?/g;
   const ret:StringParts = {literals:[], values:[]};
 
   while(true) {
       const z=re.exec(str);
-    if (z == null){
+    if (z == null || z.index == str.length){
         break;
     }
     
-    if (isStringArray(z)){
-        ret.literals.push(z[1]);
-        ret.values.push(z[2]);
+      if (isStringArray(z)) {
+        if (z[1])
+          ret.literals.push(z[1]);
+        if (z[2])
+          ret.values.push(z[2]);
     }
  }
  return ret;

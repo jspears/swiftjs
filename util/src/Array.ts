@@ -1,11 +1,8 @@
-import { isFunction, isIterable, isObjectWithProp, isObjectWithPropType } from "./guards";
-import { Range } from "./types";
+import { isFunction, isIterable } from "./guards";
+import { Predicate, Range } from "./types";
 
-interface Predicate<S> {
-    (v:S):boolean;
-}
 
-class SwiftArray<S> extends Array<S> {
+export class SwiftArray<S> extends Array<S> {
 
     get first(){
         return this[0];
@@ -53,11 +50,10 @@ class SwiftArray<S> extends Array<S> {
         this.splice(at,1);
     }
     removeFirst(num = 0){
-        this.splice(0, num);
+        return this.splice(0, num)[0];
     }
     removeLast(num:number=1){
-        const ret = this.splice(this.length - num)
-        return ret[ret.length -1];
+        return this.splice(this.length - num).pop();
     }
     removeSubrange(range:Range){
         this.splice(range.from, range.to-range.from)
