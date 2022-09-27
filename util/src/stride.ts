@@ -1,6 +1,8 @@
+import { Range } from "./types";
+
 export type StrideStr = `${number}...${number}` | `${number}..<${number}`;
 
-export class Stride {
+export class Stride implements Range{
   constructor(public from: number, public to: number, public step: number, public inclusive: boolean = false) {
     if (step == null) {
       if (to == null) {

@@ -16,7 +16,7 @@ const testTranspile = (conf:Partial<TranspileConfig> = {}) => new Transpile({
         },
         useInMemoryFileSystem:true
 })})
-
+const logTranspile = async (content:string)=>console.log(await runTranspile(content));
 const runTranspile = async (content:string, conf: Partial<TranspileConfig> = {}) => (await testTranspile(conf).transpile('test.ts', content)).getText();
 
 describe('transpile', function () {
@@ -79,12 +79,12 @@ describe('transpile', function () {
         struct Point {
             var x = 0.0, y = 0.0
         }
-        const p = new Point(x:1, y:2)
+        let p = Point(x:1, y:2)
       
         `)
         console.log(resp);
     })
-    it.only('should init when it can', async () => {
+    it('should init when it can', async () => {
         console.log(await runTranspile(`
         struct Celsius {
             var temperatureInCelsius: Double
@@ -94,8 +94,47 @@ describe('transpile', function () {
             init(fromKelvin kelvin: Double) {
                 temperatureInCelsius = kelvin - 273.15
             }
+            init(celsius: Double?) {
+                temperatureInCelsius = celsius;
+            }
         }
         let boilingPointOfWater = Celsius(fromFahrenheit: 212.0)
         `))
     });
+    it('should parse generic template', async () => {
+        console.log(await runTranspile(`struct Stack<Element> {
+            var items: [Element] = []
+            mutating func push(_ item: Element) {
+                items.append(item)
+            }
+            mutating func pop() -> Element {
+                return items.removeLast()
+            }
+        }
+        `))
+    });
+    it('should parse computed props', async ()=>{
+        console.log(await runTranspile(`struct Cuboid {
+            var width = 0.0, height = 0.0, depth = 0.0
+            var volume: Double {
+                return width * height * depth
+            }
+        }
+        let fourByFiveByTwo = Cuboid(width: 4.0, height: 5.0, depth: 2.0)`))
+    });
+    it.only('should support willget', async()=>{
+        return logTranspile(`class StepCounter {
+            var totalSteps: Int = 0 {
+                willSet(newTotalSteps) {
+                    print("About to set totalSteps to \(newTotalSteps)")
+                }
+                didSet {
+                    if totalSteps > oldValue  {
+                        print("Added \(totalSteps - oldValue) steps")
+                    }
+                }
+            }
+        }
+        let stepCounter = StepCounter()`);
+    })
 });

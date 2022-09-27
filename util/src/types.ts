@@ -202,3 +202,8 @@ export type KeysOfTypeBest<T, U, B = false> = {
       : never;
 }[keyof T];
 //type PickByTypeBest<T, U, B = false> = Pick<T, KeysOfTypeBest<T, U, B>>;
+
+export interface Range {
+  from:number;
+  to:number;
+}

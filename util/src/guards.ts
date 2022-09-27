@@ -17,7 +17,10 @@ export function isObjectWithPropType<
  
   return isObjectWithProp(v,key) && isGuard(v[key]);
  } 
-
+export function isIterable(v:unknown): v is Iterable<unknown>
+{
+ return isObjectWithPropType(isFunction, Symbol.iterator, v);
+}
 export function isFunction(v: unknown): v is (...args: any[]) => any {
   return typeof v === "function";
 }
