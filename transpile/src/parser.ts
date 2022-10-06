@@ -1,5 +1,4 @@
 import Parser from "web-tree-sitter";
-import { readFile } from 'fs/promises';
 
 let _parser: Parser;
 let _parserPromise:Promise<Parser>;
@@ -12,7 +11,7 @@ async function _loadParser() {
     return _parser;
 }
 
-export async function getParser() {
+export async function getParser():Promise<Parser> {
     if (_parser) {
         return _parser;
     }
@@ -20,8 +19,4 @@ export async function getParser() {
         _parserPromise = _loadParser();
     }
     return _parserPromise;
-}
-export async function parseFile(file: string) {
-    const [p, content] = await Promise.all([getParser(), readFile(file, 'utf-8')]);
-    return p.parse(content);
 }

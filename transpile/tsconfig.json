@@ -10,7 +10,8 @@
     "lib":["ES2022", "ES2021.String", "DOM"],
     "baseUrl": "./src/",
     "paths": {
-      "@tswift/generate":["./src/index.ts"]
+      "@tswift/util":["../util/src"],
+      
     }
   },
   "exclude": ["out/project/**", "example/**"]

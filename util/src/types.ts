@@ -211,3 +211,17 @@ export interface Range {
 export interface Predicate<S> {
   (v: S):boolean;
 }
+
+export type Compare<T> = (a: T, b: T) => boolean;
+
+
+//Swift supports value object like things.
+// like struct enum, that are copied on reference or pass.
+// this is how we are gonna implement them.
+export const cloneable = Symbol('cloneable');
+
+declare global {
+    interface Object {
+        [cloneable]?:()=> this;
+    }
+}

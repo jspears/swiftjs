@@ -37,9 +37,42 @@ export class Stride implements Range{
     return;
   }
 }
-export function toStride(fromOrStr: StrideStr): Stride {
-  const [_, start, op, end] = /(\d*)(?:\.{2,3})(<?)(\d*)/.exec(fromOrStr) || [];
-  return new Stride(Number(start), Number(end), 1, op ? true : false);
+interface StrideRange {
+  from: number;
+  to: number;
+  inclusive: boolean;
+}
+export function toStride(fromOrStr: StrideStr | StrideRange): Stride {
+  if (typeof fromOrStr === 'string') {
+    const [_, start, op, end] = /(\d*)(?:\.{2,3})(<?)(\d*)/.exec(fromOrStr) || [];
+    return new Stride(Number(start), Number(end), 1, op ? true : false);
+  }
+  return new Stride(fromOrStr.from, fromOrStr.to, 1, fromOrStr.inclusive)
+}
+
+export function *range<T>(fromOrStr: StrideStr | StrideRange, iter?: Iterable<T>) {
+  const stride = toStride(fromOrStr);
+  if (iter == null) {
+    return stride.range();
+  }
+  if (Array.isArray(iter)) {
+    for (const i of stride.range()) {
+      if (i < iter.length) {
+        yield iter[i];
+      } else {
+        return;
+       }
+    }
+    return;
+  } else {
+    const it = iter[Symbol.iterator]();
+    for (const i of stride.range()) {
+      if (it.return) {
+        return;
+      }
+      yield it.next();
+    }
+  }
 }
 
 export function* stride(fromOrStr: number | string, to?: number, step?: number) {

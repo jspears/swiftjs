@@ -1,6 +1,20 @@
 import { isFunction, isIterable } from "./guards";
-import { Predicate, Range } from "./types";
+import { Predicate, Compare, Range } from "./types";
 
+interface SwiftArrayI<T> {
+    readonly first: T;
+    readonly last: T;
+    readonly isEmpty: boolean;
+    readonly capacity: number;
+    readonly count: number;
+    remove(at: number): T;
+    sorted(by: { by: '>' | '<' | Compare<T> | boolean }): T[];
+}
+declare global {
+    interface Array<T> extends SwiftArrayI<T> {
+
+    }
+}
 
 export class SwiftArray<S> extends Array<S> {
 
@@ -17,7 +31,19 @@ export class SwiftArray<S> extends Array<S> {
         return this.length;
     }
     capacity = Number.MAX_SAFE_INTEGER;
-    
+    sorted({ by }: { by: '>' | '<' | Compare<S> | boolean } = { by: '>' }): S[] {
+
+        let fn: undefined | ((a: S, b: S) => number);
+        if (by == '<'|| by == true) {
+            fn = (a:S, b:S) => (a + '').localeCompare(b+'');
+        } else if (by == '>' || by == false) {
+            fn = (b:S,a:S) => (a + '').localeCompare(b+'');
+        } else if (typeof by === 'function') {
+            fn = (a:S, b:S) => by(a, b) ? 1 : -1;
+        }
+
+        return this.slice().sort(fn);
+    }
 
     randomElement(): S {
         return this[Math.floor((Math.random()*this.length))];   
@@ -46,17 +72,18 @@ export class SwiftArray<S> extends Array<S> {
         }
         return true;
     }
-    remove(at:number){
-        this.splice(at,1);
-    }
+   
     removeFirst(num = 0){
         return this.splice(0, num)[0];
     }
     removeLast(num:number=1){
-        return this.splice(this.length - num).pop();
+        return this.splice(this.length - num).pop() as any;
     }
     removeSubrange(range:Range){
         this.splice(range.from, range.to-range.from)
+    }
+    remove(_: number) {
+        return this.splice(_, 1)[0];
     }
     removeAll(shouldBeremoved:boolean | ((v:S)=>boolean) = true){
         //it removes all by default or if true or false, cause that's why.  see swift.
@@ -71,6 +98,6 @@ export class SwiftArray<S> extends Array<S> {
         }
     }
     popLast(){
-        return this.pop();
+        return this.pop() as any;
     }
 }

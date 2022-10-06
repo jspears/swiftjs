@@ -133,7 +133,7 @@ type AnimatedBindable<T> = Bindable<T> & {
 };
 
 export const tweenBindable = <T>(
-  t: Bindable<T> = watchable<T>(null as T),
+  t: Bindable<T> = watchable<T>(null as unknown as any),
   options: AnimationConfig = {},
 ): AnimatedBindable<T> => {
   const v=  t();

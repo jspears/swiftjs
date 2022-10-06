@@ -1,16 +1,13 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
+     "version": "0.2.0",
     "configurations": [
+
+
 
 
   
         {
              "args": [
-            //     "-u",
-            //     "tdd",
                  "--timeout",
                  "999999",
                  "--colors"
@@ -26,18 +23,13 @@
             "type": "node"
         },
         {
-            "args": [
-           //     "-u",
-           //     "tdd",
-                "--timeout",
-                "999999",
-                "--colors"
-            ],
+            
             "env": {"TAP_SNAPSHOT":"1"},
            "internalConsoleOptions": "openOnSessionStart",
-           "name": "Mocha Transpile",
-           "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+           "name": "Test Transpile",
+           "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
            "request": "launch",
+           "args": ["./test/transpile.test.ts"],
            "cwd": "${workspaceFolder}/transpile",
            "skipFiles": [
                "<node_internals>/**"
@@ -46,8 +38,6 @@
        },
        {
             "args": [
-           //     "-u",
-           //     "tdd",
                 "--timeout",
                 "999999",
                 "--colors"
@@ -82,7 +72,6 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-//            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
             "program": "${workspaceFolder}/generate/tree.js",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
@@ -117,6 +106,22 @@
             "skipFiles": [
               "<node_internals>/**"
             ]
-          }
+          },
+          {
+            "type": "node",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+            "request": "launch",
+            "name": "transpile.closure",
+            "args": ["${workspaceFolder}/transpile/test/transpile.closure.ts"],
+            "cwd": "${workspaceFolder}/transpile"
+        }
+          {
+            "type": "node",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+            "request": "launch",
+            "name": "Run test (current)",
+            "args": ["${workspaceFolder}/${relativeFile}"],
+            "cwd": "${workspaceFolder}/transpile"
+        }
     ]
 }

@@ -1,42 +1,56 @@
 
 interface StringParts {
-    literals:string[];
-    values:string[];
+    literals: string[];
+    values: string[];
 }
 
-export function parseStr(str:string):StringParts {
+export function parseStr(str: string): StringParts {
+    const ret: StringParts = { values: [], literals: [] };
 
-  let re = /(.*)(?:\\\((.+?)\))?/g;
-  const ret:StringParts = {literals:[], values:[]};
-
-  while(true) {
-      const z=re.exec(str);
-    if (z == null || z.index == str.length){
-        break;
-    }
+    let depth = 0, literal = [], value = [];
     
-      if (isStringArray(z)) {
-        if (z[1])
-          ret.literals.push(z[1]);
-        if (z[2])
-          ret.values.push(z[2]);
+    for (let i = 0; i < str.length; i++) {
+        const c = str[i];
+        switch (c) {
+            case '(':
+                if (depth == 0){
+                        ret.literals.push(literal.join(''));
+                        literal = [];
+                }
+                depth++;
+                break;
+            case ')': {
+                depth--;
+                if (depth == 0){
+                   if (value.length)
+                       ret.values.push(value.join(''));
+                   value = [];
+                   literal = [];
+               }
+                break;
+            }
+            default:
+                if (depth > 0) {
+                    value.push(c);
+                } else {
+                    literal.push(c);
+                }
+        }
     }
- }
- return ret;
+    if (literal.length){
+        ret.literals.push(literal.join(''));
+    }
+    return ret;
 }
-export function toStringLit({literals, values}:StringParts):string {
+export function toStringLit({ literals, values }: StringParts): string {
     let ret = "`";
-    for(let i=0,m=Math.max(literals.length, values.length);i<m;i++){
-        if (i< literals.length ){
-            ret+=literals[i];
+    for (let i = 0, m = Math.max(literals.length, values.length); i < m; i++) {
+        if (i < literals.length) {
+            ret += literals[i];
         }
-        if (i< values.length ){
-            ret+=`\${${values[i]}}`
+        if (i < values.length) {
+            ret += `\${${values[i]}}`
         }
     }
-    return ret+'`';
-}
-
-function isStringArray(v:unknown):v is string[] {
-    return Array.isArray(v);
+    return ret + '`';
 }

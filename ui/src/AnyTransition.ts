@@ -1,14 +1,11 @@
 
-import { Num, Size, KeyOf, False, Bool, Bindable, Listen, isObjectWithProp, isObjectWithPropType, isFunction } from '@tswift/util';
-import { swiftyKey, fromKey, watchable } from '@tswift/util';
-import { watch } from 'fs';
-import { TransitionTo } from 'react-spring';
-import { tween, Tweenable } from 'shifty';
+import { swiftyKey, fromKey, watchable, isObjectWithPropType, isFunction } from '@tswift/util';
+import type { Num, Size, KeyOf, Listen } from "@tswift/util";
+import { tween } from 'shifty';
 import { AnimationContext, Animation, AnimationKey, AnimationType } from './Animation';
 import { Edge, EdgeKey } from './Edge';
 import { CSSProperties } from './types';
 import { isNum, unitFor } from './unit';
-import { View } from './View';
 import { UnitPointKey } from './View/TransformMixin';
 
 const TRANSITION = [
@@ -39,7 +36,7 @@ export class AnyTransition implements TransitionFunctions {
     _toggle?:TransitionToggle;
 
     static identity = new AnyTransition();
-    static move(edge: EdgeKey) {
+    static move(edge: EdgeKey):AnyTransition {
         const to = fromKey(Edge, edge);
         return new class Move extends AnyTransition {
             top(n: Num) {
@@ -58,7 +55,7 @@ export class AnyTransition implements TransitionFunctions {
         }
     }
 
-    static opacity = new class Opacity extends AnyTransition {
+    static opacity:AnyTransition = new class extends AnyTransition {
         opacity(v: Num) {
             if (v === '.infinity') {
                 return 1;
@@ -93,7 +90,7 @@ export class AnyTransition implements TransitionFunctions {
         }
     }
 
-    static scale(scale: Num, from: UnitPointKey) {
+    static scale(scale: Num, from: UnitPointKey):AnyTransition {
         return new class extends AnyTransition {
 
             scale(n: number) {
@@ -105,19 +102,19 @@ export class AnyTransition implements TransitionFunctions {
         }
     }
 
-    static slide = new class Slide extends AnyTransition {
+    static slide:AnyTransition = new class Slide extends AnyTransition {
         translate(n: number): string {
             return `${-100 + (n * 100)}%`;
         }
     }
 
-    static push(from: EdgeKey) {
+    static push(from: EdgeKey):AnyTransition {
         return new class Push extends AnyTransition {
 
         }
     }
 
-    static asymetric(insertion: AnyTransition, removal: AnyTransition) {
+    static asymetric(insertion: AnyTransition, removal: AnyTransition):AnyTransition {
         return new class Asymetric extends AnyTransition {
             constructor() {
                 super()
@@ -148,7 +145,7 @@ export class AnyTransition implements TransitionFunctions {
         }, _style);
     }
 
-    combined(with_: AnyTransition) {
+    combined(with_: AnyTransition):AnyTransition {
         const self = this;
         return new class Combined extends AnyTransition {
             _animation = self._animation;

@@ -39,18 +39,26 @@ export const AppRegistry = new (class {
     if (!View) {
       throw new Error(`No view found`);
     }
-    render((globalThis.__SWIFT_UI = App(new View())), appNode);
+    const app = App(new View());
+    if (window) {
+      //@ts-ignore
+      window.__SWIFT_UI = app;
+    }
+    render(app, appNode);
   };
   init = () => {
-    if (document.readyState === "complete") {
-      const node = document.querySelector(this.selector);
+    const document = globalThis.document;
+    if (document?.readyState === "complete") {
+      const node = document?.querySelector(this.selector);
       if (node) {
         this.doc.resolve(node as HTMLElement);
       } else {
         console.warn("Document ready but node not found " + this.selector);
       }
+    } else if (document) {
+      document?.addEventListener("readystatechange", this.init);
     } else {
-      document.addEventListener("readystatechange", this.init);
+       this.doc.resolve({} as HTMLElement);
     }
   };
 })();

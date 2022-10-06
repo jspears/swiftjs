@@ -31,4 +31,4 @@ class RangeClass implements RangeType {
   }
 }
 
-export const Range = swifty(RangeClass);
+export const RangeFn = swifty(RangeClass);

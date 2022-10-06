@@ -1,5 +1,5 @@
 {
     "extension": ["ts"],
-    "spec": "test/**/*.test.ts",
-    "require": ["tsconfig-paths/register","ts-node/register"]
+    "require": ["tsconfig-paths/register","ts-node/register"],
+    "timeout": 999999
   }

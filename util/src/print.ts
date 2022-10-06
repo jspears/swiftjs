@@ -1,3 +1,3 @@
-export const print = (str: unknown) => {
-  console.log(str);
+export const print = (...str: unknown[]) => {
+  console.log(...str);
 };
