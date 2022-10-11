@@ -1,7 +1,7 @@
-import { testTranspile } from "./testUtil";
+import { tt } from "./testUtil";
 
 describe('switch', function () {
-    it('should process switch', testTranspile(`
+    it('should process switch', tt`
 let someCharacter: Character = "z"
 switch someCharacter {
 case "a","b":
@@ -10,9 +10,9 @@ case "z":
     print("The last letter of the alphabet")
 default:
     print("Some other character")
-}`));
+}`);
 
-    it.only('should process self switch', testTranspile(`
+    it('should process self switch', tt`
 enum Rank: Int {
     case two = 2, three, four, five, six, seven, eight, nine, ten
     case jack, queen, king, ace
@@ -30,6 +30,6 @@ enum Rank: Int {
         }
     }
 }
-`))
+`)
 
 });

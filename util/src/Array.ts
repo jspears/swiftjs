@@ -1,23 +1,30 @@
-import { isFunction, isIterable } from "./guards";
+import { isFunction, isIterable, isObjectWithProp, isObjectWithPropType } from "./guards";
+import { operator } from "./operator";
 import { Predicate, Compare, Range } from "./types";
 
-interface SwiftArrayI<T> {
-    readonly first: T;
-    readonly last: T;
-    readonly isEmpty: boolean;
-    readonly capacity: number;
-    readonly count: number;
-    remove(at: number): T;
-    sorted(by: { by: '>' | '<' | Compare<T> | boolean }): T[];
-}
-declare global {
-    interface Array<T> extends SwiftArrayI<T> {
+type SortBy<S> =  Compare<S> | boolean;
 
-    }
-}
+// interface SwiftArrayI<T> {
+//     readonly first: T;
+//     readonly last: T;
+//     readonly isEmpty: boolean;
+//     readonly capacity: number;
+//     readonly count: number;
+//     remove(at: number): T;
+//     sorted(by: SortBy<T> | { by: Compare<T> | boolean }): T[];
+// }
 
-export class SwiftArray<S> extends Array<S> {
-
+abstract class SwiftArray<S> implements Iterable<S> {
+    [index:number]:S;
+    length:number = 0;
+    abstract slice:Array<S>['slice'];
+    abstract push:Array<S>['push'];
+    abstract splice:Array<S>['splice'];
+    abstract findIndex:Array<S>['findIndex'];
+    abstract includes:Array<S>['includes'];
+    abstract pop:Array<S>['pop'];
+    abstract [Symbol.iterator](): Iterator<S,any,undefined> ;
+   
     get first(){
         return this[0];
     }
@@ -31,18 +38,11 @@ export class SwiftArray<S> extends Array<S> {
         return this.length;
     }
     capacity = Number.MAX_SAFE_INTEGER;
-    sorted({ by }: { by: '>' | '<' | Compare<S> | boolean } = { by: '>' }): S[] {
+    sorted(sort: SortBy<S> | { by: SortBy<S> } = operator('>') ): S[] {
+        
+        const sortBy = isObjectWithProp(sort, 'by') ? sort.by : sort;
 
-        let fn: undefined | ((a: S, b: S) => number);
-        if (by == '<'|| by == true) {
-            fn = (a:S, b:S) => (a + '').localeCompare(b+'');
-        } else if (by == '>' || by == false) {
-            fn = (b:S,a:S) => (a + '').localeCompare(b+'');
-        } else if (typeof by === 'function') {
-            fn = (a:S, b:S) => by(a, b) ? 1 : -1;
-        }
-
-        return this.slice().sort(fn);
+        return this.slice().sort(typeof sortBy === 'boolean' ? operator(sortBy ? '>' : '<') : sortBy as any);
     }
 
     randomElement(): S {
@@ -97,7 +97,18 @@ export class SwiftArray<S> extends Array<S> {
             }
         }
     }
-    popLast(){
-        return this.pop() as any;
+    popLast():S|undefined{
+        return this.pop();
     }
 }
+
+export type SwiftArrayT<T, Arr= InstanceType<typeof SwiftArray<T>>> = { 
+    [k in keyof  Arr]:Arr[k]
+}
+
+declare global {
+    interface Array<T> extends SwiftArrayT<T> {
+
+     }
+}
+Object.assign(Array.prototype, SwiftArray.prototype)

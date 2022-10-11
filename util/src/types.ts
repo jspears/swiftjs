@@ -59,7 +59,10 @@ export type PickValue<T, V = T> = {
 export type KeyOfTypeWithType<T extends Constructor> = KeyOf<T>;
 
 export type AbstractConstructor = abstract new (...args: any) => any;
-export type Constructor = new (...args: any) => any;
+export interface Constructor {
+  new(...args: any): any;
+  name: string;
+}
 export type AnyConstructor = AbstractConstructor | Constructor;
 
 
@@ -215,13 +218,20 @@ export interface Predicate<S> {
 export type Compare<T> = (a: T, b: T) => boolean;
 
 
+export interface Param {
+  name: string;
+  internal?: string;
+  type: string;
+  optional?: boolean;
+}
 //Swift supports value object like things.
 // like struct enum, that are copied on reference or pass.
 // this is how we are gonna implement them.
 export const cloneable = Symbol('cloneable');
 
 declare global {
-    interface Object {
-        [cloneable]?:()=> this;
+  interface Object {
+        //this is a hidden thing, it shouldn't ever really care
+        [cloneable]?:()=> any;
     }
 }

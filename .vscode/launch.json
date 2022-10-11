@@ -112,9 +112,25 @@
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
             "request": "launch",
             "name": "transpile.closure",
-            "args": ["${workspaceFolder}/transpile/test/transpile.closure.ts"],
+            "args": ["${workspaceFolder}/transpile/test/transpile.closure.test.ts"],
+            "cwd": "${workspaceFolder}/transpile"
+        },          {
+            "type": "node",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+            "request": "launch",
+            "name": "transpile.control",
+            "args": ["${workspaceFolder}/transpile/test/transpile.control.test.ts"],
             "cwd": "${workspaceFolder}/transpile"
         }
+, {
+    "type": "node",
+    "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+    "request": "launch",
+    "name": "transpile.class",
+    "args": ["${workspaceFolder}/transpile/test/transpile.class.test.ts"],
+    "cwd": "${workspaceFolder}/transpile"
+}
+,
           {
             "type": "node",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",

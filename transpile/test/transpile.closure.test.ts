@@ -29,7 +29,7 @@ describe('transpile/closure', function() {
     let reversedNames = names.sorted(by: > )
 
     `);
-    it.only('Trailing Closures', tt`
+    it('Trailing Closures', tt`
     
     func someFunctionThatTakesAClosure(closure: () -> Void) {
         // function body goes here
@@ -40,4 +40,24 @@ describe('transpile/closure', function() {
     }
 
     `)
+    it('Trailing Closures 2', tt`
+    let names = ["Chris", "Alex", "Ewa", "Barry", "Daniella"]  
+    let reversedNames = names.sorted() { $0 > $1 }
+
+    `)
+    it('Trailing Closure named', tt`
+    
+    func loadPicture(from server: String, completion: (String) -> Void, onFailure: () -> Void) {
+        print("do stuff \(server)");
+    }
+
+    loadPicture(from: "someServer") { picture in
+        print ("onSucces \(picture)")
+    } onFailure: {
+        print("Couldn't download the next picture.")
+    }
+    
+    
+    `)
+
 })

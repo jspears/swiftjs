@@ -1,3 +1,5 @@
+import { isFunction, isObjectWithPropType } from "./guards";
+import { Compare } from "./types";
 
 
 
@@ -5,30 +7,42 @@ type Op = '/' | '=' | '-' | '+' | '!' | '*' | '%' | '<' | '>' | '&' | '|' | '^' 
 
 type BoolOp = '<' | '>' | '==' | '!=' | '<=' | '>=' | '~=';
 
-type OpFn<T> = T extends BoolOp ? (a: unknown, b: unknown) => boolean : (a: unknown, b: unknown) => any;
+type OpFn<T> = T extends BoolOp ? Compare<unknown> : (a: unknown, b: unknown) => any;
 
-
-export function operator<T>(str: T): OpFn<T> {
+/**
+ * Crates an operator function.  If called on a type it will use that types, operator.  
+ * 
+ * @param str [Op] -- 
+ * @returns 
+ */
+export function operator<T extends Op>(str: T): OpFn<T> {
 
     switch (str) {
-        case '<': return fun((a: unknown, b: unknown) => ('' + a).localeCompare('' + b) < 0);
-        case '>': return fun((a: unknown, b: unknown) => ('' + b).localeCompare('' + a) > 0);
-        case '==': return fun((a: unknown, b: unknown) => ('' + a).localeCompare('' + b) == 0);
-        case '!=': return fun((a: unknown, b: unknown) => ('' + a).localeCompare('' + b) != 0);
-        case '<=': return fun((a: unknown, b: unknown) => ('' + a).localeCompare('' + b) <= 0);
-        case '>=': return fun((a: unknown, b: unknown) => ('' + a).localeCompare('' + b) >= 0);
-        case '~=': return fun((a: unknown, b: unknown) => a == b);
-        case '!=': return fun((a: unknown, b: unknown) => a != b);
+        case '<': return fun(str, (a: unknown, b: unknown) => ('' + a).localeCompare('' + b) < 0);
+        case '>': return fun(str, (a: unknown, b: unknown) => ('' + b).localeCompare('' + a) > 0);
+        case '==': return fun(str, (a: unknown, b: unknown) => ('' + a).localeCompare('' + b) == 0);
+        case '!=': return fun(str, (a: unknown, b: unknown) => ('' + a).localeCompare('' + b) != 0);
+        case '<=': return fun(str, (a: unknown, b: unknown) => ('' + a).localeCompare('' + b) <= 0);
+        case '>=': return fun(str, (a: unknown, b: unknown) => ('' + a).localeCompare('' + b) >= 0);
+        case '~=': return fun(str, (a: unknown, b: unknown) => a == b);
+        case '!=': return fun(str, (a: unknown, b: unknown) => a != b);
     }
-    return (a: unknown, b: unknown) => {
+    return fun(str, (a: unknown, b: unknown) => {
+        if (isObjectWithPropType(isFunction, str, a)) {
+            return a[str](b);
+        }
+
         console.log(`unimplemented operator ${str}`);
-        return null as any;
-    };
+        return false;
+    });
 }
 
-const fun = <T extends (a: unknown, b: unknown) => any>(fn: T) => function (this: unknown, ...args: unknown[]) {
+const fun = <T extends (a: unknown, b: unknown) => any>(op:Op, fn: T) => function (this: unknown, ...args: unknown[]) {
     if (args.length < 2) {
         args.unshift(this);
+    }
+    if (isObjectWithPropType(isFunction, op, this)) {
+       return this[op](...args);
     }
     return fn.call(null, ...args as [unknown, unknown]);
 }
