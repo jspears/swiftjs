@@ -17,8 +17,9 @@ let c = Counter()
 c.increment()
 c.increment(3)
 c.increment(by:4)
-`)
-it('should transpile properties', tt`
+`);
+
+it.skip('should transpile properties', tt`
     import SwiftUI
     //Animation Demo
     struct AnimationDemo: View {
@@ -32,9 +33,8 @@ it('should transpile properties', tt`
         let pi:Double = 3.1456
         let str:String;
         let i:Int = 1;
-    }
-   
-    `);
+    }`);
+
 it('should do get/set', tt`
     struct Point {
         var x = 0.0, y = 0.0

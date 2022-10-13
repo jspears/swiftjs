@@ -1,24 +1,32 @@
 import { Param } from "text";
-import { ClassDeclaration, ClassDeclarationStructure, ClassExpression, OptionalKind, SourceFile, ThrowStatement } from "ts-morph";
+import { Node as TSNode, ClassDeclaration, ClassDeclarationStructure, OptionalKind, SourceFile, } from "ts-morph";
 import { SyntaxNode as Node } from "web-tree-sitter";
 
 
 export class ContextImpl {
-
-    private scope: Map<string, string|undefined> = new Map<string, string|undefined>;
-    constructor(public src: SourceFile, public clazz?: ClassDeclaration | ClassExpression, public parent?: ContextImpl,) {
+    isMutateScope = false;
+    mutateScope(scope: boolean) {
+        const ctx = this.newContext();
+        ctx.isMutateScope = scope;
+        return ctx;
     }
-    walk(v: (c:ContextImpl)=> boolean):ContextImpl | undefined{
+    private scope: Map<string, string | undefined> = new Map<string, string | undefined>;
+    constructor(public src: SourceFile, public clazz?: ClassDeclaration, public parent?: ContextImpl,) {
+    }
+    walk(v: (c: ContextImpl) => boolean): ContextImpl | undefined {
         return v(this) ? this : this.parent?.walk(v);
+    }
+    typeFor(name: string): string | undefined {
+        return this.scope.get(name) ?? this.parent?.typeFor(name);
     }
     classNameFor(name: string) {
 
-        const cname = this.walk(v => v.clazz?.getProperty(name) != null)?.getClassName();
+        const cname = this.clazz?.getName();
         if (cname) {
-            return `${cname}.${name}`;
+            return `${cname}_${name}`;
         }
         return name;
-        
+
     }
     inScope(name: string): boolean {
         //const name = check.replace(/import\("[^"]*"\)\./, '').replace(/<.*>/, '');
@@ -29,27 +37,19 @@ export class ContextImpl {
             this.src.getVariableDeclaration(name) != null ||
             this.parent?.inScope(name) ||
             this.src.getClass(name) != null ||
-            this.hasClass(name)             ;
+            this.hasClass(name);
     }
     hasClass(name: string): boolean {
-        
-        if (this.clazz?.getName() === name) {
+        if (this.src.getClass(name) != null) {
             return true;
         }
-        if (this.src.getClass(name)) {
-            return true;
-        }
-        return this.clazz?.getProperty(name)?.getType() instanceof ClassExpression ?? this.parent?.hasClass(name) ?? false;
+        return this.src.getClass(this.classNameFor(name)) != null;
     }
 
     getParentClass() {
         return this.walk(v => v.clazz !== this.clazz);
     }
     getClassName(): string | undefined {
-        const pClass = this.getParentClass();
-        if (pClass?.clazz) {
-            return `${pClass.getClassName()}.${this.clazz?.getName()}`;
-        }
         return this.clazz?.getName();
     }
     getClass() {
@@ -65,7 +65,15 @@ export class ContextImpl {
         if (this.inScope(name)) {
             return false;
         }
-        return this.clazz?.getMember(name) != null;
+        const member = this.clazz?.getMember(name);
+        if (member == null) {
+            return false;
+        }
+        // MethodDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration 
+        if (TSNode.isMethodDeclaration(member) || TSNode.isPropertyDeclaration(member) || TSNode.isGetAccessorDeclaration(member) || TSNode.isSetAccessorDeclaration(member)) {
+            return !member.isStatic()
+        }
+        return false;
     }
 
     addImport(namedImport: string, moduleSpecifier: string) {
@@ -83,23 +91,13 @@ export class ContextImpl {
         if (!name) {
             throw new Error(`must have a class name`);
         }
-
-        let clz:ClassDeclaration | ClassExpression = this.src.addClass({
+        const className = this.classNameFor(name);
+        let clz: ClassDeclaration = this.src.addClass({
             ...clazz,
-            name,
+            name: className,
             isExported: this.clazz == null
         });
-        if (this.clazz) {
-            const initializer = clz.getText();
-            clz.remove();
-            clz = (this.clazz.addProperty({
-                name: name,
-                initializer,
-                isStatic: true,
-                isReadonly: true
-            }).getInitializer() as ClassExpression);
-            
-        };
+
         const ctx = this.newContext(clz);
 
         if (isCloneOnAssign) {
@@ -107,8 +105,8 @@ export class ContextImpl {
             clz.addMethod({
                 name: '[cloneable]',
                 statements:
-                    typeof isCloneOnAssign === 'function' ? isCloneOnAssign(name) :
-                        isCloneOnAssign === true ? `return new ${name}(this);` : isCloneOnAssign
+                    typeof isCloneOnAssign === 'function' ? isCloneOnAssign(className) :
+                        isCloneOnAssign === true ? `return new ${className}(this);` : isCloneOnAssign
             })
         }
         return ctx;
@@ -117,13 +115,36 @@ export class ContextImpl {
         console.warn(`unknown type ${message}: '${n.type}'`, n.text);
         debugger;
     }
-    newContext(clazz: ClassDeclaration | ClassExpression) {
-        return new ContextImpl(this.src, clazz || this.clazz, this);
+    newContext(clazz?: ClassDeclaration) {
+        const ctx = new ContextImpl(this.src, clazz || this.clazz, this);
+        ctx.isMutateScope = this.isMutateScope;
+        return ctx;
     }
 
-    add(...label: (Param| [string, string|undefined])[]):ContextImpl {
+    add(...label: (Param | [string, string | undefined])[]): ContextImpl {
         const ctx = new ContextImpl(this.src, this.clazz, this);
-        label.forEach(v=>Array.isArray(v) ?ctx.scope.set(v[0], v[1]) : ctx.scope.set(v.name, v.type))
+        label.forEach(v => Array.isArray(v) ? ctx.scope.set(v[0], v[1]) : ctx.scope.set(v.name, v.type))
         return ctx;
+    }
+    clone(text: string | undefined, type?: string) {
+        if (text) {
+            //Figure out better logic for this
+            //struct/enum's get cloned.... everything else not so much
+            // array?  I dunno.  
+            const varType = type || this.typeFor(text);
+
+            switch (varType) {
+                case 'bigint':
+                case 'function':
+                case 'symbol':
+                case 'string':
+                case 'boolean':
+                case 'number':
+                    return text;
+            }
+            this.addImport('cloneable', '@tswift/util');
+            return `${text}?.[cloneable]?.() ?? ${text}`;
+        }
+        return '';
     }
 }

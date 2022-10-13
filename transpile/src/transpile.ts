@@ -1,35 +1,33 @@
 import { readFile as fsReadFile } from 'fs/promises';
 import { basename, join } from "path";
-import { Node as TSNode, ClassDeclaration, FunctionDeclaration, GetAccessorDeclaration, MethodDeclaration, OptionalKind, printNode, Project, PropertyDeclaration, PropertyDeclarationStructure, Scope, SetAccessorDeclaration, SourceFile, SyntaxKind, VariableDeclaration, VariableDeclarationKind, VariableStatement } from "ts-morph";
+import { Node as TSNode, Type, ClassDeclaration, FunctionDeclaration, GetAccessorDeclaration, MethodDeclaration, OptionalKind, printNode, Project, PropertyDeclaration, PropertyDeclarationStructure, Scope, SetAccessorDeclaration, SourceFile, SyntaxKind, VariableDeclaration, VariableDeclarationKind, VariableStatement } from "ts-morph";
 import Parser, { SyntaxNode } from "web-tree-sitter";
 import { assertNodeType, cname, findSib } from './nodeHelper';
 import { Node, ComputedPropDecl, CParam, TranspileConfig } from './types';
 import { getParser } from "./parser";
 import { parseStr, toStringLit } from "./parseStr";
-import { lambdaReturn, Param, replaceEnd, replaceStart, toParams, toParamStr, toScope, unkind, writeDestructure, writeType } from "./text";
+import { lambdaReturn, Param, replaceEnd, replaceStart, toParamBody, toParams, toParamStr, toScope, unkind, writeDestructure, writeType } from "./text";
 import { ContextImpl } from './context';
-import { unfunc } from 'manipulate';
-import { type } from 'os';
+import { unfunc } from './manipulate';
+import { makeConstructor } from './constructor';
+import { toType } from './toType';
 
 export class Transpile {
     config: TranspileConfig;
     _parser?: Parser;
-    clone = (text: string | undefined, ctx: ContextImpl) => {
-        if (text) {
-            ctx.addImport('cloneable', '@tswift/util');
-            return `${text}?.[cloneable]?.() ?? ${text}`;
-        }
-        return '';
-    }
+
 
     asType(ctx: ContextImpl, namedImport?: string, moduleSpecifier: string = '@tswift/util'): string {
         if (namedImport) {
             if (namedImport in this.config.builtInTypeMap) {
                 return this.config.builtInTypeMap[namedImport];
             }
+            const nested = ctx.classNameFor(namedImport);
+            if (ctx.hasClass(nested)) {
+                return nested;
+            }
             if (ctx.hasClass(namedImport)) {
-                //emulate nested classes.
-                return ctx.classNameFor(namedImport);
+                return namedImport
             }
             if (ctx.inScope(namedImport)) {
                 return namedImport;
@@ -38,7 +36,7 @@ export class Transpile {
                 //for anonymous types.
                 return namedImport;
             }
-            namedImport = namedImport.replace(/import\("[^"]*"\)\./, '').replace(/<.*>/, '');
+          //  namedImport = namedImport.replace(/<.*>/, '');
             if (Object.values(this.config.builtInTypeMap).includes(namedImport)) {
                 return namedImport;
             }
@@ -172,8 +170,12 @@ export class Transpile {
         if (ctx.inThisScope(v.text)) {
             return `this.${v.text}`;
         }
+        const nested = ctx.classNameFor(v.text)
+        if (ctx.hasClass(nested)) {
+            return `new ${nested}`;
+        }
         if (ctx.hasClass(v.text)) {
-            return `new ${ctx.classNameFor(v.text)}`;
+            return `new ${v.text}`;
         }
         return v.text;
     }
@@ -840,7 +842,7 @@ export class Transpile {
         const finStatements = lambdaReturn(statements);
         if (!params.length) {
             for (const [name] of finStatements.matchAll(/(\$\d+?)/g)) {
-                params.push({ name });
+                params.push({ name, type: 'unknown' });
             }
         }
         const lambda =
@@ -1097,7 +1099,7 @@ export class Transpile {
                                             prop = clz?.addSetAccessor({
                                                 ...struct,
                                                 ...setter,
-                                                returnType: 'void',
+                                                returnType: undefined,
                                             });
                                         }
                                         break;
@@ -1105,7 +1107,7 @@ export class Transpile {
                                         if (!setter) setter = { statements: [], parameters: [] };
                                         setter.parameters.push({
                                             name: s.text,
-                                            type: this.asType(ctx, prop?.getType().getText())
+                                            type: toType(prop)
                                         });
                                         break;
                                     default: ctx.unknownType(s, 'computed_property->computed_setter');
@@ -1124,7 +1126,7 @@ export class Transpile {
                                         getter.statements.push(...this.processStatement(s, ctx));
 
                                         if (prop) {
-                                            const returnType = this.asType(ctx, prop.getType().getText());
+                                            const returnType = toType(prop)
                                             const struct = unkind(prop.getStructure());
                                             if (prop instanceof PropertyDeclaration) {
                                                 prop.remove();
@@ -1177,7 +1179,7 @@ export class Transpile {
                                     if (!dec) {
                                         throw new Error(`could not find decorator ` + decoratorType);
                                     }
-                                    const type = prop.getType().getText()
+                                    const type = toType(prop);
                                     //defaults to oldValue 
                                     const arg = l.children.reduce((ret, c) => {
                                         switch (c.type) {
@@ -1313,11 +1315,11 @@ export class Transpile {
     }
 
     handleConstructors(constructors: Node[], ctx: ContextImpl): void {
-        const parameters: [CParam[], Node?][] = [];
+        const parameters: [Param[], string][] = [];
 
         constructors.forEach(constructor => {
-            const perConst: CParam[] = []
-            const current: [CParam[], Node?] = [perConst];
+            const perConst: Param[] = []
+            const current: [Param[], string] = [perConst, ''];
             parameters.push(current);
             constructor.children.forEach(v => {
                 switch (v.type) {
@@ -1330,123 +1332,16 @@ export class Transpile {
                         break;
                     }
                     case 'function_body':
-                        current.push(v.children[1]);
+                        current[1] = this.processNode(v.children[1], ctx);
                         break;
                     default: ctx.unknownType(v, 'constructor');
                 }
 
             })
         });
-
-        if (parameters.length === 1) {
-            const [params, node] = parameters[0];
-            ctx.getClassOrThrow().addConstructor({
-                parameters: params.map(({ optional: hasQuestionToken, internal: name, type }) => ({
-                    name: name as string,
-                    hasQuestionToken,
-                    type,
-                })),
-                statements: this.processStatement(node, ctx),
-            });
-        } else {
-
-            const cls = ctx.getClassOrThrow();
-            const className = cls.getName() || 'NoClassName';
-            const cType = `${className}Constructor`;
-
-            let hasQuestionTokenParam = true;
-            const nonStatic = cls.getProperties().filter(v => !v.isStatic() && !TSNode.isCallExpression(v.getInitializer())).map(d => {
-                const name = d.getName();
-                const type = d.getType().getText();
-                const hasQuestionToken = d.hasQuestionToken() || d.getInitializer() != null;
-                hasQuestionTokenParam = hasQuestionTokenParam && hasQuestionToken;
-                return ({ name, type, optional: hasQuestionToken, hasInitializer: d.hasInitializer() })
-            });
-
-            const types: string[] = [];
-
-            parameters.forEach(([param, node], idx) => {
-                const name = cname(idx + 1, cType);
-                types.push(name);
-                ctx.src.insertInterface(cls.getChildIndex(), {
-                    name,
-                    typeParameters:cls.getTypeParameters().map(v=>v.getStructure()),
-                    properties: param.map(({ name = '__unknown__', type, optional: hasQuestionToken }) => ({
-                        name,
-                        type,
-                        hasQuestionToken
-                    }))
-                });
-            });
-
-           
-            //add copy constructor if it does not exist.
-            const constructorType = new Set(types);
-            const typeParameters = cls.getTypeParameters().map(v => v.getStructure());
-            if (nonStatic.length) {
-                ctx.src.insertInterface(cls.getChildIndex(), {
-                    name: cType,
-                    typeParameters,
-                    properties: nonStatic.map(({ name = '__unknown__', type, optional: hasQuestionToken }) => ({
-                        name,
-                        type,
-                        hasQuestionToken
-                    }))
-                });
-                constructorType.add(cType);
-            }
-            if (parameters.length) {
-                ctx.addImport('Overload', '@tswift/util');
-                ctx.addImport('isOverloadConstructorIdx', '@tswift/util');
-                ctx.addImport('isOverloadConstructor', '@tswift/util');
-               
-            }
-            cls.addConstructor({
-                overloads:  constructorType.size == 1 ? [] : Array.from(constructorType).map(type => ({
-                   parameters:[{name:'param', type}] 
-                })),
-                parameters: !parameters.length  ? [
-                    {
-                        name: 'param',
-                        hasQuestionToken:hasQuestionTokenParam,
-                        type: cType+(typeParameters.length ? `<${typeParameters.map(v=>v.name).join(',')}>` :'' ),
-                    }
-                ] : [
-                    {
-                        name: 'args',
-                        isRestParameter:true,
-                        type: 'any[]'
-                    }
-                ],
-                statements: [
-                    ctx.getClassOrThrow().getExtends() ? `super(${parameters.length ? '...args.slice(1)' : 'param'})` : '',
-                    ...parameters.map(([config, logic], i) => `if (isOverloadConstructorIdx<${types[i]}>(${i}, args[0], args[1])){
-                                const {${config.map(p => p.internal && p.internal != p.name ? `${p.name}:${p.internal}` : p.name).join(',')}} = args[1];
-                                ${this.processNode(logic, ctx)}
-                                return this;
-                            }`),
-                    parameters.length > 1 ? `const param = args[1] as ${cType};` : '',
-                    ...(types.includes(className) ? [] : nonStatic.map(({ name, optional, hasInitializer }) => {
-                       
-                        const paramName = this.clone(`param${optional ? '?' : ''}.${name}`, ctx);
-                        if (!optional && !hasInitializer) {
-                            return `this.${name} = ${paramName};`;
-                        }
-
-                        return `if (param && ('${name}' in param) && param.${name} !== undefined) this.${name} = ${paramName};\nif (param instanceof ${className}) Object.assign(this, param);
-                            
-                        `;
-                    }))
-                ]
-            });
-
-            if (parameters.length) {
-                cls.addDecorator({
-                    name: 'Overload',
-                    arguments:[JSON.stringify(parameters.map(v=>v[0]))]
-                })
-            }
-        }
+        
+        makeConstructor(parameters, ctx);
+       
     }
 
 
@@ -1468,6 +1363,10 @@ export class Transpile {
                     params.push(this.handleParam(n, ctx));
                     break;
                 case 'modifiers':
+                    if (n.text === 'mutating') {
+                        ctx = ctx.mutateScope(true);
+                        break;
+                    }
                     func.scope = toScope(n.text);
                     break;
                 case 'simple_identifier':

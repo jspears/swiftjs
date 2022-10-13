@@ -1,5 +1,6 @@
 import { ClassDeclaration, CodeBlockWriter, OptionalKind, ParameterDeclarationStructure, ParameteredNodeStructure, Scope, SourceFile, Writers } from "ts-morph";
-import Parser from "web-tree-sitter";
+import { Param } from '@tswift/util';
+export { Param } from '@tswift/util';
 
 export function replaceStart(prefix: string, v: string) {
     if (v.startsWith(prefix)) {
@@ -73,12 +74,7 @@ export function toScope(text: string): Scope | undefined {
     console.log('unknown scope', text);
 }
 
-export interface Param {
-    name: string;
-    internal?: string;
-    type?: string;
-    optional?: boolean; 
-}
+
 export type Context = ClassDeclaration | SourceFile;
 
 export interface ToType {
@@ -97,4 +93,8 @@ export function lambdaReturn(statements: string[]): string{
 }
 export function toParamStr(params: Param[]): string {
    return  params.map(p =>`${p.name}${p.optional ? '?' : ''}${p.type ? `:${p.type}` : ''}`).join(', ')
+}
+
+export function toParamBody(params: Param[]): string {
+    return `{${toParamStr(params)}}`
 }
