@@ -3,12 +3,12 @@ import { Constructor, Param } from "./types";
 
 type Fn = (...args: any[]) => any
 
-function isExtendName(name: string, v: unknown): boolean{
+function isExtendName(name: string, v: unknown): boolean {
     if (!v) return false;
-    if (v.constructor.name == name){
+    if (v.constructor.name == name) {
         return true
     }
-    if (v.constructor === Object || v.constructor === Function){
+    if (v.constructor === Object || v.constructor === Function) {
         return false;
     }
     return isExtendName(name, Object.getPrototypeOf(v));
@@ -35,6 +35,11 @@ export function isOverloadConstructor<T>(param?: unknown, config: Param[] = []):
 
 function isOneOfType(str: string, v?: unknown) {
     for (const type of str.split(/\s*|\s*/)) {
+        if (/Array|\[.*\]/.test(type)) {
+            if (Array.isArray(v)) {
+                return true;
+            }
+        }
         switch (type) {
             case '|': continue;
             case 'null':
@@ -58,7 +63,7 @@ function isOneOfType(str: string, v?: unknown) {
                     return true;
                 }
                 break;
-                
+
             default:
                 if (isExtendName(type, v)) {
                     return true;
@@ -102,12 +107,12 @@ function processArgOrUndef(args: any[], params: Param[]): any[] | undefined {
     }
     return;
 }
-function processArgs( idx:number, args: any[],rest: Param[][] = []): [number, ...any[]] {
+function processArgs(idx: number, args: any[], rest: Param[][] = []): [number, ...any[]] {
     const pargs = processArgOrUndef(args, rest[0]);
     if (pargs != null) {
         return [idx, ...pargs];
     }
-    return rest.length ? processArgs(idx+1, args,  rest.slice(1)) : [idx, ...args];
+    return rest.length ? processArgs(idx + 1, args, rest.slice(1)) : [idx, ...args];
 }
 /**
  * When the class is called the first argument will be the index 
@@ -121,7 +126,7 @@ export function Overload(params: Param[][]) {
     return <T extends Constructor>(constructor: T) => {
         return class extends constructor {
             constructor(...args: any[]) {
-                super(...processArgs( 0, args, params));
+                super(...processArgs(0, args, params));
             }
         }
     }
@@ -139,10 +144,7 @@ export function overload<FA extends Fn, FB extends Fn, FAArg extends any[] = Par
     fa: FA, params: Param[], fb: FB) {
     return function <T extends any[] = FAArg | FBArg>(this: any, ...args: T): T extends FAArg ? ReturnType<FA> : ReturnType<FB> {
         const arg = processArgOrUndef(args, params);
-        if (arg != null) {
-            return fa.call(this, ...arg);
-        }
-        return fb.call(this, ...args);
+        return arg ? fa.call(this, ...arg) : fb.call(this, ...args);
     }
 }
 /**
@@ -159,6 +161,6 @@ export function overload<FA extends Fn, FB extends Fn, FAArg extends any[] = Par
  * @param v 
  * @returns 
  */
-export function isOverloadConstructorIdx<T>(idx: number, check: any, v:any): v is T {
+export function isOverloadConstructorIdx<T>(idx: number, check: any, v: any): v is T {
     return idx == check;
 }

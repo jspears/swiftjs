@@ -1,16 +1,17 @@
+import { Param } from '@tswift/util';
 import { readFile as fsReadFile } from 'fs/promises';
+import { Func, handleOverload } from 'overload';
 import { basename, join } from "path";
-import { Node as TSNode, Type, ClassDeclaration, FunctionDeclaration, GetAccessorDeclaration, MethodDeclaration, OptionalKind, printNode, Project, PropertyDeclaration, PropertyDeclarationStructure, Scope, SetAccessorDeclaration, SourceFile, SyntaxKind, VariableDeclaration, VariableDeclarationKind, VariableStatement } from "ts-morph";
+import { Node as TSNode, GetAccessorDeclaration, OptionalKind, Project, PropertyDeclaration, PropertyDeclarationStructure, Scope, SetAccessorDeclaration } from "ts-morph";
 import Parser, { SyntaxNode } from "web-tree-sitter";
-import { assertNodeType, cname, findSib } from './nodeHelper';
-import { Node, ComputedPropDecl, CParam, TranspileConfig } from './types';
+import { makeConstructor } from './constructor';
+import { ContextImpl } from './context';
+import { assertNodeType, findSib } from './nodeHelper';
 import { getParser } from "./parser";
 import { parseStr, toStringLit } from "./parseStr";
-import { lambdaReturn, Param, replaceEnd, replaceStart, toParamBody, toParams, toParamStr, toScope, unkind, writeDestructure, writeType } from "./text";
-import { ContextImpl } from './context';
-import { unfunc } from './manipulate';
-import { makeConstructor } from './constructor';
+import { lambdaReturn, replaceEnd, replaceStart, toParamStr, toScope, unkind } from "./text";
 import { toType } from './toType';
+import { ComputedPropDecl, Node, TranspileConfig } from './types';
 
 export class Transpile {
     config: TranspileConfig;
@@ -36,7 +37,7 @@ export class Transpile {
                 //for anonymous types.
                 return namedImport;
             }
-          //  namedImport = namedImport.replace(/<.*>/, '');
+            //  namedImport = namedImport.replace(/<.*>/, '');
             if (Object.values(this.config.builtInTypeMap).includes(namedImport)) {
                 return namedImport;
             }
@@ -385,7 +386,9 @@ export class Transpile {
 
             switch (n.type) {
                 case 'self_expression':
+
                     ret.push('this');
+
                     break;
                 case 'switch':
                     ret.push(n.text + '(');
@@ -489,8 +492,26 @@ export class Transpile {
             case 'oct_literal':
             case 'hex_literal':
             case 'bin_literal':
+                if (n.nextSibling?.type == 'navigation_suffix') {
+                    //This fixes 25.4..mm
+                    return n.text.includes('.') ? n.text : `${n.text}.`;
+                }
                 return n.text;
             case 'self_expression':
+                //So yeah for extending Number this needs to be anything.
+                // I dunno maybe a better way to make that all work but...
+
+                switch (n.nextSibling?.type) {
+                    case '/':
+                    case '*':
+                    case '-':
+                    case '+':
+                    case '+=':
+                    case '/=':
+                    case '*=':
+                    case '-=':
+                        return 'this as any';
+                }
                 return 'this';
             case 'nil':
                 return 'undefined';
@@ -1010,6 +1031,10 @@ export class Transpile {
         if (comment) {
             p.addJsDoc(comment);
         }
+        if (!(p.hasQuestionToken() || p.hasInitializer())) {
+        
+            p.addJsDoc('@ts-ignore');   
+        }
         return computedNode ? [computedNode, p] : undefined;
     }
     processTypeAnnotation(n: Parser.SyntaxNode, ctx: ContextImpl): {
@@ -1325,6 +1350,7 @@ export class Transpile {
                 switch (v.type) {
                     case 'init':
                     case '(':
+                    case ',':   
                     case ')':
                         break;
                     case 'parameter': {
@@ -1339,18 +1365,29 @@ export class Transpile {
 
             })
         });
-        
+
         makeConstructor(parameters, ctx);
-       
+        if (ctx.isExtension) {
+            const name = ctx.getClassName()?.split('$')[0] || '__PROBLEM__';
+            ctx.src.addStatements(`Object.setPrototypeOf(${name}.prototype, ${ctx.getClassName()}.prototype)`)
+            const project = this.config.project;
+            const extensions = project.getSourceFile('src/extensions.d.ts') || this.config.project.createSourceFile('src/extensions.d.ts');
+            // const mod = extensions.addModule({
+            //     hasDeclareKeyword: true,
+            //     name: 'global'
+            // });
+            extensions.addInterface({
+                ...ctx.getClassOrThrow().extractInterface(),
+                name
+            })
+            console.log(extensions.getText());
+        }
     }
 
 
     handleFunction(node: Node, ctx: ContextImpl): void {
-        let func: Parameters<ClassDeclaration['addMethod']>[0] = {
-            name: '__unknown__'
-        };
-        let params: Param[] = [];
-        let statements: string[] = [];
+        let func: Func = {params:[]} as any;
+        
         let tupleReturn: [string | undefined, string | undefined][] = [];
         node.children.forEach((n) => {
             switch (n.type) {
@@ -1360,7 +1397,7 @@ export class Transpile {
                 case '->':
                 case 'func': break;
                 case 'parameter':
-                    params.push(this.handleParam(n, ctx));
+                    func.params.push(this.handleParam(n, ctx));
                     break;
                 case 'modifiers':
                     if (n.text === 'mutating') {
@@ -1376,14 +1413,14 @@ export class Transpile {
                     func.returnType = this.asType(ctx, n.text);
                     break;
                 case 'function_body':
-                    ctx = ctx.add(...params);
+                    ctx = ctx.add(...func.params);
                     n.children.forEach(f => {
                         switch (f.type) {
                             case '{':
                             case '}':
                                 break;
                             default:
-                                statements.push(...this.processStatement(f, ctx));
+                                func.statements = this.processStatement(f, ctx);
                                 break;
                         }
                     });
@@ -1420,109 +1457,7 @@ export class Transpile {
                     ctx.unknownType(n, 'function');
             }
         });
-        let overload: string | undefined;
-        if (ctx.clazz) {
-            const member = ctx.clazz.getMember(func.name);
-            const overloadParamNames: string[] = [];
-            if (member) {
-                if (member instanceof MethodDeclaration) {
-                    overloadParamNames.push(...member.getParameters().map(v => v.getName()));
-                }
-                overload = unfunc(member);
-                member.remove();
-            }
-            let m: MethodDeclaration | PropertyDeclaration = ctx.clazz.addMethod(func);
-            m.addStatements(statements);
-
-            //If all the parameters are '_' positional than we don't have to wrap in a func.
-            if (TSNode.isMethodDeclaration(m) && params.every(v => v.name == '_' && v.internal)) {
-                params.forEach(v => {
-                    if (!v.internal) {
-                        throw new Error('methods need parameter names');
-                    }
-                    TSNode.isMethodDeclaration(m) &&
-                        m.addParameter({
-                            name: v.internal,
-                            type: v.type,
-
-                        });
-                });
-            } else if (params.length) {
-                m.addParameter({
-                    name: writeDestructure(params),
-                    type: writeType(params)
-                })
-                const text = unfunc(m);
-                m.remove();
-                const { kind, ...rest } = func;
-                ctx.addImport('func', '@tswift/util');
-
-                m = ctx.clazz.addProperty({
-                    ...rest,
-                    initializer: `func(${text}, ${params.map(v => JSON.stringify(v.name)).join(',')})`
-                });
-            }
-
-
-            if (overload) {
-                const scope = m.getScope();
-                const name = m.getName();
-                const otext = unfunc(m);
-                m.remove();
-                ctx.addImport('overload', '@tswift/util');
-                const initializer = `overload(${overload},${JSON.stringify(params)},${otext} )`;
-
-                //                ctx.addImport('overload', '@tswift/util');
-                ctx.clazz.addProperty({
-                    name,
-                    scope,
-                    initializer
-                });
-
-            }
-
-        } else {
-            let f: FunctionDeclaration | VariableStatement = ctx.src.addFunction({
-                name: func.name,
-                isAsync: func.isAsync,
-                isExported: true,
-            });
-            if (params.length) {
-                f.addParameters(toParams(params));
-            }
-            f.addStatements(statements);
-            if (params.length) {
-                f.setIsExported(false);
-                const orig = f.getText();
-                f.remove();
-                ctx.addImport('func', '@tswift/util');
-                f = ctx.src.addVariableStatement({
-                    declarationKind: VariableDeclarationKind.Const,
-                    isExported: true,
-                    declarations: [{
-                        name: func.name,
-                        initializer: `func(${orig}, ${params.map(v => JSON.stringify(v.name)).join(',')})`
-                    }]
-                });
-            }
-
-            if (tupleReturn.length) {
-                f.setIsExported(false);
-                const orig = f.getText();
-                f.remove();
-                const wrapped = JSON.stringify(tupleReturn.map(([v]) => v));
-                this.asType(ctx, 'tupleWrap');
-                ctx.src.addVariableStatement({
-                    declarationKind: VariableDeclarationKind.Const,
-                    isExported: true,
-                    declarations: [{
-                        name: func.name,
-                        initializer: `tupleWrap(${wrapped} as const, ${orig})`
-                    }]
-                });
-
-            }
-        }
+        handleOverload(ctx, func);
     }
     handleEnum(node: Node, ctx: ContextImpl) {
 
@@ -1640,11 +1575,14 @@ export class Transpile {
     }
 
     handleClass(node: Node, ctx: ContextImpl): void {
-        let typeParameters: string[] = [];
         let isStruct = false;
+        let isExtension = false;
         node.children.forEach(n => {
             switch (n.type) {
                 case ':':
+                    break;
+                case 'extension':
+                    isExtension = true;
                     break;
                 case 'class':
                     isStruct = false;
@@ -1655,9 +1593,9 @@ export class Transpile {
                 case 'inheritance_specifier':
                     ctx.getClassOrThrow().setExtends(this.asType(ctx, n.text))
                     break;
+                case 'user_type':
                 case 'type_identifier':
-                    ctx = ctx.addClass({ name: n.text }, isStruct);
-
+                    ctx = ctx.addClass({ name: n.text }, isStruct, isExtension);
                     break;
                 case 'class_body':
                     this.handleClassBody(n, ctx);

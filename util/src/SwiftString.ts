@@ -1,3 +1,5 @@
+import { Func } from "mocha";
+import { func } from "./func";
 import { isObjectWithProp } from "./guards";
 import { Predicate } from "./types";
 
@@ -53,5 +55,9 @@ export class SwiftString extends String {
         }
 
     }
+
+    insert = func(function(this:string, {content,at}: { content: string, at: number }) {
+        return this.slice(0, at) + content + this.slice(at);
+    }, 'content', 'at');
 
 }

@@ -10,7 +10,7 @@
     "lib":["ES2022", "ES2021.String", "DOM"],
     "baseUrl": "./src/",
     "paths": {
-      "@tswift/util":["../util/src"],
+      "@tswift/util":["../util/src", "../util"],
       
     }
   },

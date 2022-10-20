@@ -76,11 +76,12 @@ it('should init when it can', tt`
         init(fromKelvin kelvin: Double) {
             temperatureInCelsius = kelvin - 273.15
         }
-        init(celsius: Double?) {
+        init(_ celsius: Double) {
             temperatureInCelsius = celsius;
         }
     }
     let boilingPointOfWater = Celsius(fromFahrenheit: 212.0)
+    let freezing = Celsius(0)
     `);
 it('should parse generic template', tt`struct Stack<Element> {
         var items: [Element] = []

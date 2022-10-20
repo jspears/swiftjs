@@ -114,7 +114,19 @@
             "name": "transpile.closure",
             "args": ["${workspaceFolder}/transpile/test/transpile.closure.test.ts"],
             "cwd": "${workspaceFolder}/transpile"
-        },          {
+        }, 
+        {
+            "type": "node",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+            "request": "launch",
+            "name": "transpile.extensions",
+            "args": ["${workspaceFolder}/transpile/test/transpile.extensions.test.ts"],
+            "cwd": "${workspaceFolder}/transpile"
+        },          
+
+        
+        
+        {
             "type": "node",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
             "request": "launch",

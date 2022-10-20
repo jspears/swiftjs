@@ -1,6 +1,5 @@
 import { ClassDeclaration, CodeBlockWriter, OptionalKind, ParameterDeclarationStructure, ParameteredNodeStructure, Scope, SourceFile, Writers } from "ts-morph";
 import { Param } from '@tswift/util';
-export { Param } from '@tswift/util';
 
 export function replaceStart(prefix: string, v: string) {
     if (v.startsWith(prefix)) {
@@ -26,7 +25,7 @@ export function writeDestructure(params:Param[]){
 export function writeType(params: Param[]) {
    return (write:CodeBlockWriter) => write.write(`{${params.map(({ name, optional, type }) => `${name}${optional ? '?' : ''}:${type}`).join(';')}}`);
 }
-export function unkind<T extends { kind: number }>({kind, ...rest}: T): Omit<T, 'kind'> {
+export function unkind<T extends { kind?: any }>({kind, ...rest}: T): Omit<T, 'kind'> {
     return rest
 }
 
@@ -92,9 +91,9 @@ export function lambdaReturn(statements: string[]): string{
     return statements[0];
 }
 export function toParamStr(params: Param[]): string {
-   return  params.map(p =>`${p.name}${p.optional ? '?' : ''}${p.type ? `:${p.type}` : ''}`).join(', ')
+   return  params?.map(p =>`${p.name}${p.optional ? '?' : ''}${p.type ? `:${p.type}` : ''}`).join(', ')
 }
 
 export function toParamBody(params: Param[]): string {
-    return `{${toParamStr(params)}}`
+    return params && params.length ? `{${toParamStr(params)}}` : ''
 }

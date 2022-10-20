@@ -1,10 +1,11 @@
-import { Param } from "text";
+import { Param } from "@tswift/util";
 import { Node as TSNode, ClassDeclaration, ClassDeclarationStructure, OptionalKind, SourceFile, } from "ts-morph";
 import { SyntaxNode as Node } from "web-tree-sitter";
-
+import { resolveType } from './resolveMap';
 
 export class ContextImpl {
     isMutateScope = false;
+    isExtension = false;
     mutateScope(scope: boolean) {
         const ctx = this.newContext();
         ctx.isMutateScope = scope;
@@ -20,7 +21,7 @@ export class ContextImpl {
         return this.scope.get(name) ?? this.parent?.typeFor(name);
     }
     classNameFor(name: string) {
-
+        
         const cname = this.clazz?.getName();
         if (cname) {
             return `${cname}_${name}`;
@@ -87,20 +88,31 @@ export class ContextImpl {
     }
     /** adds a class and also creates a new context for the class */
     addClass({ name, ...clazz }: OptionalKind<ClassDeclarationStructure>,
-        isCloneOnAssign?: boolean | string | string[] | ((className: string) => string)): ContextImpl {
+        isCloneOnAssign?: boolean | string | string[] | ((className: string) => string),
+        isExtension: boolean = false,
+    ): ContextImpl {
         if (!name) {
             throw new Error(`must have a class name`);
         }
-        const className = this.classNameFor(name);
+        if (isExtension) {
+            name = resolveType(name, this);
+        }
+        if (name == null) {
+            throw new Error('class needs name');
+        }
+        const className = this.classNameFor(name+(isExtension ? '$Extension' : '')) ?? "WHAT"
         let clz: ClassDeclaration = this.src.addClass({
             ...clazz,
-            name: className,
-            isExported: this.clazz == null
+            name:className,
+            isExported: this.clazz == null,
+            extends: isExtension ? name : undefined,
+            implements: isExtension ? [name] : undefined,
         });
 
         const ctx = this.newContext(clz);
+        ctx.isExtension = isExtension;
 
-        if (isCloneOnAssign) {
+        if (!isExtension && isCloneOnAssign) {
             ctx.addImport('cloneable', '@tswift/util');
             clz.addMethod({
                 name: '[cloneable]',
@@ -118,6 +130,7 @@ export class ContextImpl {
     newContext(clazz?: ClassDeclaration) {
         const ctx = new ContextImpl(this.src, clazz || this.clazz, this);
         ctx.isMutateScope = this.isMutateScope;
+        ctx.isExtension = this.isExtension;
         return ctx;
     }
 
