@@ -2,9 +2,10 @@ import { Node as TSNode } from 'ts-morph';
 import { Param } from "@tswift/util";
 
 import { ContextImpl } from "./context";
-import { toParamBody } from "./text";
+import { toDestructure, toDestructureBody, toParamBody } from "./text";
 import { toType } from "./toType";
 import { handleOverload } from 'overload';
+import { inTwo } from 'group';
 
 export function makeConstructor(constructors: [Param[], string][], ctx: ContextImpl) {
     const cls = ctx.getClassOrThrow();
@@ -39,15 +40,9 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
         type: string;
     }
     //    const overloadPosParam = parameters.map((p) => (p as Param[]));
-    const overloadParams = parameters.reduce((ret, [params]) => {
-        const named:Param[] = [], unnamed:Param[] = [];
-        params.forEach(p=>{
-            if (p.name == '_') {
-                unnamed.push(p);
-            } else {
-                named.push(p);
-            }
-        })
+        const overloadParams = parameters.reduce((ret, [params]) => {
+        const [named, unnamed] = inTwo(params, p => p.name !== '_');
+
         const parameters = unnamed.map(v => ({ name: v.internal || 'param', hasQuestionToken: v.optional, type: v.type }));
         if (named.length) {
             parameters.push({ name: 'param', hasQuestionToken: isAllOptional(named), type: toParamBody(named) });
@@ -63,7 +58,7 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
     
     constructors.forEach(([params, statement]) => handleOverload(ctx, {
         name: 'init',
-        params,
+        parameters: params,
         statements: [statement]
     }));
 
@@ -85,7 +80,7 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
         statements: [
             cls.getExtends() != null ? `super(..._args)` : '',
             ...(constructors.length ? ['this.init(..._args)'] :
-                [`const {${nonStatic.map(p => p.internal && p.internal != p.name ? `${p.name}:${p.internal}` : p.name).join(',')}} = _args[1]; `, ...parameters.map(([, b]) => b)]),
+                [`const ${toDestructureBody(nonStatic)} = _args[1]; `, ...parameters.map(([, b]) => b)]),
             `if (_args[0] instanceof ${className}) Object.assign(this, _args[0])`
         ]
     });

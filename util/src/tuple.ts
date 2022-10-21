@@ -8,9 +8,21 @@ import { cloneable } from "./types";
 
 type TupleArg = [ string, any] | [undefined, unknown];
 type Tuples = readonly TupleArg[];
-type TupleObj<T extends Tuples> = T extends [infer First extends TupleArg, ...infer Rest extends Tuples] ? First[0] extends `${infer Key}` ? {[k in Key]:First[1]} & TupleObj<Rest> : {} : {};
-type TupleArr<T extends Tuples> = T extends [infer First extends TupleArg, ...infer Rest extends Tuples] ? [First[1], ...TupleArr<Rest>] : [];
-type Tuple<T extends Tuples> = TupleObj<T> & TupleArr<T>;
+type TupleVal<T> = T extends [[infer K, infer V], ...infer Rest ] ? [V, ...TupleVal<Rest>] : [];
+type TupleObj<T> = T extends [[infer K extends string, infer V], ...infer Rest] ? {[k in K]:V} & TupleObj<Rest> : {};
+type _TupleRet<T, K> = T extends [infer V, ...infer RestV] ? K extends [infer Key extends string, ...infer RestT] ? { [k in Key]: V } & _TupleRet<RestT, RestV> : {} : {};
+type TupleRet<T, K> = _TupleRet<T, K> & T;
+    
+export type Tuple<T> = TupleVal<T> & TupleObj<T>;
+
+export function retuple<T extends any[], A extends any[], Keys extends readonly string[]>(fn: (this:any, ...args: A) => T, keys: Keys): (this:any, ...args:A)=>TupleRet<T, Keys> {
+    return function (this:any, ...args: A) {
+        return keys.reduce((ret, key, i) => {
+            ret[key] = ret[i];
+            return ret;
+        }, fn.call(this, ...args) as any) as any;
+    }
+}
 
 
 export function tuple<T extends readonly any[]>(...all: T):T extends Tuples ?  Tuple<T> : never {

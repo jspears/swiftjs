@@ -1,3 +1,4 @@
+import { isFunction, isIterable, isObject, isObjectWithPropType } from "./guards";
 import { Range } from "./types";
 
 export type StrideStr = `${number}...${number}` | `${number}..<${number}`;
@@ -50,7 +51,11 @@ export function toStride(fromOrStr: StrideStr | StrideRange): Stride {
   return new Stride(fromOrStr.from, fromOrStr.to, 1, fromOrStr.inclusive)
 }
 
-export function *range<T>(fromOrStr: StrideStr | StrideRange, iter?: Iterable<T>) {
+export function range<T>(this: Iterable<T>, fromOrStr: StrideStr | StrideRange): Generator<T>;
+export function* range<T>(this:unknown, fromOrStr: StrideStr | StrideRange, iter?: Iterable<T>) {
+  if (iter == null && isIterable(this))  {
+    iter = this as Iterable<T>;
+  }
   const stride = toStride(fromOrStr);
   if (iter == null) {
     return stride.range();

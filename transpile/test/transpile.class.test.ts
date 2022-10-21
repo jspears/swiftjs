@@ -101,7 +101,7 @@ it('should parse computed props', tt`struct Cuboid {
     }
     let fourByFiveByTwo = Cuboid(width: 4.0, height: 5.0, depth: 2.0)`
 );
-it('should support willget', tt`class StepCounter {
+it.only('should support willget', tt`class StepCounter {
         var totalSteps: Int = 0 {
             willSet(newTotalSteps) {
                 print("About to set totalSteps to \(newTotalSteps)")

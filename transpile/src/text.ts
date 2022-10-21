@@ -91,9 +91,15 @@ export function lambdaReturn(statements: string[]): string{
     return statements[0];
 }
 export function toParamStr(params: Param[]): string {
-   return  params?.map(p =>`${p.name}${p.optional ? '?' : ''}${p.type ? `:${p.type}` : ''}`).join(', ')
+   return  params?.map(p =>`${p.name}${p.optional ? '?' : ''}${p.type ? `:${p.type}` : ''}`).join('; ')
 }
+export function toDestructure(params: Param[]): string {
+    return  params.map(p => p.internal && p.internal != p.name ? `${p.name}:${p.internal}` : p.name).join(',')
 
+}
+export function toDestructureBody(params: Param[]) {
+    return params.length ? `{${toDestructure(params)}}` : '';
+}
 export function toParamBody(params: Param[]): string {
-    return params && params.length ? `{${toParamStr(params)}}` : ''
+    return params.length ? `{${toParamStr(params)}}` : ''
 }

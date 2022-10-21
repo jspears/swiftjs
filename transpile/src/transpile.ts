@@ -11,7 +11,7 @@ import { getParser } from "./parser";
 import { parseStr, toStringLit } from "./parseStr";
 import { lambdaReturn, replaceEnd, replaceStart, toParamStr, toScope, unkind } from "./text";
 import { toType } from './toType';
-import { ComputedPropDecl, Node, TranspileConfig } from './types';
+import { ComputedPropDecl, TranspileConfig } from './types';
 
 export class Transpile {
     config: TranspileConfig;
@@ -80,7 +80,7 @@ export class Transpile {
         return srcFile;
     }
 
-    handleRoot(n: Node, ctx: ContextImpl): void {
+    handleRoot(n: SyntaxNode, ctx: ContextImpl): void {
         switch (n.type) {
             case 'source_file':
                 n.children.forEach(child => this.handleRoot(child, ctx));
@@ -95,7 +95,7 @@ export class Transpile {
                 this.handleClassDecl(n, ctx);
                 break;
             case 'function_declaration':
-                this.handleFunction(n, ctx);
+                ctx = this.handleFunction(n, ctx);
                 break;
             case 'call_expression':
                 const statements = this.handleCallExpression(n, ctx);
@@ -124,7 +124,7 @@ export class Transpile {
      * @param ctx 
      * @returns string[];
      */
-    processPropertyDeclaration(node: Node, ctx: ContextImpl): string {
+    processPropertyDeclaration(node: SyntaxNode, ctx: ContextImpl): string {
         assertNodeType(node, 'property_declaration');
         const ret: string[] = [];
         let propName = '';
@@ -180,7 +180,7 @@ export class Transpile {
         }
         return v.text;
     }
-    processRangeExpression(node: Node, ctx: ContextImpl) {
+    processRangeExpression(node: SyntaxNode, ctx: ContextImpl) {
         assertNodeType(node, 'range_expression');
         let inclusive = false;
         const parts: string[] = [];
@@ -201,7 +201,7 @@ export class Transpile {
             inclusive,
         }
     }
-    handleCallSuffix(node: Node, ctx: ContextImpl): string {
+    handleCallSuffix(node: SyntaxNode, ctx: ContextImpl): string {
         assertNodeType(node, 'call_suffix');
         type Arg = {
             name?: string,
@@ -209,6 +209,8 @@ export class Transpile {
         }
         const args: Arg[] = [];
         let arg: Arg = {};
+        let isPropertyIndex = false;
+
         node.children.forEach(n => {
             switch (n.type) {
                 case 'lambda_literal': {
@@ -223,19 +225,20 @@ export class Transpile {
                         let arg: Arg | undefined;
                         switch (v.type) {
                             case 'range_expression':
+                                isPropertyIndex = false;
                                 const range = this.processRangeExpression(v.children[0], ctx);
-                                this.asType(ctx, 'range');
-                                throw new Error('Figure this out!');
-                                const ret = 'array';
-                                args.push({ value: `range({from:${range.from}, to:${range.to}, inclusive:${range.inclusive}}, ${ret})` });
+                                args.push({ value: `${ctx.addBuiltIn('range')}({from:${range.from}, to:${range.to}, inclusive:${range.inclusive}})` });
+                                break;
+                            case '[':
+                                isPropertyIndex = true;
                                 break;
                             case '.':
-                            case '[':
                             case ']':
                             case '(':
                             case ')':
                                 break;
                             case ',':
+                                isPropertyIndex = false;
                                 if (arg) {
                                     args.push(arg);
                                     arg = undefined;
@@ -256,7 +259,11 @@ export class Transpile {
                                             arg.value = undefined;
                                             break;
                                         }
+                                        case 'range_expression':
+                                            //will be handled upstream.
+                                            break;
                                         case 'navigation_expression':
+
                                         default:
                                             if (!arg) arg = {};
                                             arg.value = this.processNode(va, ctx);
@@ -281,15 +288,17 @@ export class Transpile {
                     ctx.unknownType(n, 'call_expression->call_suffix');
             }
         });
+        
         if (args.length == 0) {
-            return '()';
+            return  '()';
         }
+        const start = isPropertyIndex ? '[' : '(', end = isPropertyIndex ? ']' : ')';
         if (args.some(v => v.name == null)) {
-            return `(${args.map((k) => k.value).join(',')})`;
+            return `${start}${args.map((k) => k.value).join(',')}${end}`;
         }
         return '({' + args.map((k) => `${k.name}:${k.value}`).join(',') + '})';
     }
-    handleCallExpression(node: Node, ctx: ContextImpl): string {
+    handleCallExpression(node: SyntaxNode, ctx: ContextImpl): string {
         let ret = '';
         node.children.forEach(n => {
             switch (n.type) {
@@ -298,6 +307,13 @@ export class Transpile {
                     ret += this.handleRHS(n, ctx);
                     break;
                 case 'call_suffix':
+                    const range = n.descendantsOfType('range_expression')
+                    if (range.length == 1) {
+                        ctx.addBuiltIn('SwiftArrayT');
+                        const parts = this.processRangeExpression(range[0], ctx);
+                        ret += `.range({from:${parts.from}, to:${parts.to}, inclusive:${parts.inclusive}})`;
+                        break;
+                    }
                     ret += this.handleCallSuffix(n, ctx);
                     break;
                 case 'navigation_expression':
@@ -311,7 +327,7 @@ export class Transpile {
         return ret;
     }
 
-    processIfStatement(node: Node, ctx: ContextImpl): string {
+    processIfStatement(node: SyntaxNode, ctx: ContextImpl): string {
         assertNodeType(node, 'if_statement');
         const ret: string[] = [];
         let isNilCheck = false;
@@ -379,7 +395,7 @@ export class Transpile {
         return ret.join(' ');
     }
     //node.type === 'switch_statement';
-    processSwitchStatement(node: Node, ctx: ContextImpl): string {
+    processSwitchStatement(node: SyntaxNode, ctx: ContextImpl): string {
         assertNodeType(node, 'switch_statement');
         const ret: string[] = [];
         node.children.forEach(n => {
@@ -442,10 +458,10 @@ export class Transpile {
         });
         return ret.join('')
     }
-    process(ctx: ContextImpl, n: Node[], start: number = 0, end: number | undefined = undefined, fn = this.processNode): string[] {
+    process(ctx: ContextImpl, n: SyntaxNode[], start: number = 0, end: number | undefined = undefined, fn = this.processNode): string[] {
         return ((start || end) ? n.slice(start, end) : n).map(v => fn.call(this, v, ctx));
     }
-    processDictionaryLiteral(n: Node, ctx: ContextImpl): string {
+    processDictionaryLiteral(n: SyntaxNode, ctx: ContextImpl): string {
         assertNodeType(n, 'dictionary_literal');
         return n.children.reduce((ret, n) => {
             switch (n.type) {
@@ -457,7 +473,7 @@ export class Transpile {
             }
         }, '');
     }
-    processGuardStatement(n: Node, ctx: ContextImpl): string {
+    processGuardStatement(n: SyntaxNode, ctx: ContextImpl): string {
         assertNodeType(n, 'guard_statement');
         const { children } = n;
         let ret = '';
@@ -482,7 +498,7 @@ export class Transpile {
      * @param ctx 
      * @returns 
      */
-    processLiteral(n: Node, ctx: ContextImpl): string | undefined {
+    processLiteral(n: SyntaxNode, ctx: ContextImpl): string | undefined {
         switch (n.type) {
             case 'float_literal':
             case 'double_literal':
@@ -518,7 +534,7 @@ export class Transpile {
             case 'dictionary_literal':
                 return this.processDictionaryLiteral(n, ctx);
             case 'array_literal':
-                this.asType(ctx, 'SwiftArrayT');
+                ctx.addBuiltIn('SwiftArrayT');
                 return this.process(ctx, n.children).join(' ');
 
             case 'line_str_text':
@@ -535,7 +551,7 @@ export class Transpile {
 
         }
     }
-    processNode(n: Node | undefined, ctx: ContextImpl): string {
+    processNode(n: SyntaxNode | undefined, ctx: ContextImpl): string {
         if (n == null) {
             return '';
         }
@@ -621,7 +637,7 @@ export class Transpile {
                     case 'directly_assignable_expression':
                         return this.process(ctx, n.children).join(' ')
                 }
-                const tuples: [string | undefined, string | undefined][] = [];
+                const tuples: RawTuple[] = [];
                 let name: string | undefined, value: string | undefined;
                 n.children.slice(1, -1).forEach(t => {
                     switch (t.type) {
@@ -649,8 +665,10 @@ export class Transpile {
                 if (value || name) {
                     tuples.push([name, value])
                 }
-                this.asType(ctx, 'tuple');
-                return `tuple(${tuples.map(([k, v]) => `[${k ? JSON.stringify(k) : 'undefined'}, ${v}]`).join(',')})`
+                if (tuples.find(([v]) => v == null)) {
+                    return `[${tuples.map(([, v]) => v).join(',')}]`;
+                }
+                return `${ctx.addBuiltIn('tuple')}(${tuples.map(([k, v]) => `[${k ? JSON.stringify(k) : 'undefined'}, ${v}]`).join(',')})`
 
             case 'additive_expression':
             case 'comparison_expression':
@@ -681,8 +699,7 @@ export class Transpile {
             case '-=':
                 if (n.parent?.type === 'value_argument' && n.previousSibling?.type == ':') {
                     //try to capture operator methods;
-                    this.asType(ctx, 'operator');
-                    return ` operator("${n.text}") `;
+                    return ` ${ctx.addBuiltIn('operator')}("${n.text}") `;
                 }
                 return ` ${n.text} `;
             case '"':
@@ -738,7 +755,7 @@ export class Transpile {
     handles the type of function not an actual function
     ()->Void;
     */
-    handleFunctionType(node: Node, ctx: ContextImpl): string {
+    handleFunctionType(node: SyntaxNode, ctx: ContextImpl): string {
 
         assertNodeType(node, 'function_type');
 
@@ -778,7 +795,7 @@ export class Transpile {
         }
         return `(${params.map(v => `${v.name || v.internal || '_'}:${v.type || 'unknown'}`)})=>${returnType}`;
     }
-    handleParam(node: Node, ctx: ContextImpl): Param {
+    handleParam(node: SyntaxNode, ctx: ContextImpl): Param {
         let param: Partial<Param> = {};
         node.children.forEach(n => {
             switch (n.type) {
@@ -809,7 +826,7 @@ export class Transpile {
         });
         return param as Param;
     }
-    processLambdaLiteral(node: Node, ctx: ContextImpl): string {
+    processLambdaLiteral(node: SyntaxNode, ctx: ContextImpl): string {
         assertNodeType(node, 'lambda_literal');
         const params: Param[] = [];
         let statements: string[] = [];
@@ -873,7 +890,7 @@ export class Transpile {
                 `(${toParamStr(params)})=>${finStatements}`;
         return lambda;
     }
-    handleForStatement(node: Node, ctx: ContextImpl): string {
+    handleForStatement(node: SyntaxNode, ctx: ContextImpl): string {
         assertNodeType(node, 'for_statement');
         let ret = '';
         node.children.forEach((n) => {
@@ -901,8 +918,7 @@ export class Transpile {
                     ret += this.processNode(n, ctx);
                     break;
                 case 'range_expression':
-                    this.asType(ctx, 'range', '@tswift/util');
-                    ret += `range("${n.text}")`;
+                    ret += `${ctx.addBuiltIn('range')}("${n.text}")`;
                     break;
                 case 'simple_identifier':
                     ret += this.processNode(n, ctx);
@@ -919,19 +935,19 @@ export class Transpile {
 
         return ret;
     }
-    stringToNode(v: string): Node {
+    stringToNode(v: string): SyntaxNode {
         if (!this._parser) {
             throw new Error(`_parser not initialized`);
         }
         return this._parser?.parse(v).rootNode;
     }
-    processStatement(n: Node | undefined, ctx: ContextImpl): string[] {
+    processStatement(n: SyntaxNode | undefined, ctx: ContextImpl): string[] {
         return this.process(ctx, n?.children ?? []);
     }
 
-    handleAddProperty(node: Node, ctx: ContextImpl, comment?: string): ComputedPropDecl | undefined {
+    handleAddProperty(node: SyntaxNode, ctx: ContextImpl, comment?: string): ComputedPropDecl | undefined {
         let prop: OptionalKind<PropertyDeclarationStructure> = { name: '__unknown__' };
-        let computedNode: Node | undefined;
+        let computedNode: SyntaxNode | undefined;
 
         node.children.forEach(n => {
             switch (n.type) {
@@ -1031,10 +1047,7 @@ export class Transpile {
         if (comment) {
             p.addJsDoc(comment);
         }
-        if (!(p.hasQuestionToken() || p.hasInitializer())) {
         
-            p.addJsDoc('@ts-ignore');   
-        }
         return computedNode ? [computedNode, p] : undefined;
     }
     processTypeAnnotation(n: Parser.SyntaxNode, ctx: ContextImpl): {
@@ -1057,7 +1070,7 @@ export class Transpile {
                     console.log('unknown opaque_type: ' + t.text);
                     break;
                 case 'array_type':
-                    this.asType(ctx, 'SwiftArrayT', '@tswift/util');
+                    ctx.addBuiltIn('SwiftArrayT');
                     prop.type = 'Array<' + this.asType(ctx, t.children[1]?.text) + '>';
                     break;
                 default:
@@ -1070,7 +1083,7 @@ export class Transpile {
         return prop as any;
     }
 
-    handleComputedProperty(n: Node, pd: PropertyDeclaration, ctx: ContextImpl) {
+    handleComputedProperty(n: SyntaxNode, pd: PropertyDeclaration, ctx: ContextImpl) {
         let prop: PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration = pd;
         const clz = ctx.getClassOrThrow();
         let getter: { statements: string[] } | undefined;
@@ -1092,7 +1105,7 @@ export class Transpile {
                         ...struct,
                         decorators: [
                             ...(struct.decorators || []),
-                            { name: ctx.addImport('Cache', '@tswift/util') }],
+                            { name: ctx.addBuiltIn('Cache') }],
                         statements: this.processStatement(n, ctx)
                     })
                     // prop.setInitializer(`(()=>{` +.join('\n') + '})()');
@@ -1192,15 +1205,19 @@ export class Transpile {
                 });
                 break;
             case 'call_expression':
-                if (n.children[1]?.children[0]?.type === 'lambda_literal') {
-                    if (prop instanceof PropertyDeclaration)
-                        prop.setInitializer(n.children[0].text)
-                    const lamda = n.children[1].children[0].children[1];
+                const [first, second] = n.children;
+                if (second?.children[0]?.type === 'lambda_literal') {
+
+                    if (prop instanceof PropertyDeclaration) {
+                        prop.setInitializer(this.processNode(first, ctx));
+                    }
+                    const lamda = second.children[0].children[1];
+                    let decoratorType: string | undefined;
                     lamda?.children.forEach(d => {
                         d.children?.forEach(l => {
                             switch (l.type) {
                                 case 'call_suffix':
-                                    const dec = prop.getDecorator(decoratorType);
+                                    const dec =decoratorType &&  prop.getDecorator(decoratorType);
                                     if (!dec) {
                                         throw new Error(`could not find decorator ` + decoratorType);
                                     }
@@ -1231,7 +1248,7 @@ export class Transpile {
                                                     }
                                                 }, '');
                                             default:
-                                                ctx.unknownType(c, 'lambda->call_expression');
+                                                ctx.unknownType(c, 'computed_property->call_expression->lambda');
                                                 return ret;
                                         }
                                     }, `function(this:${ctx.getClassName()}, oldValue${type ? `:${type}` : ''})`);
@@ -1240,8 +1257,8 @@ export class Transpile {
                                     break;
                                 //implement willSet/didSet
                                 case 'simple_identifier':
-                                    decoratorType = this.asType(ctx, l.text)
-                                    prop?.addDecorator({ name: decoratorType });
+                                    decoratorType = ctx.addBuiltIn(l.text);
+                                    prop?.addDecorator({ name:decoratorType  });
                                     break;
                                 default:
                                     ctx.unknownType(l, 'computed_property->call_expression');
@@ -1251,15 +1268,15 @@ export class Transpile {
                     })
                     break;
                 } else {
-                    if (prop instanceof PropertyDeclaration) {
-                        prop?.setInitializer(this.processStatement(n, ctx).join(''));
+                    if (TSNode.isPropertyDeclaration(prop)) {
+                        prop.setInitializer(this.processStatement(n, ctx).join(''));
                         break;
                     }
                     throw new Error(`not a property can not initialize`);
                 }
                 break;
             case 'simple_identifier':
-                if (prop instanceof PropertyDeclaration) {
+                if (TSNode.isPropertyDeclaration(prop)) {
                     prop.setInitializer(this.processNode(n, ctx));
                     break;
                 }
@@ -1278,21 +1295,21 @@ export class Transpile {
         }
 
     }
-    handleClassDecl(node: Node, ctx: ContextImpl) {
+    handleClassDecl(node: SyntaxNode, ctx: ContextImpl) {
         assertNodeType(node, 'class_declaration', 'enum_declaration');
         if (node.children[0].type === 'enum') {
             return this.handleEnum(node, ctx);
         }
         return this.handleClass(node, ctx);
     }
-    handleClassBody(node: Node, ctx: ContextImpl): void {
+    handleClassBody(node: SyntaxNode, ctx: ContextImpl): void {
         const clz = ctx.getClassOrThrow('Class body with no class?');
         let comment: string | undefined;
-        let constructors: Node[] = [];
+        let constructors: SyntaxNode[] = [];
         node.children.filter(p => p.type === 'class_declaration').forEach(v => {
             this.handleClassDecl(v, ctx);
         });
-        const computedProperties: [Node, PropertyDeclaration][] = [];
+        const computedProperties: [SyntaxNode, PropertyDeclaration][] = [];
         node.children.forEach(n => {
             switch (n.type) {
                 case '{':
@@ -1333,13 +1350,29 @@ export class Transpile {
         //parameters before constructors or else accessors become a problem.
         this.handleComputedProperties(computedProperties, ctx);
         this.handleConstructors(constructors, ctx);
+        this.fixJSDOC(ctx);
     }
-
+    /**
+     * So we can't statically evaluate constructors to ensure that all prooperties
+     * are assigned, (due to extensions) so we will ask typescript to ignore them
+     * if 1 - the are required and 2 - they don't have an initializer.
+     * 
+     * We do this here, because of how Computed Properties are handled, since they
+     * may depend on props we have to scan for all properties first, and so any
+     * required prop will be given an ignore even if it is initialized.
+     */
+    fixJSDOC(ctx: ContextImpl) {
+        ctx.getClassOrThrow().getProperties().forEach(prop => {
+            if (!(prop.hasQuestionToken() || prop.hasInitializer())) {
+                prop.addJsDoc('@ts-ignore');
+            }
+        })
+    }
     handleComputedProperties(computedProperties: ComputedPropDecl[], clz: ContextImpl) {
         computedProperties.forEach(([node, prop]) => this.handleComputedProperty(node, prop, clz));
     }
 
-    handleConstructors(constructors: Node[], ctx: ContextImpl): void {
+    handleConstructors(constructors: SyntaxNode[], ctx: ContextImpl): void {
         const parameters: [Param[], string][] = [];
 
         constructors.forEach(constructor => {
@@ -1350,7 +1383,7 @@ export class Transpile {
                 switch (v.type) {
                     case 'init':
                     case '(':
-                    case ',':   
+                    case ',':
                     case ')':
                         break;
                     case 'parameter': {
@@ -1385,9 +1418,9 @@ export class Transpile {
     }
 
 
-    handleFunction(node: Node, ctx: ContextImpl): void {
-        let func: Func = {params:[]} as any;
-        
+    handleFunction(node: SyntaxNode, ctx: ContextImpl): ContextImpl {
+        let func: Func = { parameters: ([] as Param[]) } as Func;
+
         let tupleReturn: [string | undefined, string | undefined][] = [];
         node.children.forEach((n) => {
             switch (n.type) {
@@ -1397,7 +1430,7 @@ export class Transpile {
                 case '->':
                 case 'func': break;
                 case 'parameter':
-                    func.params.push(this.handleParam(n, ctx));
+                    func.parameters.push(this.handleParam(n, ctx));
                     break;
                 case 'modifiers':
                     if (n.text === 'mutating') {
@@ -1413,7 +1446,7 @@ export class Transpile {
                     func.returnType = this.asType(ctx, n.text);
                     break;
                 case 'function_body':
-                    ctx = ctx.add(...func.params);
+                    ctx = ctx.add(...func.parameters);
                     n.children.forEach(f => {
                         switch (f.type) {
                             case '{':
@@ -1449,7 +1482,7 @@ export class Transpile {
                                 ctx.unknownType(t, 'handleFunction->tuple_type');
                         }
                     });
-                    func.returnType = `[${tupleReturn.map(([k, v]) => v).join(',')}]`;
+                    func.returnType = `${ctx.addBuiltIn('Tuple')}<${tuplify(tupleReturn)}>`;
                     break;
                 case 'throws':
                     break;
@@ -1457,9 +1490,9 @@ export class Transpile {
                     ctx.unknownType(n, 'function');
             }
         });
-        handleOverload(ctx, func);
+        return handleOverload(ctx, func, tupleReturn);
     }
-    handleEnum(node: Node, ctx: ContextImpl) {
+    handleEnum(node: SyntaxNode, ctx: ContextImpl) {
 
         let enums: OptionalKind<PropertyDeclarationStructure>[] = [];
         let typeParameter: string | undefined;
@@ -1497,7 +1530,7 @@ export class Transpile {
             ]
         });
         //add the array import.
-        this.asType(ctx, 'SwiftArrayT', '@tswift/util');
+        ctx.addBuiltIn('SwiftArrayT');
         enm.addProperty({
             isStatic: true,
             name: 'allCases',
@@ -1508,7 +1541,7 @@ export class Transpile {
 
         return enm;
     }
-    processEnums(node: Node, ctx: ContextImpl, type?: string) {
+    processEnums(node: SyntaxNode, ctx: ContextImpl, type?: string) {
         const enums: OptionalKind<PropertyDeclarationStructure>[] = [];
         let start: number | undefined;
         const clzName = ctx.getClassOrThrow().getName();
@@ -1574,7 +1607,7 @@ export class Transpile {
         return enums;
     }
 
-    handleClass(node: Node, ctx: ContextImpl): void {
+    handleClass(node: SyntaxNode, ctx: ContextImpl): void {
         let isStruct = false;
         let isExtension = false;
         node.children.forEach(n => {
@@ -1631,3 +1664,9 @@ export class Transpile {
         return this.config.project.save();
     }
 }
+
+
+const tuplify = (tuples: RawTuple[]) =>  '[' + tuples.map(([key, value]) => `[${key == null ? 'undefined' : JSON.stringify(key)}, ${value}]`).join(',') + ']';
+    
+
+type RawTuple = [string | undefined, string | undefined];

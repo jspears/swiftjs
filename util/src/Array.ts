@@ -1,6 +1,7 @@
 import { isFunction, isIterable, isObjectWithProp, isObjectWithPropType } from "./guards";
 import { operator } from "./operator";
 import { Predicate, Compare, Range } from "./types";
+import { range } from './stride';
 
 type SortBy<S> =  Compare<S> | boolean;
 
@@ -99,6 +100,9 @@ abstract class SwiftArray<S> implements Iterable<S> {
     }
     popLast():S|undefined{
         return this.pop();
+    }
+    range(r:{ from: number, to: number, inclusive: boolean }):S[] {
+        return Array.from(range.call(this, r)) as S[];
     }
 }
 

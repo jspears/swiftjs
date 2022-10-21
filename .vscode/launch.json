@@ -5,6 +5,7 @@
 
 
 
+
   
         {
              "args": [
@@ -140,6 +141,14 @@
     "request": "launch",
     "name": "transpile.class",
     "args": ["${workspaceFolder}/transpile/test/transpile.class.test.ts"],
+    "cwd": "${workspaceFolder}/transpile"
+}
+,{
+    "type": "node",
+    "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+    "request": "launch",
+    "name": "transpile.func",
+    "args": ["${workspaceFolder}/transpile/test/transpile.func.test.ts"],
     "cwd": "${workspaceFolder}/transpile"
 }
 ,

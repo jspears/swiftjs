@@ -2,36 +2,40 @@ import { ContextImpl } from "./context";
 import { Scope, StructureKind, FunctionDeclaration, MethodDeclaration, Node as TSNode, PropertyDeclaration, VariableStatement, VariableDeclarationKind, FunctionDeclarationStructure } from "ts-morph";
 import { Param } from "@tswift/util";
 import { unfunc } from "./manipulate";
-import { toParams, unkind, writeDestructure, writeType } from "text";
+import {  toDestructureBody, toParamBody, unkind, writeDestructure, writeType } from "text";
+import { inTwo } from "group";
 
 export type Func = {
     kind?: StructureKind.Method;
     scope?: Scope;
     isAsync?: boolean;
     name: string;
-    params: Param[];
+    parameters: Param[];
     statements: string[];
     returnType?: string;
 };
 
-function overloadClass(ctx: ContextImpl, func:Func) {
+function overloadClass(ctx: ContextImpl, func: Func, tupleReturn?: TupleT[]) {
+    
     const clazz = ctx.getClassOrThrow();
     const member = clazz.getMember(func.name);
     const overloadParamNames: string[] = [];
     let _overload;
     if (member) {
-        if (member instanceof MethodDeclaration) {
+        if (TSNode.isMethodDeclaration(member)) {
             overloadParamNames.push(...member.getParameters().map(v => v.getName()));
         }
         _overload = unfunc(member);
         member.remove();
     }
     let m: MethodDeclaration | PropertyDeclaration = clazz.addMethod(func);
-
+    if (tupleReturn?.length) {
+        
+    }
 
     //If all the parameters are '_' positional than we don't have to wrap in a func.
-    if (TSNode.isMethodDeclaration(m) && func.params.every(v => v.name == '_' && v.internal)) {
-        func.params.forEach(v => {
+    if (TSNode.isMethodDeclaration(m) && func.parameters.every(v => v.name == '_' && v.internal)) {
+        func.parameters.forEach(v => {
             if (!v.internal) {
                 throw new Error('methods need parameter names');
             }
@@ -42,10 +46,10 @@ function overloadClass(ctx: ContextImpl, func:Func) {
 
                 });
         });
-    } else if (func.params.length) {
+    } else if (func.parameters.length) {
         m.addParameter({
-            name: writeDestructure(func.params),
-            type: writeType(func.params)
+            name: writeDestructure(func.parameters),
+            type: writeType(func.parameters)
         })
         const initializer = unfunc(m);
         m.remove();
@@ -75,11 +79,10 @@ function overloadClass(ctx: ContextImpl, func:Func) {
                 type: clazz.getName() || 'any'
             });
         }
-    
+
         const otext = unfunc(m);
         m.remove();
-        ctx.addImport('overload', '@tswift/util');
-        const initializer = `overload(${_overload},${JSON.stringify(func.params)},${otext} )`;
+        const initializer = `${ctx.addBuiltIn('overload')}(${_overload},${JSON.stringify(func.parameters)},${otext} )`;
         clazz.addProperty({
             name,
             scope,
@@ -87,31 +90,70 @@ function overloadClass(ctx: ContextImpl, func:Func) {
         });
 
     }
+    return ctx;
 
-} 
 
-function overloadVar(ctx:ContextImpl, func:Func){
+}
+
+function overloadVar(ctx: ContextImpl, { parameters, kind, ...func }: Func,  tupleReturn?:TupleT[]):ContextImpl {
     let f: FunctionDeclaration | VariableStatement = ctx.src.addFunction({
         isExported: true,
-        ...unkind(func),
+        ...func,
     });
-  
-    if (func.params.length) {
+    const [named, unnamed] = inTwo(parameters, v => v.name !== '_');
+    f.addParameters(unnamed.map(v => ({ ...v, name: v.internal || '' })));
+    f.addParameter({
+        name: toDestructureBody(named),
+        type: toParamBody(named),
+    });
+    if (tupleReturn?.length) {
         f.setIsExported(false);
-        const orig = f.getText();
+        const name = f.getName() || 'unnamed';
+        f.setReturnType('');
+        const body = f.getText();
+        const pos = f.getChildIndex();
         f.remove();
-        ctx.addImport('func', '@tswift/util');
-        f = ctx.src.addVariableStatement({
+        ctx.src.insertVariableStatement(pos, {
+            isExported:true,
             declarationKind: VariableDeclarationKind.Const,
-            isExported: true,
-            declarations: [{
-                name: func.name,
-                initializer: `func(${orig}, ${func.params.map(v => JSON.stringify(v.name)).join(',')})`
-            }]
+            declarations: [
+                {
+                    name,
+                    initializer:`${ctx.addBuiltIn('retuple')}(${body}, ${JSON.stringify(tupleReturn.map(([v])=>v))})`
+                }
+            ]            
         });
+
     }
+    return ctx.add(...parameters);
+    // if (parameters.length) {
+    //     f.setIsExported(false);
+    //     const orig = f.getText();
+    //     f.remove();
+    //     ctx.addImport('func', '@tswift/util');
+    //     f = ctx.src.addVariableStatement({
+    //         declarationKind: VariableDeclarationKind.Const,
+    //         isExported: true,
+    //         declarations: [{
+    //             name: func.name,
+    //             initializer: `func(${orig}, ${parameters.map(v => JSON.stringify(v.name)).join(',')})`
+    //         }]
+    //     });
+    // }
 }
 
-export function handleOverload(ctx: ContextImpl, func: Func) {
-    return ctx.clazz ? overloadClass(ctx, func) : overloadVar(ctx, func);
+export function handleOverload(ctx: ContextImpl, func: Func, tupleReturn?: TupleT[]) {
+//    console.log(tupleReturn);
+    return ctx.clazz ? overloadClass(ctx, func, tupleReturn) : overloadVar(ctx, func, tupleReturn);
 }
+
+function wrapTuple(ctx: ContextImpl, f: FunctionDeclaration, tupleReturn:TupleT[]): string {
+    f.setIsExported(false);
+    const name = f.getName() || 'unnamed';
+    f.setReturnType('');
+    const body = f.getText();
+    const pos = f.getChildIndex();
+    f.remove();
+    return `${ctx.addBuiltIn('retuple')}(${body}, ${JSON.stringify(tupleReturn.map(([v]) => v))})`;         
+}
+type TupleT = [string | undefined, string | undefined];

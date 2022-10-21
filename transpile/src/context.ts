@@ -6,6 +6,13 @@ import { resolveType } from './resolveMap';
 export class ContextImpl {
     isMutateScope = false;
     isExtension = false;
+
+    //in the future change this to make sure it does not conflict with scoped variables.
+    addBuiltIn(text: string) {
+        this.addImport(text, '@tswift/util');
+        return text;
+    }
+
     mutateScope(scope: boolean) {
         const ctx = this.newContext();
         ctx.isMutateScope = scope;
@@ -29,16 +36,33 @@ export class ContextImpl {
         return name;
 
     }
+    inHiearchyScope(name: string): boolean {
+        if (this.hasClass(name)) {
+            return true;
+        }
+        if (this.getClassName() == name) {
+            return true;
+        }
+        if (this.scope.has(name)) {
+            return true;
+        }
+
+        if (this.clazz?.getTypeParameter(name) != null) {
+            return true;
+        }
+        if (this.parent?.inHiearchyScope(name)) {
+            return true;
+        }
+
+        return false;
+    }
     inScope(name: string): boolean {
         //const name = check.replace(/import\("[^"]*"\)\./, '').replace(/<.*>/, '');
 
-        return this.scope.has(name) ||
-            this.clazz?.getTypeParameter(name) != null ||
+        return this.inHiearchyScope(name) ||
             this.src.getClass(name) != null ||
-            this.src.getVariableDeclaration(name) != null ||
-            this.parent?.inScope(name) ||
-            this.src.getClass(name) != null ||
-            this.hasClass(name);
+            this.src.getFunction(name) != null || 
+            this.src.getVariableDeclaration(name) != null 
     }
     hasClass(name: string): boolean {
         if (this.src.getClass(name) != null) {
@@ -113,9 +137,8 @@ export class ContextImpl {
         ctx.isExtension = isExtension;
 
         if (!isExtension && isCloneOnAssign) {
-            ctx.addImport('cloneable', '@tswift/util');
             clz.addMethod({
-                name: '[cloneable]',
+                name: `[${ctx.addBuiltIn('cloneable')}]`,
                 statements:
                     typeof isCloneOnAssign === 'function' ? isCloneOnAssign(className) :
                         isCloneOnAssign === true ? `return new ${className}(this);` : isCloneOnAssign
@@ -155,8 +178,7 @@ export class ContextImpl {
                 case 'number':
                     return text;
             }
-            this.addImport('cloneable', '@tswift/util');
-            return `${text}?.[cloneable]?.() ?? ${text}`;
+            return `${text}?.[${this.addBuiltIn('cloneable')}]?.() ?? ${text}`;
         }
         return '';
     }
