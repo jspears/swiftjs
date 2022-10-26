@@ -2,7 +2,7 @@ import { Node as TSNode } from 'ts-morph';
 import { Param } from "@tswift/util";
 
 import { ContextImpl } from "./context";
-import { toDestructure, toDestructureBody, toParamBody } from "./text";
+import { toDestructure, toDestructureBody, toParamBody } from "./paramHelper";
 import { toType } from "./toType";
 import { handleOverload } from 'overload';
 import { inTwo } from 'group';
@@ -80,7 +80,7 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
         statements: [
             cls.getExtends() != null ? `super(..._args)` : '',
             ...(constructors.length ? ['this.init(..._args)'] :
-                [`const ${toDestructureBody(nonStatic)} = _args[1]; `, ...parameters.map(([, b]) => b)]),
+               nonStatic.length ? [`const ${toDestructureBody(nonStatic)} = _args[1]; `, ...parameters.map(([, b]) => b)] : []),
             `if (_args[0] instanceof ${className}) Object.assign(this, _args[0])`
         ]
     });

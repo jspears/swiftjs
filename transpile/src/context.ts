@@ -82,6 +82,7 @@ export class ContextImpl {
     }
     getClassOrThrow(message = 'no class in context') {
         if (!this.clazz) {
+            debugger;
             throw new Error(message);
         }
         return this.clazz;
@@ -147,8 +148,12 @@ export class ContextImpl {
         return ctx;
     }
     unknownType(n: Node, message: string = '') {
-        console.warn(`unknown type ${message}: '${n.type}'`, n.text);
-        debugger;
+        if (n.type == 'ERROR') {
+            console.warn(`error parsing source file `, this.src.getFilePath()+ 'at ['+n.startPosition.row+':'+n.startPosition.column+']');
+        } else {
+            console.warn(`unknown type ${message}: '${n.type}'`, n.text);
+            debugger;
+        }
     }
     newContext(clazz?: ClassDeclaration) {
         const ctx = new ContextImpl(this.src, clazz || this.clazz, this);

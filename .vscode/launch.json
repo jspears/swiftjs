@@ -1,18 +1,12 @@
 {
-     "version": "0.2.0",
+    "version": "0.2.0",
     "configurations": [
-
-
-
-
-
-  
         {
-             "args": [
-                 "--timeout",
-                 "999999",
-                 "--colors"
-             ],
+            "args": [
+                "--timeout",
+                "999999",
+                "--colors"
+            ],
             "internalConsoleOptions": "openOnSessionStart",
             "name": "Mocha Tests",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
@@ -24,35 +18,38 @@
             "type": "node"
         },
         {
-            
-            "env": {"TAP_SNAPSHOT":"1"},
-           "internalConsoleOptions": "openOnSessionStart",
-           "name": "Test Transpile",
-           "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
-           "request": "launch",
-           "args": ["./test/transpile.test.ts"],
-           "cwd": "${workspaceFolder}/transpile",
-           "skipFiles": [
-               "<node_internals>/**"
-           ],
-           "type": "node"
-       },
-       {
+            "env": {
+                "TAP_SNAPSHOT": "1"
+            },
+            "internalConsoleOptions": "openOnSessionStart",
+            "name": "Test Transpile",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
+            "request": "launch",
+            "args": [
+                "./test/transpile.test.ts"
+            ],
+            "cwd": "${workspaceFolder}/transpile",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
             "args": [
                 "--timeout",
                 "999999",
                 "--colors"
             ],
-           "internalConsoleOptions": "openOnSessionStart",
-           "name": "Util Tests",
-           "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
-           "request": "launch",
-           "cwd": "${workspaceFolder}/util",
-           "skipFiles": [
-               "<node_internals>/**"
-           ],
-           "type": "node"
-       },
+            "internalConsoleOptions": "openOnSessionStart",
+            "name": "Util Tests",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/util",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
         {
             "type": "node",
             "request": "launch",
@@ -88,7 +85,9 @@
             "cwd": "${workspaceFolder}/transpile",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
             "program": "${workspaceFolder}/transpile/src/transpile.ts",
-            "args": ["${workspaceFolder}/demo/src/pages/AnimationDemo/AnimationDemo.swift"],
+            "args": [
+                "${workspaceFolder}/demo/src/pages/AnimationDemo/AnimationDemo.swift"
+            ],
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]
@@ -101,63 +100,81 @@
             "continueOnAttach": true,
             "autoAttachChildProcesses": false,
             "resolveSourceMapLocations": [
-              "!**/node_modules/**",
-              "!**/.vscode/extensions/hbenl.vscode-mocha-test-adapter-*/**"
+                "!**/node_modules/**",
+                "!**/.vscode/extensions/hbenl.vscode-mocha-test-adapter-*/**"
             ],
             "skipFiles": [
-              "<node_internals>/**"
+                "<node_internals>/**"
             ]
-          },
-          {
+        },
+        {
             "type": "node",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
             "request": "launch",
             "name": "transpile.closure",
-            "args": ["${workspaceFolder}/transpile/test/transpile.closure.test.ts"],
+            "args": [
+                "${workspaceFolder}/transpile/test/transpile.closure.test.ts"
+            ],
             "cwd": "${workspaceFolder}/transpile"
-        }, 
+        },
         {
             "type": "node",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
             "request": "launch",
             "name": "transpile.extensions",
-            "args": ["${workspaceFolder}/transpile/test/transpile.extensions.test.ts"],
+            "args": [
+                "${workspaceFolder}/transpile/test/transpile.extensions.test.ts"
+            ],
             "cwd": "${workspaceFolder}/transpile"
-        },          
-
-        
-        
+        },
         {
             "type": "node",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
             "request": "launch",
             "name": "transpile.control",
-            "args": ["${workspaceFolder}/transpile/test/transpile.control.test.ts"],
+            "args": [
+                "${workspaceFolder}/transpile/test/transpile.control.test.ts"
+            ],
             "cwd": "${workspaceFolder}/transpile"
-        }
-, {
-    "type": "node",
-    "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
-    "request": "launch",
-    "name": "transpile.class",
-    "args": ["${workspaceFolder}/transpile/test/transpile.class.test.ts"],
-    "cwd": "${workspaceFolder}/transpile"
-}
-,{
-    "type": "node",
-    "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
-    "request": "launch",
-    "name": "transpile.func",
-    "args": ["${workspaceFolder}/transpile/test/transpile.func.test.ts"],
-    "cwd": "${workspaceFolder}/transpile"
-}
-,
-          {
+        },
+        {
+            "type": "node",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+            "request": "launch",
+            "name": "transpile.class",
+            "args": [
+                "${workspaceFolder}/transpile/test/transpile.class.test.ts"
+            ],
+            "cwd": "${workspaceFolder}/transpile"
+        },
+        {
+            "type": "node",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+            "request": "launch",
+            "name": "transpile.func",
+            "args": [
+                "${workspaceFolder}/transpile/test/transpile.func.test.ts"
+            ],
+            "cwd": "${workspaceFolder}/transpile"
+        },
+        {
+            "type": "node",
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
+            "request": "launch",
+            "name": "transpile.parse",
+            "args": [
+                "${workspaceFolder}/transpile/test/transpile.parse.test.ts"
+            ],
+            "cwd": "${workspaceFolder}/transpile"
+        },
+        {
             "type": "node",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/mocha",
             "request": "launch",
             "name": "Run test (current)",
-            "args": ["${workspaceFolder}/${relativeFile}"],
+            "args": [
+                "${workspaceFolder}/${relativeFile}"
+            ],
             "cwd": "${workspaceFolder}/transpile"
         }
     ]

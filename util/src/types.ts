@@ -223,6 +223,7 @@ export interface Param {
   internal?: string;
   type: string;
   optional?: boolean;
+  initializer?: string;
 }
 //Swift supports value object like things.
 // like struct enum, that are copied on reference or pass.

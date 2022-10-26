@@ -3,7 +3,8 @@ import { Node, Context } from "./types";
 
 export const assertNodeType = (node: Node, ...type: string[]) => {
     if (!type.includes(node?.type)) {
-        throw new Error(`Expected a node  of type '${type.join(',')}' got '${node?.type}'`);
+        console.warn(`Expected a node  of type '${type.join(',')}' got '${node?.type}'`);
+        debugger;
     }
 };
 export const asSrc = (ctx: Context) => {
@@ -17,15 +18,6 @@ export const asClass = (ctx: Context) => {
         return ctx;
     }
     return;
-};
-export const findSib = (type: string | ((v: Node) => boolean), n: Node | null | undefined): Node | undefined => {
-    if (!n)
-        return;
-    const fn = typeof type === 'string' ? ((v:Node)=>v.type == type) : type;
-    if (fn(n)) {
-        return n;
-    }
-    return findSib(fn, n.nextSibling);
 };
 export const cname = (n: number, prefix = 'init') => n == 0 ? prefix : `${prefix}$${n - 1}`;
 export const asInner = (name: string, ctx: Context) => {

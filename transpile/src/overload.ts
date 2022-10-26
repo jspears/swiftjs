@@ -1,9 +1,10 @@
 import { ContextImpl } from "./context";
-import { Scope, StructureKind, FunctionDeclaration, MethodDeclaration, Node as TSNode, PropertyDeclaration, VariableStatement, VariableDeclarationKind, FunctionDeclarationStructure } from "ts-morph";
+import { Scope, StructureKind, FunctionDeclaration, MethodDeclaration, Node as TSNode, PropertyDeclaration, VariableStatement, VariableDeclarationKind, FunctionDeclarationStructure, OptionalKind, TypeParameterDeclarationStructure } from "ts-morph";
 import { Param } from "@tswift/util";
 import { unfunc } from "./manipulate";
-import {  toDestructureBody, toParamBody, unkind, writeDestructure, writeType } from "text";
+import {  toDestructureBody, toParamBody, unkind, writeDestructure, writeType } from "paramHelper";
 import { inTwo } from "group";
+export type TypeParameter = OptionalKind<TypeParameterDeclarationStructure>;
 
 export type Func = {
     kind?: StructureKind.Method;
@@ -13,6 +14,8 @@ export type Func = {
     parameters: Param[];
     statements: string[];
     returnType?: string;
+    isAbstract?: boolean;
+    typeParameters?:TypeParameter[];
 };
 
 function overloadClass(ctx: ContextImpl, func: Func, tupleReturn?: TupleT[]) {
@@ -61,7 +64,9 @@ function overloadClass(ctx: ContextImpl, func: Func, tupleReturn?: TupleT[]) {
         });
     }
 
-
+    if (func.isAbstract) {
+        m.setIsAbstract(true);
+    }
     if (_overload) {
         const scope = m.getScope();
         const name = m.getName();

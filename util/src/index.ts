@@ -6,6 +6,7 @@ export * from "./util";
 export * from "./stride";
 export * from "./Bool";
 export * from "./Hasher";
+export * from "./lazy";
 export * from "./operator";
 export * from "./overload";
 export * from "./ObservableObject";
