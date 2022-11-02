@@ -15,7 +15,7 @@ export type Node = Parser.SyntaxNode;
 export interface TranspileConfig {
     project: Project
     srcDir: string;
-    readFile: typeof readFile,
+    readFile(path:string, enc:string):Promise<string>,
     basedir(path: string): string,
     overwrite: boolean,
     importMap: Record<string, string>,

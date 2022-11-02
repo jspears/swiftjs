@@ -1,72 +1,80 @@
 import { ContextImpl } from "./context";
-import { Scope, StructureKind, FunctionDeclaration, MethodDeclaration, Node as TSNode, PropertyDeclaration, VariableStatement, VariableDeclarationKind, FunctionDeclarationStructure, OptionalKind, TypeParameterDeclarationStructure } from "ts-morph";
-import { Param } from "@tswift/util";
+import { Scope, StructureKind, FunctionDeclaration, MethodDeclaration, Node as TSNode, PropertyDeclaration, VariableStatement, VariableDeclarationKind, FunctionDeclarationStructure, OptionalKind, TypeParameterDeclarationStructure, ParameterDeclarationStructure, SyntaxKind, Node, GetAccessorDeclaration, IfStatement, Block, VariableDeclaration, SourceFile, ArrowFunction, FunctionExpression } from "ts-morph";
 import { unfunc } from "./manipulate";
-import {  toDestructureBody, toParamBody, unkind, writeDestructure, writeType } from "paramHelper";
-import { inTwo } from "group";
-export type TypeParameter = OptionalKind<TypeParameterDeclarationStructure>;
+import { toDestructureBody, toParamBody} from "./paramHelper";
+import { inTwo } from "./group";
+import { Func } from './internalTypes';
 
-export type Func = {
-    kind?: StructureKind.Method;
-    scope?: Scope;
-    isAsync?: boolean;
-    name: string;
-    parameters: Param[];
-    statements: string[];
-    returnType?: string;
-    isAbstract?: boolean;
-    typeParameters?:TypeParameter[];
-};
+export function fixAllFuncs(src: Node) {
+    for (const child of src.getChildren()) {
+        switch (child.getKind()) {
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.FunctionDeclaration:
+            case SyntaxKind.ArrowFunction:
+            case SyntaxKind.FunctionExpression:
+                addReturnTuple(child as FunctionDeclaration);
+            default:
+                fixAllFuncs(child);
+        }
+    }
+}
 
+function getMethod(v: VariableDeclaration | GetAccessorDeclaration | FunctionDeclaration | VariableDeclaration | MethodDeclaration | ArrowFunction | FunctionExpression) {
+    if (v.isKind(SyntaxKind.VariableDeclaration)) {
+        return v.getInitializerIfKind(SyntaxKind.FunctionExpression) ?? v.getInitializerIfKind(SyntaxKind.ArrowFunction);
+    }
+    return v;
+}
+export function addReturnTuple(prop: GetAccessorDeclaration | FunctionDeclaration | VariableDeclaration) {
+    const list = getMethod(prop)?.getBody()?.getChildSyntaxList();
+    if (list) {
+        const newList: string[] = [];
+        for(const child of list.getChildren()){
+            switch (child.getKind()) {
+                case SyntaxKind.ExpressionStatement:
+                    newList.push(child.getText());
+                    break;
+                case SyntaxKind.IfStatement:
+                    const ifEx = child as IfStatement;
+                    const truthy = (ifEx.getLastChild() as Block)?.getChildSyntaxList()?.getChildren().map(v => v.getText()).join(',');
+                    newList.push(`...((${ifEx.getExpression().getText()}) ? [${truthy}] : [])`);
+                    break;
+                default:
+                    //everything other we break.
+                    return prop;
+                   // newList.push(child.getText());
+            }
+        }
+        getMethod(prop)?.setBodyText( newList.length == 0 ? '' : newList.length === 1 ? `return ${newList[0]}` : `return [${newList.join(',')}]`);
+
+    }
+    return prop;
+}
 function overloadClass(ctx: ContextImpl, func: Func, tupleReturn?: TupleT[]) {
-    
+    //    statementsToTuple(ctx, func);
     const clazz = ctx.getClassOrThrow();
     const member = clazz.getMember(func.name);
-    const overloadParamNames: string[] = [];
     let _overload;
     if (member) {
-        if (TSNode.isMethodDeclaration(member)) {
-            overloadParamNames.push(...member.getParameters().map(v => v.getName()));
-        }
         _overload = unfunc(member);
         member.remove();
     }
-    let m: MethodDeclaration | PropertyDeclaration = clazz.addMethod(func);
-    if (tupleReturn?.length) {
-        
-    }
+    const { parameters, ...fn } = func;
+    const [inline, named] = inTwo(parameters, (v) => v.name === '_');
+    let m: MethodDeclaration | PropertyDeclaration = clazz.addMethod({
 
-    //If all the parameters are '_' positional than we don't have to wrap in a func.
-    if (TSNode.isMethodDeclaration(m) && func.parameters.every(v => v.name == '_' && v.internal)) {
-        func.parameters.forEach(v => {
-            if (!v.internal) {
-                throw new Error('methods need parameter names');
-            }
-            TSNode.isMethodDeclaration(m) &&
-                m.addParameter({
-                    name: v.internal,
-                    type: v.type,
+        ...fn,
+        kind: StructureKind.Method,
+        parameters: [
+            ...inline.map(v => ({ ...v, name: v.internal || '' })),
+            ...(named.length ? [{
+                name: toDestructureBody(named),
+                type: toParamBody(named)
+            }] : [])
+        ]
+    });
 
-                });
-        });
-    } else if (func.parameters.length) {
-        m.addParameter({
-            name: writeDestructure(func.parameters),
-            type: writeType(func.parameters)
-        })
-        const initializer = unfunc(m);
-        m.remove();
-        const { kind, ...rest } = func;
 
-        m = clazz.addProperty({
-            ...rest,
-            initializer
-        });
-    }
-
-    if (func.isAbstract) {
-        m.setIsAbstract(true);
-    }
     if (_overload) {
         const scope = m.getScope();
         const name = m.getName();
@@ -100,37 +108,51 @@ function overloadClass(ctx: ContextImpl, func: Func, tupleReturn?: TupleT[]) {
 
 }
 
-function overloadVar(ctx: ContextImpl, { parameters, kind, ...func }: Func,  tupleReturn?:TupleT[]):ContextImpl {
+function tupleSerialize(tupleReturn: TupleT[]) {
+    const [hasName, noName] = inTwo(tupleReturn, (v) => typeof v[0] == 'string');
+    if (hasName.length) {
+        return `[${hasName.map(([name, type]: TupleT) => `[${JSON.stringify(name)}, ${type}]`).join(',')}]`
+    }
+    return `[${noName.map(([name, type]) => type).join(',')}]`
+}
+
+function overloadVar(ctx: ContextImpl, { parameters, ...func }: Func, tupleReturn?: TupleT[]): ContextImpl {
+
     let f: FunctionDeclaration | VariableStatement = ctx.src.addFunction({
         isExported: true,
         ...func,
     });
+    if (tupleReturn) {
+        addReturnTuple(f);
+    }
+
     const [named, unnamed] = inTwo(parameters, v => v.name !== '_');
     f.addParameters(unnamed.map(v => ({ ...v, name: v.internal || '' })));
     f.addParameter({
         name: toDestructureBody(named),
         type: toParamBody(named),
     });
-    if (tupleReturn?.length) {
+    if (tupleReturn?.find(([name])=>name != null)) {
         f.setIsExported(false);
         const name = f.getName() || 'unnamed';
         f.setReturnType('');
         const body = f.getText();
         const pos = f.getChildIndex();
         f.remove();
+
         ctx.src.insertVariableStatement(pos, {
-            isExported:true,
+            isExported: true,
             declarationKind: VariableDeclarationKind.Const,
             declarations: [
                 {
                     name,
-                    initializer:`${ctx.addBuiltIn('retuple')}(${body}, ${JSON.stringify(tupleReturn.map(([v])=>v))})`
+                    initializer: `${ctx.addBuiltIn('retuple')}(${body}, ${JSON.stringify(tupleReturn.map(([v])=>v).filter(Boolean))})`
                 }
-            ]            
+            ]
         });
 
     }
-    return ctx.add(...parameters);
+    return ctx.add(...(parameters || []));
     // if (parameters.length) {
     //     f.setIsExported(false);
     //     const orig = f.getText();
@@ -148,17 +170,17 @@ function overloadVar(ctx: ContextImpl, { parameters, kind, ...func }: Func,  tup
 }
 
 export function handleOverload(ctx: ContextImpl, func: Func, tupleReturn?: TupleT[]) {
-//    console.log(tupleReturn);
+    //    console.log(tupleReturn);
     return ctx.clazz ? overloadClass(ctx, func, tupleReturn) : overloadVar(ctx, func, tupleReturn);
 }
 
-function wrapTuple(ctx: ContextImpl, f: FunctionDeclaration, tupleReturn:TupleT[]): string {
+function wrapTuple(ctx: ContextImpl, f: FunctionDeclaration, tupleReturn: TupleT[]): string {
     f.setIsExported(false);
     const name = f.getName() || 'unnamed';
     f.setReturnType('');
     const body = f.getText();
     const pos = f.getChildIndex();
     f.remove();
-    return `${ctx.addBuiltIn('retuple')}(${body}, ${JSON.stringify(tupleReturn.map(([v]) => v))})`;         
+    return `${ctx.addBuiltIn('retuple')}(${body}, ${JSON.stringify(tupleReturn.map(([v]) => v))})`;
 }
 type TupleT = [string | undefined, string | undefined];

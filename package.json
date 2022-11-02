@@ -5,6 +5,7 @@
   "description": "Just playing around with TS syntax to make something swift like.",
   "scripts": {
     "dev": "yarn workspace @tswift/demo dev",
+    "transpile:site": "yarn workspace @tswift/transpile-site dev",
     "docs": "yarn workspace @tswift/demo docs",
     "test": "lage test",
     "clean": "git clean -fdx",
@@ -31,7 +32,8 @@
       "util",
       "todo",
       "demo",
-      "transpile"
+      "transpile",
+      "transpile-site"
     ]
   },
   "devDependencies": {

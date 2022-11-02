@@ -1,5 +1,5 @@
 import { ClassDeclaration, CodeBlockWriter, OptionalKind, ParameterDeclarationStructure, ParameteredNodeStructure, Scope, SourceFile, Writers } from "ts-morph";
-import { Param } from '@tswift/util';
+import { Param } from './internalTypes';
 import { SyntaxNode } from "web-tree-sitter";
 
 export function replaceStart(prefix: string, v: string) {

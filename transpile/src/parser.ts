@@ -1,25 +1,34 @@
 import Parser from "web-tree-sitter";
 
+export const ParserConfig: { swift: string, ['tree-sitter']?: string } = {
+    swift: `../wasm/tree-sitter-swift.wasm`,
+}
+
 let _parser: Parser;
-let _parserPromise:Promise<Parser>;
-const wasm = `${__dirname}/../wasm/tree-sitter-swift.wasm`;
+let _parserPromise: Promise<Parser>;
 
 async function _loadParser() {
-    console.log('parser initt');
     try {
-        await Parser.init();
+        await Parser.init({
+            locateFile(scriptName: string, scriptDirectory: string) {
+                const name = scriptName.replace(/\.wasm$/, '') as keyof typeof ParserConfig;
+                if (name in ParserConfig) {
+                    return ParserConfig[name];
+                }
+                return `${scriptDirectory}/${scriptName}`;
+            },
+        });
+
     } catch (e) {
         console.trace(e);
         throw e;
     }
     _parser = new Parser();
-    console.log('loading', wasm);
-    const Swift = await Parser.Language.load(wasm);
-    _parser.setLanguage(Swift);     
+    _parser.setLanguage( await Parser.Language.load(ParserConfig.swift));
     return _parser;
 }
 
-export async function getParser():Promise<Parser> {
+export async function getParser(): Promise<Parser> {
     if (_parser) {
         return _parser;
     }

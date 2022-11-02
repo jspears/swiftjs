@@ -1,0 +1,53 @@
+@import url("./reset.css");
+html {font-size: 62.5%}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background:beige;
+  padding: 1rem 3rem;
+}
+
+button {
+  justify-content: center;
+  text-align: center;
+  vertical-align: middle;
+  background-color: gray;
+  border: 1px solid darkblue;
+  color: darkblue;
+  padding: .5rem 1rem;
+  border-radius: .5rem;
+
+}
+button:active {
+  border-color: darkgray;
+}
+
+.wrap {
+  display:flex;
+  flex-direction: row;
+  flex: 1;
+}
+.navigate {
+  list-style: none;
+
+}
+.content {
+  display: flex;
+  justify-content: center;
+  flex:1;
+}
+h2 {
+  font-size: 1.5rem;
+  padding: 2em 0;
+  line-height: 2;
+}
+
+a {
+  padding: 1em 0;
+  display: block;
+} 
+
+@font-face {
+ font-family: "SF Pro";
+ src: url("https://www.apple.com/wss/fonts/SF-Pro-Icons/v3/sf-pro-icons_regular.woff2") format("woff2");
+}

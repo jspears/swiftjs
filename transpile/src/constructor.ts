@@ -1,11 +1,10 @@
-import { Node as TSNode } from 'ts-morph';
-import { Param } from "@tswift/util";
-
+import { ConstructorDeclarationStructure, Node as TSNode, OptionalKind, Scope } from 'ts-morph';
+import { Param } from "./internalTypes";
 import { ContextImpl } from "./context";
-import { toDestructure, toDestructureBody, toParamBody } from "./paramHelper";
+import { toDestructureBody, toParamBody } from "./paramHelper";
 import { toType } from "./toType";
-import { handleOverload } from 'overload';
-import { inTwo } from 'group';
+import { handleOverload } from './overload';
+import { inTwo } from './group';
 
 export function makeConstructor(constructors: [Param[], string][], ctx: ContextImpl) {
     const cls = ctx.getClassOrThrow();
@@ -14,7 +13,17 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
     let hasQuestionTokenParam = true;
     //Generate parameters from the optional and uninitalized class properties.   
     //If a constructor is specified than the default constructor is not created.
-    const nonStatic: Param[] = (constructors.length != 0 || ctx.isExtension) ? [] : cls.getProperties().filter(v => !v.isStatic() && !TSNode.isCallExpression(v.getInitializer())).map(d => {
+    const nonStatic: Param[] = (constructors.length != 0 || ctx.isExtension) ? [] : cls.getProperties()
+        .filter(v => {
+            if (v.isStatic()) {
+                return false;
+            }
+            if (v.getScope() == Scope.Private || v.getScope() == Scope.Protected) {
+                return false;
+            }
+             return !TSNode.isCallExpression(v.getInitializer()
+            )
+        }).map(d => {
         const name = d.getName();
         const type = toType(d);
         const optional = d.hasQuestionToken() || d.hasInitializer();
@@ -35,11 +44,6 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
             return `if(${name} !== undefined) this.${name} = ${paramName};`;
         }).join('\n')]
     ]
-    type SP = {
-        name: string;
-        type: string;
-    }
-    //    const overloadPosParam = parameters.map((p) => (p as Param[]));
         const overloadParams = parameters.reduce((ret, [params]) => {
         const [named, unnamed] = inTwo(params, p => p.name !== '_');
 
@@ -47,7 +51,8 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
         if (named.length) {
             parameters.push({ name: 'param', hasQuestionToken: isAllOptional(named), type: toParamBody(named) });
         }
-        ret.push(parameters);
+         if (parameters.length)
+            ret.push(parameters);
         return ret;
     }, [] as {name:string, hasQuestionTokenParam?:boolean, type:string}[][]);
     const defaultClassConstructor = {
@@ -62,10 +67,10 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
         statements: [statement]
     }));
 
-    cls.addConstructor({
+  const constructor:OptionalKind<ConstructorDeclarationStructure> = {
         overloads: [
-            ...overloadParams.map((p) => ({
-                parameters:p
+            ...overloadParams.map((parameters) => ({
+                parameters
             })),
             ...(ctx.isExtension || hasSameConstructor(constructors, defaultClassConstructor) ? [] : [{
                 parameters: [defaultClassConstructor]
@@ -80,12 +85,23 @@ export function makeConstructor(constructors: [Param[], string][], ctx: ContextI
         statements: [
             cls.getExtends() != null ? `super(..._args)` : '',
             ...(constructors.length ? ['this.init(..._args)'] :
-               nonStatic.length ? [`const ${toDestructureBody(nonStatic)} = _args[1]; `, ...parameters.map(([, b]) => b)] : []),
+               nonStatic.length ? [`const ${toDestructureBody(nonStatic)} = _args[0]; `, ...parameters.map(([, b]) => b)] : []),
             `if (_args[0] instanceof ${className}) Object.assign(this, _args[0])`
         ]
-    });
-
+  }
     
+    if (constructor.overloads?.length == 1) {
+        constructor.parameters = constructor.overloads.shift()?.parameters ?? [];
+        constructor.statements = [];
+        if (cls.getExtends()) {
+            constructor.statements.push('super()');
+        }
+        if (ctx.clazz?.getMember('[cloneable]')) {
+            constructor.statements.push(`Object.assign(this, param)`);
+        }
+    }
+
+    cls.addConstructor(constructor);
 
 }
 

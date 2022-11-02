@@ -1,0 +1,25 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "composite": true,
+    "module":"Node16",
+    "tsBuildInfoFile": "./lib/.tsbuildinfo-demo",
+    "types": ["vite/client"]
+
+  },
+  "include": ["src/**/*"],
+  "references": [
+    {
+      "path":"../util"
+    },
+    {
+      "path":"../ui"
+    },
+    {
+      "path":"../coredata"
+    }
+  ]
+}

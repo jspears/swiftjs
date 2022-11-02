@@ -1,4 +1,4 @@
-import { Param } from "@tswift/util";
+import { Param } from "./internalTypes";
 import { Node as TSNode, ClassDeclaration, ClassDeclarationStructure, OptionalKind, SourceFile, } from "ts-morph";
 import { SyntaxNode as Node } from "web-tree-sitter";
 import { resolveType } from './resolveMap';
@@ -164,7 +164,7 @@ export class ContextImpl {
 
     add(...label: (Param | [string, string | undefined])[]): ContextImpl {
         const ctx = new ContextImpl(this.src, this.clazz, this);
-        label.forEach(v => Array.isArray(v) ? ctx.scope.set(v[0], v[1]) : ctx.scope.set(v.name, v.type))
+        label.forEach(v => Array.isArray(v) ? ctx.scope.set(v[0], v[1]) : ctx.scope.set((v.name == '_' ? v.internal : v.name) ?? '', v.type))
         return ctx;
     }
     clone(text: string | undefined, type?: string) {

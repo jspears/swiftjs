@@ -1,0 +1,24 @@
+.error {
+    color:red;
+    font-weight: bold;
+}
+.container {
+    background-color: white;
+    padding:1rem;
+    border: 1px solid black;
+}
+
+.numbers {
+    margin:0;
+    padding:0;
+    color: turquoise;
+    list-style: auto;
+    list-style-position: inside;
+}
+.numbers .error {
+    color:red;  
+}
+.numbers pre {
+    color: black;
+    display: inline-block;
+}

@@ -1,6 +1,6 @@
 
 
-export function inTwo<T>(arr: T[], f: (a: T) => boolean):[T[],T[]] {
+export function inTwo<T>(arr: T[] = [], f: (a: T) => boolean):[T[],T[]] {
     const ret: [T[], T[]] = [[],[]];
 
     for (const o of arr) {
