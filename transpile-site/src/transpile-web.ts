@@ -57,7 +57,8 @@ export const createTranspile = (conf: Partial<TranspileConfig> = {}) => new Tran
 export async function transpile(content: string, filename = 'unknown') {
     const trans = createTranspile();
     const project = trans.config.project;
-    const src = (await trans.transpile((filename || './test/test') + '.swift', content))
+    const src = (await trans.transpile((filename || './test/test') + '.swift', content));
+    src.formatText({trimTrailingWhitespace:true, indentStyle:ts.IndentStyle.Smart, });
     const text = src.getText();
     
     const preEmit = project.getPreEmitDiagnostics();

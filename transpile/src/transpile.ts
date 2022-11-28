@@ -305,7 +305,6 @@ export class Transpile {
 
                 case 'value_arguments':
                     n.children.forEach(v => {
-                        let arg: Arg | undefined;
                         switch (v.type) {
                             case 'range_expression':
                                 isPropertyIndex = false;
@@ -322,37 +321,34 @@ export class Transpile {
                                 break;
                             case ',':
                                 isPropertyIndex = false;
-                                if (arg) {
-                                    args.push(arg);
-                                    arg = undefined;
-                                }
+                               
                                 break;
                             case 'value_argument': {
-                                arg = {};
-                                args.push(arg);
+                                let carg: Arg = {}
+                                args.push(carg);
                                 v.children.forEach(va => {
                                     switch (va.type) {
                                         case 'simple_identifier':
-                                            if (!arg) arg = {};
-                                            arg.value = va.text;
+                                            if (carg.name || va.nextSibling?.text != ':') {
+                                                carg.value = this.processNode(va, ctx);
+                                            } else {
+                                                carg.value = va.text;
+                                            }
                                             break;
                                         case ':': {
-                                            if (!arg) arg = {};
-                                            arg.name = arg?.value;
-                                            arg.value = undefined;
+                                            carg.name = carg.value;
+                                            carg.value = undefined;
                                             break;
                                         }
                                         case 'range_expression':
                                             //will be handled upstream.
                                             break;
                                         case 'navigation_expression':
-
                                         default:
-                                            if (!arg) arg = {};
-                                            arg.value = this.processNode(va, ctx);
+                                            carg.value = this.processNode(va, ctx);
 
                                     }
-                                })
+                                });
 
                                 break;
                             }
@@ -877,6 +873,13 @@ export class Transpile {
                 const p = findParent(n, 'function_declaration')?.descendantsOfType('->')[0]?.nextSibling?.descendantsOfType('type_identifier')[0];
                 if (p) {
                     return `${p.text}${n.text}`;
+                } else {
+                    const ta = findParent(n, 'assignment')?.descendantsOfType('type_identifier')[0];
+                    if (ta) {
+                        const type = ctx.typeFor(ta.text);
+                        if (type)
+                            return `${type}${n.text}`;
+                    }
                 }
                 return `'${n.text}'`;
             case 'while_statement':

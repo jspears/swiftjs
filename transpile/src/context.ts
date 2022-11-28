@@ -25,7 +25,8 @@ export class ContextImpl {
         return v(this) ? this : this.parent?.walk(v);
     }
     typeFor(name: string): string | undefined {
-        return this.scope.get(name) ?? this.parent?.typeFor(name);
+        
+        return this.scope.get(name)  ?? this.clazz?.getProperty(name)?.getType().getText() ?? this.parent?.typeFor(name);
     }
     classNameFor(name: string) {
         
